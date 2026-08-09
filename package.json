@@ -1,0 +1,47 @@
+{
+  "name": "voice-ai-agent",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Providerfreie Fake-/Replay-Foundation für den Textback-MVP.",
+  "license": "UNLICENSED",
+  "packageManager": "pnpm@11.20.0",
+  "engines": {
+    "node": ">=24.18.0 <25",
+    "pnpm": "11.20.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "clean": "turbo run clean",
+    "commitlint": "commitlint",
+    "compose:down": "node tooling/task-guard.mjs F-002 compose:down",
+    "compose:up": "node tooling/task-guard.mjs F-002 compose:up",
+    "db:migrate": "node tooling/task-guard.mjs T-003 db:migrate",
+    "db:seed": "node tooling/task-guard.mjs T-003 db:seed",
+    "dev": "turbo run dev --parallel",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "turbo run lint && eslint tooling eslint.config.mjs commitlint.config.mjs",
+    "test": "turbo run test && pnpm test:architecture && pnpm test:commitlint",
+    "test:architecture": "node tooling/architecture/check-boundaries.mjs . && vitest run tooling/architecture/check-boundaries.test.mjs",
+    "test:commitlint": "commitlint --edit tooling/commitlint/valid-message.txt",
+    "test:e2e": "vitest run --passWithNoTests tests/e2e",
+    "test:integration": "vitest run --passWithNoTests tests/integration",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.2.1",
+    "@commitlint/config-conventional": "21.2.0",
+    "@eslint/js": "9.39.5",
+    "@types/node": "24.13.3",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.3.0",
+    "eslint-config-prettier": "10.1.8",
+    "globals": "17.9.0",
+    "prettier": "3.9.6",
+    "turbo": "2.10.9",
+    "tsx": "4.23.11",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.66.0",
+    "vitest": "4.1.10"
+  }
+}

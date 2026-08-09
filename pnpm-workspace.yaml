@@ -1,0 +1,13 @@
+packages:
+  - apps/*
+  - packages/*
+
+engineStrict: true
+saveExact: true
+strictPeerDependencies: true
+autoInstallPeers: false
+resolutionMode: highest
+
+allowBuilds:
+  esbuild@0.28.1: true
+  unrs-resolver@1.12.2: true

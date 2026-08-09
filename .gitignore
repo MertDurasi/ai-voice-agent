@@ -1,0 +1,57 @@
+# Operating system and editors
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+
+# Node.js and frontend build output
+node_modules/
+.pnpm-store/
+.turbo/
+.next/
+out/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Python and voice tooling
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Local services, databases and object storage
+.data/
+postgres-data/
+redis-data/
+minio-data/
+*.sqlite
+*.sqlite3
+*.db
+
+# Logs, caches and temporary files
+logs/
+*.log
+.cache/
+.tmp/
+tmp/
+temp/

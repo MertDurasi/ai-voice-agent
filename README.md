@@ -39,12 +39,14 @@ corepack pnpm build
 dauerhaften Health-/Runtime-Verträge folgen in `F-004`. Aktuell existieren
 weder reale Provideradapter noch externe Egress-Pfade.
 Die Zielbefehle `compose:*` und `db:*` sind bereits als fail-closed Guards
-sichtbar und werden erst in `F-002` beziehungsweise `T-003` implementiert.
+sichtbar. Die lokale Infrastruktur ist unter
+[infra/compose](infra/compose/README.md) dokumentiert; Datenbankmigrationen und
+Seeds bleiben bis `T-003` fail-closed.
 
 Aktuell in `Now`: Engineering hat
-[F-001 – Repository und Toolchain](docs/tasks/foundation/F-001-repository-toolchain.md)
+[F-002 – Lokale Infrastruktur](docs/tasks/foundation/F-002-local-infrastructure.md)
 abgeschlossen und zieht als Nächstes
-[F-002 – Lokale Infrastruktur](docs/tasks/foundation/F-002-local-infrastructure.md);
+[F-003 – Konfiguration und Secrets](docs/tasks/foundation/F-003-configuration-secrets.md);
 der Product-Owner-Track zieht
 [PO-001 – Probleminterviews](docs/tasks/product-owner/PO-001-problem-interviews.md).
 `PO-002` und `PO-003` folgen wegen des Product-WIP-Limits nacheinander.

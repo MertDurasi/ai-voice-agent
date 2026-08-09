@@ -9,7 +9,7 @@ gleichzeitig aktiv.
 
 | Spur | Task | überprüfbares Outcome | Stop-/Reviewpunkt |
 |---|---|---|---|
-| Engineering | `F-002` | reproduzierbare lokale Infrastruktur; Healthchecks, persistente Volumes und sichere Reset-/Restore-Nachweise | keine Providerkonten oder Real-Egress; `F-003` erst nach Abschluss/Review ziehen |
+| Engineering | `F-003` | validierte, typisierte Konfiguration und Secret-Leitplanken für lokale App-Runtimes | keine echten Secrets oder Providerzugänge; baut auf dem abgeschlossenen `F-002` auf |
 | Product/Discovery | `PO-001` | zehn nicht suggestive SHK-Probleminterviews mit anonymisierter Evidenz und Pivot-Signalen | keine PII ohne freigegebenen Prozess; Kohorte ist nicht vorab „validiert“ |
 
 `Now` enthält bewusst höchstens diese zwei Tasks. `PO-002` und `PO-003` bleiben

@@ -16,8 +16,8 @@ Stand: 2026-08-09
 
 ## Nächste zulässige Arbeit
 
-- Engineering `Now`: `F-002` als nächster Pull-Kandidat; `F-003` bleibt bis zum
-  Abschluss beziehungsweise Review von `F-002` im Engineering-WIP-Puffer.
+- Engineering `Now`: `F-003` als nächster Pull-Kandidat nach abgeschlossenem
+  `F-002`.
 - Product/Discovery `Now`: `PO-001`; danach nacheinander `PO-002`, `PO-003`
 
 `G0` entsperrt ausschließlich die reversible Fake-/Replay-Foundation. Es ist

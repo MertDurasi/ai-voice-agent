@@ -7,7 +7,7 @@ Freigabe. Die verbindliche Reihenfolge steht in der
 
 | Horizont | Forecastannahme | erwartetes Ergebnis | Konfidenz |
 |---|---|---|---|
-| `Now` | je ein WIP-Slot pro Spur; Abschluss vor neuem Pull | `F-002` im Engineering-Track und `PO-001` im Product-Track | mittel für Reihenfolge, niedrig für Datum bis erste Cycle-Time vorliegt |
+| `Now` | je ein WIP-Slot pro Spur; Abschluss vor neuem Pull | `F-003` im Engineering-Track und `PO-001` im Product-Track | mittel für Reihenfolge, niedrig für Datum bis erste Cycle-Time vorliegt |
 | `Next` | ungefähr 2–6 Wochen, abhängig von Taskzuschnitt und tatsächlichem Durchsatz | lokale Foundation/CI, erste Tenancy-Outcomes sowie `PO-002`/`PO-003` als Investment-Checkpoint | niedrig bis erste 3–5 Tasks abgeschlossen sind |
 | `Later` | keine Kalenderprognose | Onboarding, Walking Skeleton, Ingestion, Textback, Produktreife, Pilot, Voice/Cloud nur bei Trigger | absichtlich keine Termin-Konfidenz |
 

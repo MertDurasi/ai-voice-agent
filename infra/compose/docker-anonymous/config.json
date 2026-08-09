@@ -1,0 +1,8 @@
+{
+  "cliPluginsExtraDirs": [
+    "/Applications/Docker.app/Contents/Resources/cli-plugins",
+    "/usr/local/lib/docker/cli-plugins",
+    "/usr/libexec/docker/cli-plugins",
+    "/usr/lib/docker/cli-plugins"
+  ]
+}

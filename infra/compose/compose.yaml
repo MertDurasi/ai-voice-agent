@@ -1,0 +1,159 @@
+name: ${COMPOSE_PROJECT_NAME:?COMPOSE_PROJECT_NAME is required}
+
+x-service-defaults: &service-defaults
+  init: true
+  restart: unless-stopped
+  networks:
+    - local-only
+  security_opt:
+    - no-new-privileges:true
+  logging:
+    driver: json-file
+    options:
+      max-size: 5m
+      max-file: '2'
+
+services:
+  postgres:
+    <<: *service-defaults
+    image: postgres:18.4-alpine3.23@sha256:996d0920e4ff9df1fc19dacb904492f3c1ec0ec1cc338f0ad7123be7731c5f5e
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    mem_limit: 768m
+    pids_limit: 200
+
+  redis:
+    <<: *service-defaults
+    image: redis:8.8.1-alpine3.23@sha256:8096655e437712b07503796fb64d81359256cfcff0ab29d95a7da72863786efb
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+    command:
+      - /bin/sh
+      - -ec
+      - >-
+        exec redis-server --appendonly yes --appendfsync everysec
+        --save 60 1 --requirepass "$$REDIS_PASSWORD"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: [CMD-SHELL, REDISCLI_AUTH="$$REDIS_PASSWORD" redis-cli ping | grep -qx PONG]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+    mem_limit: 256m
+    pids_limit: 100
+
+  keycloak:
+    <<: *service-defaults
+    image: quay.io/keycloak/keycloak:26.7.0@sha256:0f198be292568439d700cdbfb893e69a6009bb43a94a06a945b1d3d506c76b13
+    command:
+      - start-dev
+      - --health-enabled=true
+      - --metrics-enabled=true
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_BOOTSTRAP_ADMIN_USERNAME:?KEYCLOAK_BOOTSTRAP_ADMIN_USERNAME is required}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_BOOTSTRAP_ADMIN_PASSWORD:?KEYCLOAK_BOOTSTRAP_ADMIN_PASSWORD is required}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:?POSTGRES_DB is required}
+      KC_DB_USERNAME: ${POSTGRES_USER:?POSTGRES_USER is required}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      KC_CACHE: local
+      KC_HOSTNAME_STRICT: 'false'
+      KC_HTTP_ENABLED: 'true'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD-SHELL, "bash -c 'exec 3<>/dev/tcp/127.0.0.1/9000'"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    mem_limit: 1024m
+    pids_limit: 300
+
+  minio:
+    <<: *service-defaults
+    build:
+      context: ./minio
+      args:
+        MINIO_VERSION: RELEASE.2025-10-15T17-29-55Z
+    image: voice-ai-agent/minio-local:RELEASE.2025-10-15T17-29-55Z
+    command: [server, /data, --console-address, ':9001']
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?MINIO_ROOT_USER is required}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: [CMD, wget, --spider, --quiet, http://127.0.0.1:9000/minio/health/ready]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+    mem_limit: 512m
+    pids_limit: 200
+
+  mailpit:
+    <<: *service-defaults
+    build:
+      context: ./mailpit
+    image: voice-ai-agent/mailpit-local:v1.30.0
+    environment:
+      MP_DATABASE: /data/mailpit.db
+      MP_DISABLE_VERSION_CHECK: 'true'
+      MP_MAX_MESSAGES: '100'
+      MP_MAX_AGE: 24h
+      MP_MAX_MESSAGE_SIZE: '1'
+    volumes:
+      - mailpit-data:/data
+    healthcheck:
+      test: [CMD, wget, --spider, --quiet, http://127.0.0.1:8025/readyz]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+    mem_limit: 256m
+    pids_limit: 100
+
+  minio-client:
+    image: minio/mc:RELEASE.2025-07-16T15-35-03Z@sha256:d5bccfe71e95a34b25d626d86621930342553657e8776833b65ae0bc63cf4928
+    profiles: [tools]
+    networks:
+      - local-only
+    environment:
+      MC_HOST_local: http://${MINIO_ROOT_USER:?MINIO_ROOT_USER is required}:${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}@minio:9000
+    depends_on:
+      minio:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+
+  health-client:
+    image: alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b
+    profiles: [tools]
+    networks:
+      - local-only
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  local-only:
+    internal: true
+
+volumes:
+  postgres-data:
+  redis-data:
+  minio-data:
+  mailpit-data:

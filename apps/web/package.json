@@ -5,13 +5,14 @@
   "type": "module",
   "scripts": {
     "build": "next build",
-    "dev": "next dev",
+    "dev": "node --env-file-if-exists=../../.env scripts/run-next.mjs dev",
     "lint": "eslint . --max-warnings=0",
-    "start": "next start",
+    "start": "node scripts/run-next.mjs start",
     "test": "vitest run",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
+    "@voice-ai/config": "workspace:*",
     "next": "16.3.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"

@@ -9,7 +9,7 @@ gleichzeitig aktiv.
 
 | Spur | Task | überprüfbares Outcome | Stop-/Reviewpunkt |
 |---|---|---|---|
-| Engineering | `F-003` | validierte, typisierte Konfiguration und Secret-Leitplanken für lokale App-Runtimes | keine echten Secrets oder Providerzugänge; baut auf dem abgeschlossenen `F-002` auf |
+| Engineering | `F-004` | providerfreie API-, Web- und Worker-Basis mit überprüfbaren Runtime-Verträgen | keine echten Secrets, Realdaten oder Providerzugänge; baut auf den abgeschlossenen `F-002`/`F-003` auf |
 | Product/Discovery | `PO-001` | zehn nicht suggestive SHK-Probleminterviews mit anonymisierter Evidenz und Pivot-Signalen | keine PII ohne freigegebenen Prozess; Kohorte ist nicht vorab „validiert“ |
 
 `Now` enthält bewusst höchstens diese zwei Tasks. `PO-002` und `PO-003` bleiben
@@ -19,8 +19,7 @@ bereit, werden aber wegen des Product-WIP-Limits nicht parallel begonnen.
 
 | Outcome | wahrscheinliche Tasks/Abhängigkeiten | Nachweis vor Pull |
 |---|---|---|
-| lokale Entwicklungsumgebung ist reproduzierbar und secret-sicher | `F-002`, `F-003` nach `F-001` | Toolchain grün; Infrastruktur-/Secret-Scope verfeinert |
-| API/Web/Worker und CI bilden ein gesundes, providerfreies Fundament | `F-004`, `F-005` nach F-002/F-003 | Health-/Build-/Supply-Chain-Akzeptanz definiert |
+| API/Web/Worker und CI bilden ein gesundes, providerfreies Fundament | `F-005` nach `F-004`; F-002/F-003 sind abgeschlossen | Health-/Build-/Supply-Chain-Akzeptanz definiert |
 | Product-Investment-Checkpoint vor domänenspezifischem Ausbau | nacheinander `PO-002`, `PO-003`; alle `PO-001`–`PO-003` vor `O-001` | Interviewevidenz, extern testbares Angebot, Kostenbandbreite/Stopregel |
 | Tenantkontext ist autoritativ und Cross-Tenant-Zugriff beweisbar ausgeschlossen | `T-001`–`T-004` nach `G1` | Auth-/RLS-/Audit-Negativfälle verfeinert; keine reale Tenant-PII nötig |
 | dünne synthetische Walking-Skeleton-Scheibe ist ausführbar geplant | Refinement nach `G2` | Replay Call → Eligibility → Fake Message → lokales Capability-Formular → synthetischer Lead; keine Gateumgehung |

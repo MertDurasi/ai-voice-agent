@@ -18,12 +18,13 @@ Voraussetzungen:
 
 - Node.js `24.18.0` gemäß `.nvmrc`/`.node-version`;
 - das mit Node ausgelieferte Corepack;
-- Git. Ein Remote, Providerkonto oder `.env` ist für `F-001` nicht nötig.
+- Git. Ein Providerkonto ist nicht nötig.
 
 Ein frischer Checkout benötigt genau einen Installationsbefehl:
 
 ```bash
 corepack pnpm install --frozen-lockfile
+cp .env.example .env
 ```
 
 Danach prüft die vollständige Foundation:
@@ -38,15 +39,18 @@ corepack pnpm build
 `corepack pnpm dev` ruft die Entwicklungsbefehle der drei Skeletons auf; die
 dauerhaften Health-/Runtime-Verträge folgen in `F-004`. Aktuell existieren
 weder reale Provideradapter noch externe Egress-Pfade.
+Die Konfiguration wird pro App typisiert und fail-fast geprüft; lokale Werte
+bleiben synthetisch. Klassifikation und spätere Rotation sind im
+[Secret-Leitfaden](docs/security/configuration-and-secrets.md) dokumentiert.
 Die Zielbefehle `compose:*` und `db:*` sind bereits als fail-closed Guards
 sichtbar. Die lokale Infrastruktur ist unter
 [infra/compose](infra/compose/README.md) dokumentiert; Datenbankmigrationen und
 Seeds bleiben bis `T-003` fail-closed.
 
 Aktuell in `Now`: Engineering hat
-[F-002 – Lokale Infrastruktur](docs/tasks/foundation/F-002-local-infrastructure.md)
+[F-003 – Konfiguration und Secrets](docs/tasks/foundation/F-003-configuration-secrets.md)
 abgeschlossen und zieht als Nächstes
-[F-003 – Konfiguration und Secrets](docs/tasks/foundation/F-003-configuration-secrets.md);
+[F-004 – API-, Web- und Worker-Basis](docs/tasks/foundation/F-004-application-baseline.md);
 der Product-Owner-Track zieht
 [PO-001 – Probleminterviews](docs/tasks/product-owner/PO-001-problem-interviews.md).
 `PO-002` und `PO-003` folgen wegen des Product-WIP-Limits nacheinander.

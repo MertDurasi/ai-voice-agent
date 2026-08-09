@@ -22,12 +22,14 @@
     "dev": "turbo run dev --parallel",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "turbo run lint && eslint tooling scripts eslint.config.mjs commitlint.config.mjs",
-    "test": "turbo run test && pnpm test:architecture && pnpm test:commitlint",
+    "lint": "turbo run lint && eslint tooling scripts tests eslint.config.mjs commitlint.config.mjs",
+    "secret:scan": "node tooling/security/scan-secrets.mjs",
+    "test": "turbo run test && pnpm test:architecture && pnpm test:commitlint && pnpm test:secret-scan",
     "test:architecture": "node tooling/architecture/check-boundaries.mjs . && vitest run tooling/architecture/check-boundaries.test.mjs",
     "test:commitlint": "commitlint --edit tooling/commitlint/valid-message.txt",
     "test:e2e": "vitest run --passWithNoTests tests/e2e",
-    "test:integration": "vitest run --passWithNoTests tests/integration",
+    "test:integration": "pnpm build && vitest run tests/integration",
+    "test:secret-scan": "vitest run tooling/security/scan-secrets.test.mjs && pnpm secret:scan",
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {

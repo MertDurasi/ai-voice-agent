@@ -2,7 +2,7 @@
 id: F-004
 title: API-, Web- und Worker-Basis
 phase: foundation
-status: blocked
+status: ready
 priority: P0
 owner: Engineering
 dependencies: [F-002, F-003]

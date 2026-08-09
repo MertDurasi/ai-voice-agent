@@ -6,7 +6,9 @@ AV-Verträge und Kommunikationstexte fachlich geprüft werden.
 
 Das vollständige D-003-Paket steht im
 [Compliance-Index](../compliance/README.md); konkrete Angriffs- und
-Recovery-Szenarien stehen im [Abuse-Katalog](abuse-cases.md).
+Recovery-Szenarien stehen im [Abuse-Katalog](abuse-cases.md). Der ausführbare
+Konfigurations-, Klassifikations- und Rotationsvertrag steht im
+[Secret-Leitfaden](configuration-and-secrets.md).
 
 ## Security-Baseline
 

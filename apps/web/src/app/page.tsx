@@ -1,15 +1,50 @@
+const runtimeItems = [
+  ['API', 'Versionierter Vertrag und Health'],
+  ['Worker', 'Readiness und kontrollierter Drain'],
+  ['Daten', 'Ausschließlich synthetische lokale Daten'],
+] as const;
+
 export default function Page() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl items-center px-6">
-      <section aria-labelledby="foundation-title" className="space-y-3">
-        <p className="text-sm font-medium uppercase tracking-wide text-slate-500">Foundation</p>
-        <h1 id="foundation-title" className="text-3xl font-semibold text-slate-950">
-          Fake-/Replay-Basis bereit
-        </h1>
-        <p className="text-base leading-7 text-slate-700">
-          Reale Nachrichten, Providerverbindungen und Voice bleiben deaktiviert.
-        </p>
-      </section>
+    <main className="min-h-screen bg-slate-950 text-slate-50">
+      <div className="mx-auto flex min-h-screen max-w-6xl flex-col justify-between px-6 py-10 sm:px-10 sm:py-14">
+        <header className="flex items-center justify-between border-b border-white/10 pb-6">
+          <p className="text-sm font-semibold tracking-tight">Voice AI Agent</p>
+          <span className="rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-xs font-medium text-emerald-200">
+            Lokale Foundation
+          </span>
+        </header>
+
+        <section aria-labelledby="foundation-title" className="max-w-3xl py-16 sm:py-24">
+          <p className="mb-5 text-sm font-medium uppercase tracking-[0.22em] text-sky-300">
+            Providerfreier Runtime-Vertrag
+          </p>
+          <h1
+            id="foundation-title"
+            className="text-balance text-4xl font-semibold tracking-tight sm:text-6xl"
+          >
+            Die technische Basis ist bereit für den nächsten sicheren Schritt.
+          </h1>
+          <p className="mt-7 max-w-2xl text-pretty text-base leading-8 text-slate-300 sm:text-lg">
+            API, Web und Worker bleiben vollständig im synthetischen Fake-/Replay-Modus. Reale
+            Nachrichten, Telefonie, Zahlungen und Voice sind weiterhin deaktiviert.
+          </p>
+        </section>
+
+        <section aria-labelledby="runtime-title" className="pb-8">
+          <h2 id="runtime-title" className="sr-only">
+            Runtime-Bausteine
+          </h2>
+          <ul className="grid gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:grid-cols-3">
+            {runtimeItems.map(([title, description]) => (
+              <li key={title} className="bg-slate-950 px-6 py-6">
+                <p className="text-sm font-semibold text-white">{title}</p>
+                <p className="mt-2 text-sm leading-6 text-slate-400">{description}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
     </main>
   );
 }

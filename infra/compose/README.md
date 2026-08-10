@@ -35,12 +35,14 @@ und beweist anschließend deren Persistenz. Der Test ist wiederholbar.
 | MinIO | API `minio:9000`, Console `minio:9001` | `minio-data` |
 | Mailpit 1.30.0 | SMTP `mailpit:1025`, UI `mailpit:8025` | `mailpit-data` |
 
-Ports und lokale Testzugänge stehen in `.env.example`. Sie sind absichtlich
-als `local-only` markiert und dürfen niemals für Staging, Produktion oder echte
+Lokale Testzugänge stehen in `.env.example`. Sie sind absichtlich als
+`local-only` markiert und dürfen niemals für Staging, Produktion oder echte
 Daten wiederverwendet werden. Die Compose-Datei besitzt keine Passwortdefaults:
 ohne eine ausdrücklich übergebene Env-Datei bricht die Auswertung ab. Eine
-Produktionskonfiguration existiert in `F-002` nicht. Host-Zugriffe werden erst
-mit den App-Runtime-Verträgen in `F-004` minimal und explizit entschieden.
+Produktionskonfiguration existiert in `F-002` nicht. `F-004` lässt Host-Zugriffe
+bewusst geschlossen und prüft die App-Runtime separat mit synthetischen
+Loopback-Abhängigkeiten; siehe
+[Application-Runtime](../../docs/operations/application-runtime.md#lokale-netzwerkgrenze-und-smoke-nachweis).
 
 ## Stoppen und Löschen
 

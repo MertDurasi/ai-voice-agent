@@ -1,6 +1,6 @@
 # Roadmap – Now, Next, Later
 
-Stand: 2026-08-08. Ausführbar sind ausschließlich die Task-Verträge unter
+Stand: 2026-08-10. Ausführbar sind ausschließlich die Task-Verträge unter
 `docs/tasks/`. Diese Roadmap zeigt Outcomes und Pull-Reihenfolge, keine
 Lieferzusage. Maximal eine Engineering- und eine Product-/Discovery-Task sind
 gleichzeitig aktiv.
@@ -9,7 +9,7 @@ gleichzeitig aktiv.
 
 | Spur | Task | überprüfbares Outcome | Stop-/Reviewpunkt |
 |---|---|---|---|
-| Engineering | `F-004` | providerfreie API-, Web- und Worker-Basis mit überprüfbaren Runtime-Verträgen | keine echten Secrets, Realdaten oder Providerzugänge; baut auf den abgeschlossenen `F-002`/`F-003` auf |
+| Engineering | `F-005` | jeder Merge besitzt reproduzierbare Qualitäts- und Supply-Chain-Nachweise | keine Produktionsauslieferung; baut auf der abgeschlossenen providerfreien Runtime `F-004` auf |
 | Product/Discovery | `PO-001` | zehn nicht suggestive SHK-Probleminterviews mit anonymisierter Evidenz und Pivot-Signalen | keine PII ohne freigegebenen Prozess; Kohorte ist nicht vorab „validiert“ |
 
 `Now` enthält bewusst höchstens diese zwei Tasks. `PO-002` und `PO-003` bleiben
@@ -19,7 +19,6 @@ bereit, werden aber wegen des Product-WIP-Limits nicht parallel begonnen.
 
 | Outcome | wahrscheinliche Tasks/Abhängigkeiten | Nachweis vor Pull |
 |---|---|---|
-| API/Web/Worker und CI bilden ein gesundes, providerfreies Fundament | `F-005` nach `F-004`; F-002/F-003 sind abgeschlossen | Health-/Build-/Supply-Chain-Akzeptanz definiert |
 | Product-Investment-Checkpoint vor domänenspezifischem Ausbau | nacheinander `PO-002`, `PO-003`; alle `PO-001`–`PO-003` vor `O-001` | Interviewevidenz, extern testbares Angebot, Kostenbandbreite/Stopregel |
 | Tenantkontext ist autoritativ und Cross-Tenant-Zugriff beweisbar ausgeschlossen | `T-001`–`T-004` nach `G1` | Auth-/RLS-/Audit-Negativfälle verfeinert; keine reale Tenant-PII nötig |
 | dünne synthetische Walking-Skeleton-Scheibe ist ausführbar geplant | Refinement nach `G2` | Replay Call → Eligibility → Fake Message → lokales Capability-Formular → synthetischer Lead; keine Gateumgehung |

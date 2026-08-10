@@ -2,7 +2,7 @@
 
 ## Rahmen
 
-- Stand: 2026-08-08
+- Stand: 2026-08-10
 - Kapazitätshypothese: Solo-/Kleinteam, ungefähr 20 Netto-Stunden pro Woche
 - Produktstrategie: Textback zuerst; Voice ausschließlich nach Evidenz und `G7`
 - Architekturstrategie: mandantenfähiger modularer Monolith, zuverlässige
@@ -17,7 +17,7 @@ Nachweisen und benannten Entscheidungen, nie allein auf Kalenderzeit.
 
 | Spur | WIP-Limit | Zweck | aktueller Pull |
 |---|---:|---|---|
-| Engineering | 1 | kleinste vollständige technische Task bis `done` führen | `F-004` |
+| Engineering | 1 | kleinste vollständige technische Task bis `done` führen | `F-005` |
 | Product/Discovery | 1 | Evidenz, Ownerentscheidungen und externe Reviews | `PO-001` |
 
 - Eine Task zählt ab `in_progress` bis einschließlich `review` zum WIP.

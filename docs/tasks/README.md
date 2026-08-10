@@ -8,9 +8,9 @@ ADRs. Der Status in der jeweiligen Task-Datei ist maßgeblich.
 
 | Horizont/Spur | Task/Outcome |
 |---|---|
-| `Now` Engineering | `F-004`: providerfreie API-, Web- und Worker-Basis |
+| `Now` Engineering | `F-005`: reproduzierbare CI- und Supply-Chain-Baseline |
 | `Now` Product | `PO-001`: SHK-Probleminterviews und Pivot-Evidenz |
-| `Next` | F-004 → F-005; danach Tenancy; Product nacheinander PO-002/PO-003 |
+| `Next` | nach F-005 Tenancy; Product nacheinander PO-002/PO-003 |
 | `Later` | Onboarding, synthetischer Walking Skeleton, Ingestion/Textback, Pilot, Voice/Cloud nur bei Aktivierungstrigger |
 
 WIP: höchstens eine Engineering- und eine Product-/Discovery-Task. `Next` ist
@@ -38,8 +38,8 @@ eine Outcome-Reihenfolge für ungefähr zwei bis sechs Wochen, keine Zusage.
 | [F-001 Repository und Toolchain](foundation/F-001-repository-toolchain.md) | done | G0, F-000 |
 | [F-002 Lokale Infrastruktur](foundation/F-002-local-infrastructure.md) | done | F-001 |
 | [F-003 Konfiguration und Secrets](foundation/F-003-configuration-secrets.md) | done | F-001 |
-| [F-004 API/Web/Worker-Basis](foundation/F-004-application-baseline.md) | ready | F-002, F-003 |
-| [F-005 CI und Supply Chain](foundation/F-005-ci-supply-chain.md) | blocked | F-001–F-004 |
+| [F-004 API/Web/Worker-Basis](foundation/F-004-application-baseline.md) | done | F-002, F-003 |
+| [F-005 CI und Supply Chain](foundation/F-005-ci-supply-chain.md) | ready | F-001–F-004 |
 
 ## Identity, Tenancy und Datenbasis – Gate G2
 

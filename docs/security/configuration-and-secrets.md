@@ -1,6 +1,6 @@
 # Konfigurations- und Secret-Leitfaden
 
-- Stand: 2026-08-09
+- Stand: 2026-08-10
 - Task: `F-003`
 - Owner: Engineering/Security
 - Geltungsbereich: lokale, synthetische Foundation; kein produktiver Secret
@@ -33,15 +33,18 @@ Die lokalen `dev`-Skripte laden ausschließlich die ignorierte Root-Datei
 Prozess-Environment; Staging/Produktion können dadurch nicht unbemerkt eine
 lokale Datei übernehmen. Anwendungscode sucht nicht selbstständig nach
 alternativen Dateien. Die in `F-002` isolierten Infrastrukturcontainer
-veröffentlichen noch keine Host-Ports. Die minimale Verbindung zwischen
-App-Runtime und internem Compose-Netz wird erst in `F-004` festgelegt.
+veröffentlichen keine Host-Ports. `F-004` hält diese No-Egress-Grenze aufrecht:
+Prozess-Smokes verwenden kurzlebige synthetische TCP-Endpunkte; eine spätere
+CI-/Deployment-Topologie setzt Apps und Abhängigkeiten in ein ausdrücklich
+freigegebenes internes Netz. Details stehen im
+[Runtime-Vertrag](../operations/application-runtime.md#lokale-netzwerkgrenze-und-smoke-nachweis).
 
 ## Klassifikation und Exposition
 
 | Klasse | Variablen | Behandlung |
 |---|---|---|
 | öffentlich | `NEXT_PUBLIC_API_BASE_URL` | darf in Browserbundles erscheinen; niemals Credentials, Tokens oder interne Verwaltungsendpunkte ergänzen |
-| intern | `APP_ENV`, `API_HOST`, `API_PORT`, `API_LOG_LEVEL`, `WORKER_LOG_LEVEL`, `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID` | nicht vertraulich, aber nicht ungeprüft in Telemetrie oder Clientbundles übernehmen |
+| intern | `APP_ENV`, `API_HOST`, `API_PORT`, `API_LOG_LEVEL`, `DEPENDENCY_PROBE_TIMEOUT_MS`, `SHUTDOWN_GRACE_PERIOD_MS`, `WORKER_LOG_LEVEL`, `WORKER_READINESS_INTERVAL_MS`, `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID` | nicht vertraulich, aber nicht ungeprüft in Telemetrie oder Clientbundles übernehmen |
 | secret (`DATA-26`) | `DATABASE_URL`, `REDIS_URL`, `OIDC_CLIENT_SECRET`, `SESSION_SECRET` | nur serverseitig; im Config-Paket als `SecretValue`, dessen String-, JSON- und Inspect-Darstellung immer `[REDACTED]` ist |
 
 Ein `SecretValue` wird ausschließlich direkt am nutzenden Outbound-Adapter

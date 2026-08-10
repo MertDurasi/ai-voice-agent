@@ -9,5 +9,6 @@ autoInstallPeers: false
 resolutionMode: highest
 
 allowBuilds:
+  '@scarf/scarf': false
   esbuild@0.28.1: true
   unrs-resolver@1.12.2: true

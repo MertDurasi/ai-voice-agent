@@ -1,13 +1,12 @@
 import 'reflect-metadata';
 
-import { NestFactory } from '@nestjs/core';
 import { formatStartupError, loadApiConfig } from '@voice-ai/config';
 
-import { AppModule } from './app.module';
+import { createApiApplication } from './bootstrap';
 
 async function bootstrap(): Promise<void> {
   const config = loadApiConfig(process.env);
-  const app = await NestFactory.create(AppModule);
+  const { app } = await createApiApplication(config);
   await app.listen(config.port, config.host);
 }
 

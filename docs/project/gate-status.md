@@ -1,6 +1,6 @@
 # Gate-Status
 
-Stand: 2026-08-09
+Stand: 2026-08-10
 
 | Gate | Status | Voraussetzungen | Freigabe/Datum | Nachweis |
 |---|---|---|---|---|
@@ -16,8 +16,8 @@ Stand: 2026-08-09
 
 ## Nächste zulässige Arbeit
 
-- Engineering `Now`: `F-004` als nächster Pull-Kandidat nach abgeschlossenen
-  `F-002` und `F-003`.
+- Engineering `Now`: `F-005` als nächster Pull-Kandidat nach abgeschlossenem
+  `F-004`; `G1` bleibt bis zum CI-/Supply-Chain-Nachweis offen.
 - Product/Discovery `Now`: `PO-001`; danach nacheinander `PO-002`, `PO-003`
 
 `G0` entsperrt ausschließlich die reversible Fake-/Replay-Foundation. Es ist

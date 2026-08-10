@@ -29,6 +29,7 @@ Entscheidungen.
 - [Retention- und Löschentwurf](compliance/retention-draft.md)
 - [Abuse Cases und Recovery](security/abuse-cases.md)
 - [Observability, Runbooks und Delivery](operations/operations-and-delivery.md)
+- [Providerfreie Application-Runtime](operations/application-runtime.md)
 
 ## Projektsteuerung
 

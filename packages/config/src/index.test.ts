@@ -22,13 +22,16 @@ const developmentEnvironment = Object.freeze({
   APP_ENV: 'development',
   DATABASE_URL:
     'postgresql://voice_ai_local:local-only-postgres-change-before-real-data@127.0.0.1:5432/voice_ai_local',
+  DEPENDENCY_PROBE_TIMEOUT_MS: '500',
   NEXT_PUBLIC_API_BASE_URL: 'http://127.0.0.1:3001',
   OIDC_CLIENT_ID: 'voice-ai-api-local',
   OIDC_CLIENT_SECRET: 'replace-with-local-oidc-client-secret',
   OIDC_ISSUER_URL: 'http://127.0.0.1:8080/realms/voice-ai-local',
   REDIS_URL: 'redis://:local-only-redis-change-before-real-data@127.0.0.1:6379',
   SESSION_SECRET: 'replace-with-at-least-32-random-local-bytes',
+  SHUTDOWN_GRACE_PERIOD_MS: '5000',
   WORKER_LOG_LEVEL: 'debug',
+  WORKER_READINESS_INTERVAL_MS: '2000',
 });
 
 const productionEnvironment = Object.freeze({
@@ -68,9 +71,11 @@ describe('typed application configuration', () => {
     const web = loadWebConfig(developmentEnvironment);
 
     expect(api.port).toBe(3001);
+    expect(api.dependencyProbeTimeoutMs).toBe(500);
     expect(api.oidcIssuerUrl).toBeInstanceOf(URL);
     expect(api.databaseUrl.reveal()).toContain('voice_ai_local');
     expect(worker.environment).toBe('development');
+    expect(worker.readinessIntervalMs).toBe(2000);
     expect(web.apiBaseUrl.origin).toBe('http://127.0.0.1:3001');
   });
 
@@ -78,6 +83,16 @@ describe('typed application configuration', () => {
     expect(loadApiConfig(productionEnvironment).environment).toBe('production');
     expect(loadWorkerConfig(productionEnvironment).environment).toBe('production');
     expect(loadWebConfig(productionEnvironment).environment).toBe('production');
+  });
+
+  it('allows a production-built web server to use the isolated test profile', () => {
+    expect(
+      loadWebConfig({
+        APP_ENV: 'test',
+        NEXT_PUBLIC_API_BASE_URL: 'http://127.0.0.1:3001',
+        NODE_ENV: 'production',
+      }).environment,
+    ).toBe('test');
   });
 
   it('fails fast for missing, invalid and conflicting values', () => {

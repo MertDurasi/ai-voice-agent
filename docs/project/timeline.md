@@ -1,13 +1,13 @@
 # Rolling Forecast
 
-Stand: 2026-08-08. Kapazitätshypothese: ungefähr 20 Netto-Stunden pro Woche.
+Stand: 2026-08-10. Kapazitätshypothese: ungefähr 20 Netto-Stunden pro Woche.
 Dies ist eine Forecastbandbreite für Replenishment, kein Liefertermin und keine
 Freigabe. Die verbindliche Reihenfolge steht in der
 [Now–Next–Later-Roadmap](roadmap.md).
 
 | Horizont | Forecastannahme | erwartetes Ergebnis | Konfidenz |
 |---|---|---|---|
-| `Now` | je ein WIP-Slot pro Spur; Abschluss vor neuem Pull | `F-004` im Engineering-Track und `PO-001` im Product-Track | mittel für Reihenfolge, niedrig für Datum bis weitere Cycle-Time vorliegt |
+| `Now` | je ein WIP-Slot pro Spur; Abschluss vor neuem Pull | `F-005` im Engineering-Track und `PO-001` im Product-Track | mittel für Reihenfolge, niedrig für Datum bis weitere Cycle-Time vorliegt |
 | `Next` | ungefähr 2–6 Wochen, abhängig von Taskzuschnitt und tatsächlichem Durchsatz | lokale Foundation/CI, erste Tenancy-Outcomes sowie `PO-002`/`PO-003` als Investment-Checkpoint | niedrig bis erste 3–5 Tasks abgeschlossen sind |
 | `Later` | keine Kalenderprognose | Onboarding, Walking Skeleton, Ingestion, Textback, Produktreife, Pilot, Voice/Cloud nur bei Trigger | absichtlich keine Termin-Konfidenz |
 

@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -93,7 +93,9 @@ function repositoryFiles(workspaceRoot) {
 export function scanRepository(workspaceRoot) {
   const findings = [];
   for (const relativePath of repositoryFiles(workspaceRoot)) {
-    const content = readFileSync(path.join(workspaceRoot, relativePath));
+    const absolutePath = path.join(workspaceRoot, relativePath);
+    if (!existsSync(absolutePath)) continue;
+    const content = readFileSync(absolutePath);
     if (content.includes(0)) continue;
     findings.push(...scanText(relativePath, content.toString('utf8')));
   }

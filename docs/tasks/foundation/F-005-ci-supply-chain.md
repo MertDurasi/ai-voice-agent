@@ -2,7 +2,7 @@
 id: F-005
 title: CI-Baseline und Supply Chain
 phase: foundation
-status: blocked
+status: ready
 priority: P0
 owner: Engineering/Security
 dependencies: [F-001, F-002, F-003, F-004]

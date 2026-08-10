@@ -36,21 +36,24 @@ corepack pnpm test
 corepack pnpm build
 ```
 
-`corepack pnpm dev` ruft die Entwicklungsbefehle der drei Skeletons auf; die
-dauerhaften Health-/Runtime-Verträge folgen in `F-004`. Aktuell existieren
-weder reale Provideradapter noch externe Egress-Pfade.
+`corepack pnpm dev` startet die drei providerfreien App-Basen. API-Vertrag,
+Health-Endpunkte, OpenAPI, Request-ID, Worker-Readiness und Shutdown sind in der
+[Application-Runtime](docs/operations/application-runtime.md) dokumentiert.
+Aktuell existieren weder reale Provideradapter noch externe Egress-Pfade.
 Die Konfiguration wird pro App typisiert und fail-fast geprüft; lokale Werte
 bleiben synthetisch. Klassifikation und spätere Rotation sind im
 [Secret-Leitfaden](docs/security/configuration-and-secrets.md) dokumentiert.
-Die Zielbefehle `compose:*` und `db:*` sind bereits als fail-closed Guards
-sichtbar. Die lokale Infrastruktur ist unter
+Die `db:*`-Befehle bleiben bis `T-003` als fail-closed Guards sichtbar. Die
+lokale Infrastruktur ist unter
 [infra/compose](infra/compose/README.md) dokumentiert; Datenbankmigrationen und
-Seeds bleiben bis `T-003` fail-closed.
+Seeds bleiben bis `T-003` fail-closed. Runtime-Smokes laufen mit kurzlebigen
+synthetischen Loopback-Abhängigkeiten und benötigen keine geöffneten
+Containerports.
 
 Aktuell in `Now`: Engineering hat
-[F-003 – Konfiguration und Secrets](docs/tasks/foundation/F-003-configuration-secrets.md)
+[F-004 – API-, Web- und Worker-Basis](docs/tasks/foundation/F-004-application-baseline.md)
 abgeschlossen und zieht als Nächstes
-[F-004 – API-, Web- und Worker-Basis](docs/tasks/foundation/F-004-application-baseline.md);
+[F-005 – CI und Supply Chain](docs/tasks/foundation/F-005-ci-supply-chain.md);
 der Product-Owner-Track zieht
 [PO-001 – Probleminterviews](docs/tasks/product-owner/PO-001-problem-interviews.md).
 `PO-002` und `PO-003` folgen wegen des Product-WIP-Limits nacheinander.

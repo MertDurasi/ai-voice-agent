@@ -1,5 +1,8 @@
 # Observability, Runbooks und Delivery
 
+Der ausführbare API-/Web-/Worker-Vertrag der lokalen Foundation ist separat in
+der [Application-Runtime](application-runtime.md) dokumentiert.
+
 ## SLOs des gehärteten Textbacks
 
 | SLI | Ziel |

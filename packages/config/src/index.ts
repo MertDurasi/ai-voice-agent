@@ -102,6 +102,7 @@ export class SecretValue {
 
 export interface ApiConfig {
   readonly databaseUrl: SecretValue;
+  readonly dependencyProbeTimeoutMs: number;
   readonly environment: AppEnvironment;
   readonly host: string;
   readonly logLevel: LogLevel;
@@ -115,9 +116,12 @@ export interface ApiConfig {
 
 export interface WorkerConfig {
   readonly databaseUrl: SecretValue;
+  readonly dependencyProbeTimeoutMs: number;
   readonly environment: AppEnvironment;
   readonly logLevel: LogLevel;
+  readonly readinessIntervalMs: number;
   readonly redisUrl: SecretValue;
+  readonly shutdownGracePeriodMs: number;
 }
 
 export interface WebConfig {
@@ -136,6 +140,12 @@ export const configCatalog = Object.freeze([
     applications: ['api'],
     description: 'API bind address.',
     name: 'API_HOST',
+    sensitivity: 'internal',
+  },
+  {
+    applications: ['api', 'worker'],
+    description: 'Maximum duration of one dependency readiness probe in milliseconds.',
+    name: 'DEPENDENCY_PROBE_TIMEOUT_MS',
     sensitivity: 'internal',
   },
   {
@@ -188,8 +198,20 @@ export const configCatalog = Object.freeze([
   },
   {
     applications: ['worker'],
+    description: 'Maximum graceful drain duration in milliseconds.',
+    name: 'SHUTDOWN_GRACE_PERIOD_MS',
+    sensitivity: 'internal',
+  },
+  {
+    applications: ['worker'],
     description: 'Worker log verbosity.',
     name: 'WORKER_LOG_LEVEL',
+    sensitivity: 'internal',
+  },
+  {
+    applications: ['worker'],
+    description: 'Worker dependency readiness refresh interval in milliseconds.',
+    name: 'WORKER_READINESS_INTERVAL_MS',
     sensitivity: 'internal',
   },
   {
@@ -236,6 +258,7 @@ function required(
 function readEnvironment(
   source: EnvironmentSource,
   issues: ConfigIssue[],
+  application: ConfigApplication,
 ): AppEnvironment | undefined {
   const value = required(source, 'APP_ENV', issues);
   if (value === undefined) return undefined;
@@ -246,8 +269,11 @@ function readEnvironment(
 
   const environment = value as AppEnvironment;
   const nodeEnvironment = source.NODE_ENV;
-  const expectedNodeEnvironment = environment === 'staging' ? 'production' : environment;
-  if (nodeEnvironment !== undefined && nodeEnvironment !== expectedNodeEnvironment) {
+  const expectedNodeEnvironments =
+    application === 'web' && environment === 'test'
+      ? new Set(['production', 'test'])
+      : new Set([environment === 'staging' ? 'production' : environment]);
+  if (nodeEnvironment !== undefined && !expectedNodeEnvironments.has(nodeEnvironment)) {
     issues.push({ code: 'environment_mismatch', variable: 'NODE_ENV' });
   }
   return environment;
@@ -364,17 +390,23 @@ function finish<T>(application: ConfigApplication, issues: ConfigIssue[], value:
 
 export function loadApiConfig(source: EnvironmentSource): Readonly<ApiConfig> {
   const issues: ConfigIssue[] = [];
-  const environment = readEnvironment(source, issues);
+  const environment = readEnvironment(source, issues, 'api');
   const host = required(source, 'API_HOST', issues);
   const port = readInteger(source, 'API_PORT', 1, 65_535, issues);
   const logLevel = readLogLevel(source, 'API_LOG_LEVEL', issues);
+  const dependencyProbeTimeoutMs = readInteger(
+    source,
+    'DEPENDENCY_PROBE_TIMEOUT_MS',
+    10,
+    30_000,
+    issues,
+  );
   const databaseUrlValue = readUrl(source, 'DATABASE_URL', ['postgres:', 'postgresql:'], issues);
   const redisUrlValue = readUrl(source, 'REDIS_URL', ['rediss:', 'redis:'], issues);
   const oidcIssuerUrl = readUrl(source, 'OIDC_ISSUER_URL', ['http:', 'https:'], issues);
   const oidcClientId = required(source, 'OIDC_CLIENT_ID', issues);
   const oidcClientSecret = readSecret(source, 'OIDC_CLIENT_SECRET', 16, environment, issues);
   const sessionSecret = readSecret(source, 'SESSION_SECRET', 32, environment, issues);
-
   rejectUnsafeNonLocalValue(environment, 'DATABASE_URL', source.DATABASE_URL, issues);
   rejectUnsafeNonLocalValue(environment, 'REDIS_URL', source.REDIS_URL, issues);
   requireNonLocalHttps(environment, 'OIDC_ISSUER_URL', oidcIssuerUrl, issues);
@@ -385,6 +417,7 @@ export function loadApiConfig(source: EnvironmentSource): Readonly<ApiConfig> {
 
   return finish('api', issues, {
     databaseUrl: databaseUrl as SecretValue,
+    dependencyProbeTimeoutMs: dependencyProbeTimeoutMs as number,
     environment: environment as AppEnvironment,
     host: host as string,
     logLevel: logLevel as LogLevel,
@@ -399,10 +432,31 @@ export function loadApiConfig(source: EnvironmentSource): Readonly<ApiConfig> {
 
 export function loadWorkerConfig(source: EnvironmentSource): Readonly<WorkerConfig> {
   const issues: ConfigIssue[] = [];
-  const environment = readEnvironment(source, issues);
+  const environment = readEnvironment(source, issues, 'worker');
   const logLevel = readLogLevel(source, 'WORKER_LOG_LEVEL', issues);
+  const dependencyProbeTimeoutMs = readInteger(
+    source,
+    'DEPENDENCY_PROBE_TIMEOUT_MS',
+    10,
+    30_000,
+    issues,
+  );
+  const readinessIntervalMs = readInteger(
+    source,
+    'WORKER_READINESS_INTERVAL_MS',
+    100,
+    300_000,
+    issues,
+  );
   const databaseUrlValue = readUrl(source, 'DATABASE_URL', ['postgres:', 'postgresql:'], issues);
   const redisUrlValue = readUrl(source, 'REDIS_URL', ['rediss:', 'redis:'], issues);
+  const shutdownGracePeriodMs = readInteger(
+    source,
+    'SHUTDOWN_GRACE_PERIOD_MS',
+    100,
+    120_000,
+    issues,
+  );
 
   rejectUnsafeNonLocalValue(environment, 'DATABASE_URL', source.DATABASE_URL, issues);
   rejectUnsafeNonLocalValue(environment, 'REDIS_URL', source.REDIS_URL, issues);
@@ -413,15 +467,18 @@ export function loadWorkerConfig(source: EnvironmentSource): Readonly<WorkerConf
 
   return finish('worker', issues, {
     databaseUrl: databaseUrl as SecretValue,
+    dependencyProbeTimeoutMs: dependencyProbeTimeoutMs as number,
     environment: environment as AppEnvironment,
     logLevel: logLevel as LogLevel,
+    readinessIntervalMs: readinessIntervalMs as number,
     redisUrl: redisUrl as SecretValue,
+    shutdownGracePeriodMs: shutdownGracePeriodMs as number,
   });
 }
 
 export function loadWebConfig(source: EnvironmentSource): Readonly<WebConfig> {
   const issues: ConfigIssue[] = [];
-  const environment = readEnvironment(source, issues);
+  const environment = readEnvironment(source, issues, 'web');
   const apiBaseUrl = readUrl(source, 'NEXT_PUBLIC_API_BASE_URL', ['http:', 'https:'], issues);
   requireNonLocalHttps(environment, 'NEXT_PUBLIC_API_BASE_URL', apiBaseUrl, issues);
 

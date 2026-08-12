@@ -2,7 +2,7 @@
 id: PO-001
 title: Zehn Problem- und Vertrauensinterviews in einem Gewerk
 phase: product-owner
-status: ready
+status: in_progress
 priority: P0
 owner: Product Owner
 dependencies: [G0V]
@@ -34,3 +34,16 @@ bereits validiert verkauft.
 - [ ] Rohdaten oder PII werden nur über einen freigegebenen Prozess gespeichert.
 
 Nicht im Scope: Anbieterpräsentation, Produktdemo oder Realanruf.
+
+## Lieferobjekte und Arbeitsgrenze
+
+- [Interview-Kit](../../product/research/PO-001-interview-kit.md) mit Screener,
+  neutralem Gesprächsskript, Consent-/Notizgrenze und Abschlussfragen;
+- [Evidenz-Workbook](../../product/research/PO-001-evidence-workbook.md) für zehn
+  pseudonyme Interviews, Gegenbelege und eine reproduzierbare Synthese;
+- keine Kontaktaufnahme, Aufzeichnung oder Speicherung personenbezogener
+  Rekrutierungsdaten im Repository.
+
+Die Vorlagen sind fertig; der Task bleibt `in_progress`, bis der Product Owner
+zehn auswertbare Interviews durchgeführt und die anonymisierte Synthese
+abgenommen hat.

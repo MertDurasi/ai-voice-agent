@@ -2,7 +2,7 @@
 
 | Task | Status | Fällig |
 |---|---|---|
-| [PO-001 Problem-/Vertrauensinterviews](PO-001-problem-interviews.md) | ready (`Now`) | Investment-Checkpoint vor O-001 |
+| [PO-001 Problem-/Vertrauensinterviews](PO-001-problem-interviews.md) | in_progress (`Now`) | Interview-Kit fertig; zehn Interviews vor O-001 |
 | [PO-002 Kombiniertes Pilotangebot](PO-002-pilot-offer.md) | blocked (`Next`) | nach PO-001, vor O-001 |
 | [PO-003 Voice-/Text-Kostenmodell](PO-003-cost-pricing-model.md) | blocked (`Next`) | nach V-001, vor O-001 |
 | [PO-004 Rechtsprüfung](PO-004-legal-review.md) | blocked | vor G6 |

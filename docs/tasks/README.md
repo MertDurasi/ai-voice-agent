@@ -11,7 +11,7 @@ Gatevoraussetzungen stehen in [Gate-Status](../project/gate-status.md).
 | Horizont/Spur | Task/Outcome |
 |---|---|
 | `Now` Engineering | `F-005` im Review: CI grün, nur Required Ruleset offen |
-| `Now` Product | `PO-001`: Problem-/Vertrauensinterviews und Intent-Evidenz |
+| `Now` Product | `PO-001` in Arbeit: Interview-Kit fertig; zehn Interviews und Intent-Evidenz offen |
 | `Next` | nach `F-005` Gate `G1`/Tenancy; nach `PO-001` `PO-002`/`V-001`; weitere Arbeit WIP-gesteuert |
 | `Later` | `G3` Voice+Text Configuration → `G4` Realtime Telephony & Media → `G5` synthetischer Combined Assistant → Pilot-Readiness und kontrollierter Pilot |
 
@@ -69,7 +69,7 @@ werden nicht rückwirkend erweitert.
 
 | Task | Status | Abhängigkeit |
 |---|---|---|
-| [PO-001 Problem-/Vertrauensinterviews](product-owner/PO-001-problem-interviews.md) | ready (`Now`) | G0V |
+| [PO-001 Problem-/Vertrauensinterviews](product-owner/PO-001-problem-interviews.md) | in_progress (`Now`) | G0V |
 | [PO-002 Kombiniertes Pilotangebot](product-owner/PO-002-pilot-offer.md) | blocked | PO-001 |
 | [V-001 Provider-/Runtime-Benchmark](voice/V-001-discovery-benchmark.md) | blocked | G0V, PO-001 |
 | [PO-003 Voice-/Text-Kostenmodell](product-owner/PO-003-cost-pricing-model.md) | blocked | D-002, V-001 |

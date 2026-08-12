@@ -1,6 +1,6 @@
 ---
 id: PO-007
-title: Pricing für Grundpreis und Nutzung
+title: Pricing für Voice+Text-Grundpreis und Nutzung
 phase: product-owner
 status: blocked
 priority: P0
@@ -13,10 +13,11 @@ completed_at: null
 
 # PO-007 – Pricing
 
-Grundpreis, inkludierte Nutzung, Mehrverbrauch, Limits und mögliche
-Überziehungssperre anhand Kostenmodell, Zahlungsbereitschaft und Pilotnutzung
-entscheiden.
+Grundpreis, inkludierte Voice-Minuten/-Sessions und Textback-Nutzung,
+Mehrverbrauch, Limits und mögliche Überziehungssperre anhand Kostenmodell,
+Zahlungsbereitschaft und kombinierter Pilotnutzung entscheiden.
 
 Akzeptanz: Zielmarge, Szenarien, Steuer-/Rechnungsannahmen, Preisversion,
-Bestandskundeneffekt und Änderungs-/Rollbackweg sind dokumentiert. Entscheidung
-ist Input für B-001/B-003, keine automatische Live-Umschaltung.
+Bestandskundeneffekt, Provider-/AI-Kostensensitivität und Änderungs-/Rollbackweg
+sind dokumentiert. Entscheidung ist Input für B-001/B-003, keine automatische
+Live-Umschaltung.

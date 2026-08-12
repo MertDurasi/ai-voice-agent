@@ -1,15 +1,15 @@
 # Rolling Forecast
 
-Stand: 2026-08-10. Kapazitätshypothese: ungefähr 20 Netto-Stunden pro Woche.
+Stand: 2026-08-11. Kapazitätshypothese: ungefähr 20 Netto-Stunden pro Woche.
 Dies ist eine Forecastbandbreite für Replenishment, kein Liefertermin und keine
 Freigabe. Die verbindliche Reihenfolge steht in der
 [Now–Next–Later-Roadmap](roadmap.md).
 
 | Horizont | Forecastannahme | erwartetes Ergebnis | Konfidenz |
 |---|---|---|---|
-| `Now` | je ein WIP-Slot pro Spur; Abschluss vor neuem Pull | `F-005` im Engineering-Track und `PO-001` im Product-Track | mittel für Reihenfolge, niedrig für Datum bis weitere Cycle-Time vorliegt |
-| `Next` | ungefähr 2–6 Wochen, abhängig von Taskzuschnitt und tatsächlichem Durchsatz | lokale Foundation/CI, erste Tenancy-Outcomes sowie `PO-002`/`PO-003` als Investment-Checkpoint | niedrig bis erste 3–5 Tasks abgeschlossen sind |
-| `Later` | keine Kalenderprognose | Onboarding, Walking Skeleton, Ingestion, Textback, Produktreife, Pilot, Voice/Cloud nur bei Trigger | absichtlich keine Termin-Konfidenz |
+| `Now` | je ein WIP-Slot pro Spur; Abschluss vor neuem Pull | `F-005` im Engineering-Track und `PO-001` im Product-Track; `PM-002`/`G0V` ist abgeschlossen | mittel für Reihenfolge, niedrig für Datum bis weitere Cycle Time vorliegt |
+| `Next` | ungefähr 2–6 Wochen, abhängig von Evidenz, Taskzuschnitt und Durchsatz | `PO-001`–`PO-003`/`V-001` als Investment-Checkpoint, `G1`/`G2` und danach Voice+Text-Konfiguration für `G3` | niedrig; Anbieter-/Runtimebenchmark und erste 3–5 vergleichbare Tasks fehlen |
+| `Later` | keine Kalenderprognose | `G4` Realtime Telephony & Media, `G5` synthetischer Combined Assistant, `G6` Pilot Ready, `G7` kontrollierter Pilot und `G8` Post-pilot-Entscheid | absichtlich keine Termin-Konfidenz |
 
 ## Forecast-Regeln
 
@@ -18,14 +18,17 @@ Freigabe. Die verbindliche Reihenfolge steht in der
 - Wöchentlich werden Cycle Time, abgeschlossene Tasks je Spur, Blocked Time und
   ungeplante Expedites dokumentiert. Erst reale Durchsatzdaten schärfen den
   Forecast.
-- Externe Wartezeit für Interviews, Legal, Provider oder Ownerentscheidungen
-  wird separat von aktiver Engineeringzeit ausgewiesen.
+- Externe Wartezeit für Interviews, Legal, Provider, Safety oder
+  Ownerentscheidungen wird separat von aktiver Engineeringzeit ausgewiesen.
 - Ein P50/P85-Forecast wird erst nach mindestens fünf vergleichbaren
   abgeschlossenen Tasks erwogen; vorher bleiben qualitative Bandbreiten.
 - Scope-/Risikowachstum ändert zuerst `Next`/`Later`, nie still Akzeptanz oder
   Sicherheitsgates einer aktiven Task.
+- Vor jedem Pull aus `Later` wird nur die kleinste vertikale Scheibe bis zum
+  nächsten Nachweis detailliert. Die übrige Gatefolge bleibt Outcome-Planung.
 
-Eine interne synthetische Walking-Skeleton-Demo kann nach `G2` früh priorisiert
-werden. Ein rechtlich, finanziell und betrieblich kontrollierter Pilot folgt
-erst nach seinen eigenen Nachweisen. Termindruck hebt Tenant-Isolation,
-Idempotenz, Löschung, Signaturprüfung oder Realbetriebsblocker nicht auf.
+Eine interne synthetische Voice+Text-Walking-Skeleton-Demo wird nach `G3` über
+`G4`/`G5` priorisiert. Ein rechtlich, finanziell und betrieblich kontrollierter
+Realpilot folgt erst nach `G6`. Termindruck hebt Tenant-Isolation, Disclosure,
+Handoff, Idempotenz, Löschung, Signaturprüfung, Inhaltsminimierung oder
+Realbetriebsblocker nicht auf.

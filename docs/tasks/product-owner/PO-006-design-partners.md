@@ -1,6 +1,6 @@
 ---
 id: PO-006
-title: Fünf Designpartner und Pilotvereinbarung
+title: Fünf Designpartner und Voice+Text-Pilotvereinbarung
 phase: product-owner
 status: blocked
 priority: P0
@@ -13,10 +13,20 @@ completed_at: null
 
 # PO-006 – Designpartner
 
-Mindestens fünf passende Betriebe anhand dokumentierter Kriterien gewinnen und
-Pilotvereinbarung, Ansprechpartner, Nutzungserwartung, Feedbackrhythmus,
-Datenschutz/Verträge und Kohortenzuordnung sichern.
+## Ziel und Scope
 
-Akzeptanz: Jeder Partner erfüllt Segmentkriterien, hat autorisierte
-Ansprechpartner und unterschriebene erforderliche Vereinbarungen; kein Partner
-wird ohne technische/Go-live-Gates aktiviert.
+Mindestens fünf passende Betriebe anhand dokumentierter Kriterien gewinnen und
+eine Vereinbarung für den begrenzten kombinierten Voice-/Textback-Pilot,
+Ansprechpartner, Nutzungserwartung, Feedbackrhythmus, Datenverarbeitung,
+Handoffverantwortung und Kohortenzuordnung sichern.
+
+## Akzeptanz und Verifikation
+
+- [ ] Jeder Partner erfüllt Segmentkriterien und hat autorisierte
+      Ansprechpartner sowie erforderliche Vereinbarungen.
+- [ ] Nummernweg, KI-Disclosure, Handoff, Textback, erlaubte Intents,
+      Betriebszeiten und Stop-/Löschprozess sind verständlich beschrieben.
+- [ ] Produktivreview ist nicht still enthalten; ein etwaiger Reviewprozess
+      braucht eigenen Zweck, Transparenz, Zugriff und Freigabe.
+- [ ] Kein Partner wird ohne technische und explizite `G6`-/Go-live-Gates
+      aktiviert.

@@ -120,10 +120,12 @@ corepack pnpm test --filter @voice-ai/config
 corepack pnpm test:secret-scan
 ```
 
-Der Repository-Scan erkennt bekannte strukturierte Credentialmuster,
-Private-Key-Header und verdächtige Secret-Zuweisungen in Env/YAML-Dateien. Er
-verlangt genau einen künstlichen Canary unter
-`tooling/security/fixtures/`; derselbe Canary an jedem anderen Ort ist ein
-Fehler. Findings nennen nur Datei, Zeile und Detektortyp, niemals den Wert.
-Der Scan ergänzt einen späteren etablierten Scanner in `F-005`, ersetzt aber
-weder Plattform-Scanning noch History-/Artifact-Scanning.
+Der Repository-Scan prüft Arbeitsbaum und Git-Historie auf bekannte
+strukturierte Credentialmuster, Private-Key-Header und verdächtige
+Secret-Zuweisungen in Env/YAML-Dateien. Er verlangt genau einen künstlichen
+Canary unter `tooling/security/fixtures/`; derselbe Canary an jedem anderen Ort
+ist ein Fehler. Findings nennen nur Datei, Zeile und Detektortyp, niemals den
+Wert.
+Der projektspezifische Scan ergänzt den Trivy-Dateisystem-/Secret-Scan und die
+Artefakt-Allowlist aus `F-005`; serverseitige Push Protection bleibt eine
+zusätzliche Repository-Leitplanke.

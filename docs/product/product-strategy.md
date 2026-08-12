@@ -1,5 +1,9 @@
 # Produktvision, Zielgruppe und Scope
 
+- Stand: 2026-08-11
+- Strategie: Voice-first mit integriertem Textback
+- Verbindlicher Entscheid: [ADR-013](../adr/ADR-013-voice-first-combined-mvp.md)
+
 ## Problem
 
 Kleine und mittlere Handwerksbetriebe verlieren Aufträge, weil Anrufe während
@@ -8,18 +12,25 @@ fehlen und Leads werden nicht strukturiert verfolgt.
 
 ## MVP-Nutzenversprechen
 
-Ein Handwerksbetrieb verbindet nach separater Freigabe eine Rufnummer. Ein
-verpasster Anruf soll zuverlässig und höchstens einmal eine minimale,
-freigegebene Text-Rückmeldung auslösen. Der Anrufer erfasst sein Anliegen
-datensparsam. Der Betrieb sieht einen strukturierten Lead und wird
-benachrichtigt. Nutzung, Zustellung, Rechtsgrundlage und Löschfristen bleiben
-nachvollziehbar. Aktuell wird dieses Zielbild ausschließlich synthetisch über
-Fake-/Replay-Adapter geprüft.
+Ein Handwerksbetrieb verbindet nach separater Freigabe eine Rufnummer. Ein klar
+als KI erkennbarer, begrenzter Voice-Agent beantwortet eingehende Anrufe als
+primärer Assistent, erfasst das Anliegen strukturiert und erzeugt einen
+nachvollziehbaren Lead. Er kann in einen freigegebenen menschlichen
+Handoff-/Rückrufpfad wechseln. Textback setzt denselben Vorgang nur nach
+positiver Eligibility und Kommunikationsfreigabe schriftlich fort, etwa für
+einen sicheren Formularlink, oder dient als Fallback bei einem nicht
+abgeschlossenen Voice-Pfad.
+
+Voice, Textback, Lead, Audit, Usage und Löschung bilden einen gemeinsamen
+tenantgebundenen Vorgang. Provider-Replays, Retries oder Kanalwechsel erzeugen
+weder doppelte Leads noch unkoordinierte Nachrichten. Aktuell wird dieses
+Zielbild ausschließlich synthetisch über Fake-/Replay-Adapter geprüft.
 
 SHK ist die reversible Discovery-Kohorte; Bedarf und Segment-Fit sind noch
-nicht durch Interviews validiert. Angebot und SMS als Primärkanal bleiben
-reversible Hypothesen. `G0` bestätigt nur diese Lernrichtung und einen
-realistischen Replay-Pfad, keinen Realversand.
+nicht durch Interviews validiert. Voice-Akzeptanz, höchstens drei konkrete
+Intents, Textback-Kanal, Provider, Rufnummerntopologie und Angebot bleiben
+prüfbare Hypothesen. Kein Gate behauptet vor `PO-004` und den späteren
+Safety-/Security-/Go-live-Nachweisen einen zulässigen Realbetrieb.
 
 ## Primäre Zielgruppe
 
@@ -31,42 +42,49 @@ realistischen Replay-Pfad, keinen Realversand.
 
 ## Jobs-to-be-done
 
-- Betriebsinhaber: Nach einem verpassten Anruf sofort seriös reagieren, bevor
-  der Auftrag verloren geht.
-- Anrufer: Sofort erfahren, wie es weitergeht, ohne eine App installieren zu
-  müssen.
-- Büro/Disposition: Anfragen mit Dringlichkeit und Kontaktdaten zentral sehen
-  und bearbeiten.
+- Betriebsinhaber: Jeden relevanten Anruf professionell erstaufnehmen, ohne die
+  Arbeit beim Kunden zu unterbrechen.
+- Anrufer: Sofort eine klare, ehrliche und sichere Erstaufnahme erhalten und
+  bei Bedarf schriftlich oder mit einem Menschen fortfahren.
+- Büro/Disposition: Anfragen mit Herkunft, Dringlichkeit, Unsicherheit und
+  Kontaktdaten zentral sehen und bearbeiten.
 
 ## MVP-Scope
 
 - Multi-Tenant-Onboarding, Benutzer und Rollen
 - eine verbundene Rufnummer pro Tenant; Datenmodell später erweiterbar
-- ein Telefonieadapter und Webhooks für verpasste Anrufe
-- SMS nur als zu prüfende Primärkanalhypothese; kein Realversand und kein
-  stiller WhatsApp-/Dual-Send-Fallback ohne separate Freigabe
-- regel-/templatebasierter Textback ohne generative KI im Versandpfad
-- öffentliches tokenisiertes Kurzformular
-- Lead-Inbox, Detailansicht, Status und interne Notizen
+- providerneutraler Telefonie-/Voice-Vertrag mit Fake-/Replay-Referenz
+- Voice als primärer Anrufpfad mit nicht überspringbarer KI-Transparenz
+- genau ein Gewerk und höchstens drei nach `PO-001`/`V-001` validierte Intents
+- strukturierte Erstaufnahme, freigegebene Fakten und Human-/Rückruf-Handoff
+- SMS nur als zu prüfender Textback-Kandidat; kein Realversand, stiller
+  Dual-Send oder WhatsApp-Fallback ohne separate Freigabe
+- deterministische Channel-Eligibility und versionierte Textback-Templates
+- öffentliches tokenisiertes Kurzformular als optionale Fortsetzung
+- gemeinsame Lead-Inbox, Detailansicht, Status und interne Notizen
 - E-Mail-Benachrichtigung an den Betrieb
-- Plan/Subscription und belastbares Usage-Ledger; echte Abrechnung nur nach
-  Freigabe
+- Plan/Subscription und belastbares Usage-Ledger für Telefonie, Voice und
+  Messaging; echte Abrechnung nur nach Freigabe
 - Audit, Löschung, Export, Basis-Observability und Backups
 
 ## Explizite Nicht-Ziele des MVP
 
-- vollständiger Voice-Agent oder Gesprächsaufzeichnungen
-- generative freie Antworten an Endkunden
-- native Mobile App
-- Kubernetes oder eine Microservice-Landschaft
-- mandantenspezifische Custom-Deployments
-- vollständiges CRM, Angebots- oder Rechnungswesen
-- Mehrsprachigkeit
-- Kalender-Schreibzugriff vor validiertem Lead-Fluss und Bedarf
+- unbeschränkter autonomer Rezeptionist oder beliebige freie Intents
+- Gesprächsaufzeichnung, persistiertes Audio oder Rohtranskript
+- Voiceprints, Sprecheridentifikation, Emotionserkennung oder Providertraining
+  mit Gesprächsdaten
+- technische/medizinische Diagnose oder generative Notfallberatung
+- verbindliche Preis-, Einsatz-, Termin- oder Verfügbarkeitszusage
+- beliebige Tool-/URL-Aufrufe, Zahlung oder Kalender-Schreibzugriff
+- native Mobile App, Mehrsprachigkeit oder vollständiges CRM
+- Kubernetes, vorzeitige Microservices oder mandantenspezifische Deployments
 
-## Produktgrenze für Voice
+## Unveränderliche Voice-/Textback-Grenzen
 
-Voice beginnt erst nach einem datengestützten Go in `P-004`/`G7`. Der Scope ist
-dann auf ein Gewerk und höchstens drei Intents begrenzt. Das System ist kein
-Notrufdienst; lebensbedrohliche Situationen dürfen nicht durch generative
-Beratung verzögert werden.
+- KI-Hinweis vor fachlicher Datenerhebung; Human-/Rückrufalternative
+- Safety-Pfad beendet normale Automation ohne generative Verzögerung
+- Voice-Audio und Rohtranskript nur flüchtig mit Persistenz `0`
+- nur separat freigegebene strukturierte Summary darf gespeichert werden
+- Textback ausschließlich nach positiver, versionierter Eligibility
+- alle Anbieter und realen Außenwirkungen bleiben bis zu ihren Gates aus
+- ein Gewerk und maximal drei Intents; Erweiterung nur mit neuer Evidenz

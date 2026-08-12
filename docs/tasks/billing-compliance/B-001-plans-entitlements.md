@@ -1,6 +1,6 @@
 ---
 id: B-001
-title: Plan, Subscription und Entitlements
+title: Voice+Text Plan, Subscription und Entitlements
 phase: billing-compliance
 status: blocked
 priority: P0
@@ -15,16 +15,20 @@ completed_at: null
 
 ## Ziel und Scope
 
-Providerneutrale Planversionen, Preis-Snapshot, Trial, Limits, Entitlements und
-Subscription-Zustände modellieren. Versandentscheidung konsumiert einen
-expliziten Entitlement-Check; Zahlungssystemdetails bleiben außen.
+Providerneutrale Planversionen, Preis-Snapshot, Trial, Voice-Session-/Minuten-,
+Handoff- und Textback-Limits, Entitlements und Subscription-Zustände
+modellieren. Sessionstart und Textback-Entscheidung konsumieren explizite,
+getrennt auswertbare Entitlement-Checks; Zahlungssystemdetails bleiben außen.
 
 ## Akzeptanz und Verifikation
 
 - [ ] Planänderung verändert historische Preise/Nutzung nicht.
-- [ ] Abgelaufene oder suspendierte Subscription unterdrückt Versand mit Reason.
+- [ ] Abgelaufene oder suspendierte Subscription verhindert neue Voice-Sessions
+      und unterdrückt Textback mit stabilem Reason; ein sicherer Handoff bleibt
+      nach der freigegebenen Policy möglich.
 - [ ] Trial-, Perioden- und Zeitzonengrenzen sind mit injizierter Clock getestet.
 - [ ] Concurrent Planwechsel sind versionsgesichert und auditiert.
 - [ ] Domain kennt keinen Payment Provider.
 
-Stop: Preise sind Hypothesen bis PO-Freigabe; keine Echtgeldfunktion.
+Stop: Preise, Einheiten und Caps sind Hypothesen bis PO-Freigabe; keine
+Echtgeldfunktion und kein hartes Beenden laufender Sessions ohne sicheren Pfad.

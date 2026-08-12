@@ -6,7 +6,7 @@ status: blocked
 priority: P1
 owner: Engineering/Finance
 dependencies: [B-001, B-002, provider-approval]
-gate: G6
+gate: real-money-billing
 outputs: [payment-port, testmode-adapter, payment-inbox, reconciliation-job]
 completed_at: null
 ---

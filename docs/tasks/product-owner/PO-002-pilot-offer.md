@@ -1,21 +1,33 @@
 ---
 id: PO-002
-title: Pilotangebot und messbares Nutzenversprechen
+title: Kombiniertes Pilotangebot und messbares Nutzenversprechen
 phase: product-owner
-status: ready
+status: blocked
 priority: P0
 owner: Product Owner
-dependencies: []
-gate: G0
+dependencies: [PO-001]
+gate: G3
 outputs: [pilot-offer-hypothesis]
 completed_at: null
 ---
 
-# PO-002 – Pilotangebot und Nutzenversprechen
+# PO-002 – Kombiniertes Pilotangebot und Nutzenversprechen
+
+## Ziel und Scope
 
 Zielsegment, versprochenes Ergebnis, Scope, Preis-/Trial-Hypothese, Laufzeit,
 Erfolgsmessung, Pflichten des Designpartners und klare Nicht-Ziele formulieren.
+Voice ist der primäre Assistent; Human-Handoff und ein erlaubter Textback sind
+Bestandteile desselben Angebots und keine getrennten Produkte.
 
-Akzeptanz: Angebot ist in einem Satz verständlich, an messbaren Funnel/KPI
-gebunden, enthält Kündigungs-/Supportannahmen und behauptet keine ungeprüfte
-Rechts- oder Produktfähigkeit. Evidenz und Änderungsgründe sind versioniert.
+## Akzeptanz und Verifikation
+
+- [ ] Das Angebot ist in einem Satz verständlich und an gemeinsame Voice-,
+      Handoff-, Textback-, Lead-, Kosten- und Supportmetriken gebunden.
+- [ ] Ein Gewerk, höchstens drei evidenzbasierte Intents sowie verbotene
+      Diagnose-, Preis-, Termin- und Toolwirkungen sind sichtbar.
+- [ ] Kündigungs-, Support-, Kohorten- und Stopannahmen sind dokumentiert.
+- [ ] Keine ungeprüfte Rechts-, Provider-, Qualitäts- oder Produktfähigkeit
+      wird behauptet; Evidenz und Änderungsgründe sind versioniert.
+
+Nicht im Scope: Vertragsschluss, Go-live oder finale Preise.

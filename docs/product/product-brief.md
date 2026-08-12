@@ -1,11 +1,11 @@
-# Product Brief – Textback für verpasste Handwerker-Anrufe
+# Product Brief – Voice-first und Textback für Handwerker-Anrufe
 
 - Status: Product-Owner-abgenommene Discovery-Baseline
-- Version: 1.0
-- Stand: 2026-08-08
+- Version: 2.0
+- Stand: 2026-08-11
 - Owner: Product Owner
-- Zugehöriger Task: `D-001`
-- Nächste Review: bei widersprechender Interviewevidenz oder vor `G0`
+- Zugehörige Tasks: `D-001`, `PM-002`
+- Nächste Review: nach `PO-001`, `V-001` oder bei widersprechender Evidenz
 
 ## 1. Dokumentlogik
 
@@ -32,10 +32,13 @@ Erreichbarkeit für Bestandskunden.
 
 ### Lösungshypothese
 
-Eine sofortige, seriöse Textnachricht nach einem tatsächlich verpassten Anruf
-erwartet weniger Verhalten vom Betrieb als ein neues CRM und weniger Verhalten
-vom Anrufer als eine App. Ein kurzes mobiles Formular liefert dem Betrieb genug
-Kontext für einen priorisierten Rückruf.
+Ein klar als KI erkennbarer, begrenzter Voice-Agent beantwortet den Anruf als
+primärer Assistent, erfasst maximal drei validierte Anliegen strukturiert und
+wechselt bei Unsicherheit, Ablehnung oder Safety-Bedarf in einen menschlichen
+Handoff-/Rückrufpfad. Ein rechtlich freigegebener Textback kann denselben
+Vorgang auf Wunsch oder als sicherer Fallback mit einem kurzen mobilen Formular
+fortsetzen. Beide Kanäle erzeugen genau einen gemeinsamen Lead statt
+unabhängiger Automationen.
 
 ### Primäre Segmenthypothese
 
@@ -50,9 +53,10 @@ eintreten (`DEC-001`).
 
 ### Kernnutzenhypothese
 
-Wenn ein Betrieb verpasste Anrufe innerhalb von 60 Sekunden automatisch
-qualifiziert beantwortet, steigt der Anteil verwertbarer Rückrufanfragen, ohne
-dass die laufende Support- und Bearbeitungszeit pro Tenant untragbar wird.
+Wenn ein Betrieb eingehende Anrufe unmittelbar durch einen transparenten,
+begrenzten Voice-Agenten erstaufnehmen und bei Bedarf schriftlich fortsetzen
+kann, steigt der Anteil verwertbarer Anfragen, ohne dass Support-, Safety- und
+Bearbeitungsaufwand pro Tenant untragbar werden.
 
 ## 3. Zielgruppe und Akteure
 
@@ -66,7 +70,7 @@ dass die laufende Support- und Bearbeitungszeit pro Tenant untragbar wird.
 | Arbeitsweise | hoher Außendienstanteil | dauerhaft besetztes Callcenter |
 | Eingang | relevante mobile Telefonanfragen | fast ausschließlich Portal-/E-Mail-Leads |
 | Software | kein/einfaches CRM | komplexe Enterprise-Dispatch-Landschaft |
-| Kaufmotiv | weniger verlorene Aufträge und Rückrufaufwand | primär Voice-Automatisierung gesucht |
+| Kaufmotiv | weniger verlorene Aufträge und Rückrufaufwand | vollautonome Diagnose-/Dispatchlösung gesucht |
 
 ### 3.2 Rollen
 
@@ -75,7 +79,7 @@ dass die laufende Support- und Bearbeitungszeit pro Tenant untragbar wird.
 | Entscheider: Inhaber/Geschäftsführung | Verpasste Chancen ohne zusätzliche Büroarbeit zurückgewinnen | Nutzen und Kosten monatlich sichtbar | Sorge um Seriosität, Recht und Kundenreaktion |
 | Nutzer: Büro/Disposition | Rückrufe mit Kontext und Dringlichkeit priorisieren | weniger Rückfragen und Medienbrüche | noch ein Posteingang ohne Workflownutzen |
 | Nutzer: Techniker/Inhaber unterwegs | nicht jeden Anruf sofort unterbrechen müssen | nur relevante, strukturierte Rückrufe | Benachrichtigungsüberlastung |
-| Anrufer | sofort Orientierung und einfachen Rückrufweg erhalten | Antwort ohne App, wenig Dateneingabe | unerwünschte Nachricht oder unklarer Absender |
+| Anrufer | sofort eine ehrliche Erstaufnahme und Wahlmöglichkeit erhalten | KI erkennbar, Anliegen verstanden, sicherer Human-/Textpfad | Halluzination, unerwünschte Nachricht oder unklarer Absender |
 | Interner Support | Tenant sicher aktivieren und Störungen beheben | geringe Supportzeit, auditierbare Werkzeuge | verdeckte Impersonation oder manueller Dauerbetrieb |
 
 ### 3.3 Nicht primär adressierte Nutzer
@@ -91,21 +95,23 @@ generative Antworten gelöst.
 |---|---|---|---|
 | H-PROB-01 | Zielbetriebe verpassen regelmäßig wirtschaftlich relevante Anrufe. | ≥ 7/10 Interviews nennen mindestens fünf relevante verpasste Anrufe pro Woche oder quantifizieren vergleichbaren Schmerz. | PO-001 |
 | H-PROB-02 | Späte/unstrukturierte Rückrufe führen zu verlorenen Aufträgen oder hohem Aufwand. | ≥ 6/10 berichten konkrete Verluste oder >30 Minuten tägliche Rückrufkoordination. | PO-001 |
-| H-VALUE-01 | Sofortiger Textback wird als seriöse Verbesserung akzeptiert. | ≥ 7/10 würden einen klar beschriebenen Test zulassen; zentrale Einwände sind lösbar. | PO-001/PO-002 |
+| H-VALUE-01 | Ein transparenter Voice-first-Assistent mit Human-Fallback wird als seriöse Verbesserung akzeptiert. | ≥ 7/10 würden einen eng begrenzten Test zulassen; zentrale Einwände sind lösbar. | PO-001/PO-002 |
 | H-VALUE-02 | Ein Kurzformular erzeugt verwertbaren Kontext. | Im Pilot ≥ 25 % der zugestellten Textbacks führen zu einer vollständigen Einreichung; Ziel nach Baseline anpassen. | B-006/Pilot |
 | H-VALUE-03 | Automatisierung bleibt betrieblich leichtgewichtig. | Medianes Onboarding <20 Minuten und Support <60 Minuten/Tenant/Monat. | O-004/Pilot |
-| H-TRUST-01 | Regelbasierte Templates schaffen mehr Vertrauen als freie KI-Antworten. | In Interviews bevorzugen ≥ 7/10 kontrollierbare Vorlagen für den Erstkontakt. | PO-001 |
+| H-VOICE-01 | Drei begrenzte Voice-Intents erfassen genug Kontext für einen menschlichen Rückruf. | Synthetischer Benchmark und Pilot messen Task Completion, Pflichtfeldgenauigkeit, Handoff und verbotene Zusagen. | V-001/B-006/Pilot |
+| H-CHANNEL-01 | Textback verbessert Voice als angeforderte Fortsetzung oder Fallback, ohne Doppelansprache. | Kanalwechsel erzeugen genau einen Lead und keine ungeplante Nachricht; Akzeptanz und Conversion werden separat gemessen. | M-003/V-007/B-006 |
+| H-TRUST-01 | Begrenzte Dialogzustände und freigegebene Texte schaffen mehr Vertrauen als freie KI-Autonomie. | In Interviews bevorzugen ≥ 7/10 kontrollierbare Intents, klare KI-Ansage und Human-Fallback. | PO-001 |
 | H-SEG-01 | Die reversible SHK-Kohorte zeigt ausreichend häufigen, dringlichen und wirtschaftlich relevanten Bedarf. | Interview-Schwellen für Schmerz, Häufigkeit, Dringlichkeit und Zahlungsbereitschaft werden erreicht; sonst Elektro als Vergleichs-/Pivotkohorte aktivieren. | PO-001/DEC-001 |
 
 Schwellenwerte sind Discovery-Hypothesen, keine statistischen
 Wirksamkeitsnachweise. Gegenbeispiele und Segmentunterschiede werden explizit
 dokumentiert.
 
-## 5. Anrufgründe – SHK-Arbeitshypothese
+## 5. Voice-Intents und Textback-Fortsetzung – SHK-Arbeitshypothese
 
 Die Reihenfolge ist zu validieren; sie basiert nicht auf Produktivdaten.
 
-| Rang | Anrufgrund | Minimaler Formular-Kontext | Gewünschtes Betriebsergebnis |
+| Rang | Anrufgrund | Minimaler Voice-/Formular-Kontext | Gewünschtes Betriebsergebnis |
 |---|---|---|---|
 | 1 | akute Störung/Reparatur | Kategorie, Ort grob, Rückrufzeit, Freitext | Dringlichkeit prüfen und zurückrufen |
 | 2 | Wartung/Service | Anlage/Leistung grob, Wunschtermin | planbaren Lead erfassen |
@@ -115,6 +121,12 @@ Die Reihenfolge ist zu validieren; sie basiert nicht auf Produktivdaten.
 
 Das MVP diagnostiziert keine technische Ursache und macht keine Preis-, Termin-
 oder Verfügbarkeitszusage.
+
+`PO-001` und `V-001` wählen aus dieser Liste höchstens drei produktive
+Voice-Intents. Ein Notfall ist kein normaler Intent, sondern ein separater,
+nichtgenerativer Safety-/Handoffpfad. Textback ist kein vierter unabhängiger
+Dialog: Er setzt denselben Call-Vorgang nur mit freigegebenem Zweck, Template
+und sicherem Link fort.
 
 ## 6. Notfall- und Dringlichkeitsfälle – Safety-Hypothesen
 
@@ -137,19 +149,32 @@ Nummer (`DEC-006`).
 
 ## 7. MVP-Nutzerreise
 
-1. Tenant beginnt Onboarding und hinterlegt Betriebsprofil.
-2. Rufnummer und Nachrichtenkonfiguration werden im Testmodus validiert.
-3. Tenant verarbeitet ein synthetisches Testevent und aktiviert Textback.
-4. Im späteren, weiterhin blockierten Realflow meldet ein verifizierter
-   Provider-Webhook einen verpassten Anruf.
-5. Eligibility entscheidet deterministisch und fail-closed über Send-Intent
-   oder Suppression.
-6. Nur nach Kanal-, Rechts- und Providerfreigabe wird genau eine versionierte
-   Nachricht geplant und providerseitig akzeptiert.
-7. Anrufer öffnet ein kurzlebiges, tenantgebundenes Formular.
-8. Eine valide Einsendung erzeugt genau einen Lead.
-9. Betrieb sieht den Lead und erhält eine minimale E-Mail-Benachrichtigung.
-10. Zustellung, Nutzung, Audit und spätere Löschung bleiben nachvollziehbar.
+1. Tenant beginnt Onboarding und hinterlegt Betriebsprofil, Erreichbarkeit,
+   Handoffziel und freigegebene Fakten.
+2. Rufnummer, Voice-Policy, KI-Hinweis und Textback-Konfiguration werden im
+   Testmodus validiert.
+3. Tenant absolviert einen synthetischen Voice-Test sowie einen getrennten
+   Fake-Textback-/Formulartest und aktiviert die Konfiguration nur für Fake.
+4. Im späteren, weiterhin blockierten Realflow erreicht ein eingehender Anruf
+   den primären Voice-Pfad.
+5. Der Voice-Agent macht sich vor fachlicher Erhebung klar als KI erkennbar und
+   bietet Human-/Rückrufalternativen an.
+6. Ein begrenzter Dialog erfasst einen erlaubten Intent und strukturierte
+   Pflichtdaten; Unsicherheit bleibt sichtbar.
+7. Safety-, Ablehnungs- oder Handoffbedingungen beenden den normalen Dialog
+   kontrolliert und ohne generative Verzögerung.
+8. Eine erfolgreiche Erstaufnahme erzeugt idempotent genau einen gemeinsamen
+   Lead und optional eine freigegebene strukturierte Summary.
+9. Nur wenn der Anrufer eine schriftliche Fortsetzung verlangt oder ein
+   freigegebener Fallback greift, entscheidet Eligibility fail-closed über
+   Textback oder Suppression.
+10. Nur nach Kanal-, Rechts- und Providerfreigabe wird genau eine versionierte
+    Nachricht für diesen Zweck geplant.
+11. Der Anrufer kann einen kurzlebigen, tenant-/callgebundenen Formularlink
+    öffnen; die Submission ergänzt denselben Lead idempotent.
+12. Der Betrieb sieht den Lead und erhält eine minimale Benachrichtigung.
+13. Voice-, Kanal-, Handoff-, Zustell-, Usage-, Audit- und Löschstatus bleiben
+    ohne Audio-/Rohtranskriptpersistenz nachvollziehbar.
 
 ## 8. MVP-Funnel und Eventkatalog v1
 
@@ -171,27 +196,37 @@ Nummer (`DEC-006`).
 | 2 | `phone_connected_v1` | Nummer erfolgreich testverifiziert | Aktivierung/Drop-off |
 | 3 | `test_event_processed_v1` | kanonisches Test-Call-Event fachlich verarbeitet | Setup-Qualität |
 | 4 | `test_textback_accepted_v1` | Fake/Testadapter akzeptiert genau eine Testnachricht | Time-to-Value |
-| 5 | `textback_activated_v1` | vollständige Konfiguration explizit aktiviert | Aktivierungsrate |
-| 6 | `missed_call_detected_v1` | deduplizierter Call erreicht fachlich `missed` | Kernvolumen |
-| 7a | `textback_suppressed_v1` | Eligibility lehnt mit Reason Code ab | Guardrail/Diagnose |
-| 7b | `textback_provider_accepted_v1` | Provider akzeptiert Sendung | Latenz/Usage |
-| 8 | `textback_delivered_v1` | verifizierter Statuscallback meldet Zustellung | Zustellquote |
-| 9 | `lead_form_opened_v1` | gültiges Capability Token öffnet Formular | Formular-Drop-off |
-| 10 | `lead_submitted_v1` | valide Einsendung erzeugt idempotent Lead | Lead-Conversion |
-| 11 | `lead_qualified_v1` | autorisierter Nutzer setzt Lead auf qualifiziert | Business Outcome |
+| 5 | `test_voice_session_completed_v1` | synthetischer Dialog erreicht erlaubtes Ende ohne Guardrail-Verstoß | Voice-Time-to-Value |
+| 6 | `voice_textback_activated_v1` | vollständige kombinierte Konfiguration explizit aktiviert | Aktivierungsrate |
+| 7 | `voice_session_started_v1` | deduplizierter Call beginnt Voice-Session | Kernvolumen |
+| 8 | `ai_disclosure_completed_v1` | versionierter KI-Hinweispfad erreicht | Transparenz-Guardrail |
+| 9a | `voice_lead_captured_v1` | erlaubter Dialog erzeugt idempotent strukturierten Lead | Voice-Completion |
+| 9b | `voice_handoff_requested_v1` | Policy/Caller verlangt Human-/Rückrufpfad | Safety/Qualität |
+| 10a | `textback_suppressed_v1` | Channel-Eligibility lehnt mit Reason Code ab | Guardrail/Diagnose |
+| 10b | `textback_provider_accepted_v1` | Provider akzeptiert freigegebene Fortsetzung | Latenz/Usage |
+| 11 | `textback_delivered_v1` | verifizierter Statuscallback meldet Zustellung | Zustellquote |
+| 12 | `lead_form_opened_v1` | gültiges Capability Token öffnet Formular | Formular-Drop-off |
+| 13 | `lead_submitted_v1` | valide Einsendung erzeugt/ergänzt idempotent denselben Lead | Lead-Conversion |
+| 14 | `lead_qualified_v1` | autorisierter Nutzer setzt Lead auf qualifiziert | Business Outcome |
 
 ### 8.3 Funnel-Definitionen
 
-- Aktivierung = eindeutige Tenants mit `textback_activated_v1` / eindeutige
+- Aktivierung = eindeutige Tenants mit `voice_textback_activated_v1` / eindeutige
   Tenants mit `onboarding_started_v1` im betrachteten Kohortenfenster.
 - Time-to-Value = Zeit zwischen `onboarding_started_v1` und erstem
-  `test_textback_accepted_v1` desselben Tenants.
+  erfolgreichen `test_voice_session_completed_v1` und
+  `test_textback_accepted_v1` desselben Tenants; beide Teilzeiten werden
+  zusätzlich getrennt ausgewiesen.
+- Voice-Completion = eindeutige `voice_lead_captured_v1` / Sessions mit
+  abgeschlossenem KI-Hinweis; Safety-/Caller-Handoffs separat ausweisen.
 - Textback-Latenz = `textback_provider_accepted_v1.occurredAt` minus
   `missed_call_detected_v1.occurredAt` je Correlation ID.
 - Lead-Conversion = eindeutige `lead_submitted_v1` / zugestellte Textbacks mit
   gültigem Formularpfad im definierten Attribution Window.
 - Duplicate Guardrail = mehr als eine fachliche Sendewirkung je dedupliziertem
   Missed-Call-/Cooldown-Schlüssel; Ziel exakt 0.
+- Lead-Duplicate Guardrail = mehr als ein Lead für denselben Call-/Kanalvorgang;
+  Ziel exakt 0.
 
 Attribution Window, Testevent-Ausschluss und kanalbereinigte Auswertung werden
 in `B-006` versioniert. Bis dahin sind sie offene Analytikdetails, keine
@@ -204,9 +239,11 @@ Produktentscheidungen.
 - acht Wochen Designpartner-Pilot;
 - erste zwei Wochen technische Einrichtung und Akzeptanz, danach sechs Wochen
   Nutzung/Messung;
-- eine Rufnummer, ein Gewerk, deutsche Templates, Textback und Lead-Inbox;
+- eine Rufnummer, ein Gewerk, höchstens drei Voice-Intents, Human-Handoff,
+  freigegebener Textback und gemeinsame Lead-Inbox;
 - Concierge-Onboarding und wöchentlich 30 Minuten strukturiertes Feedback;
-- keine Voice-Funktion, keine SLA und keine individuelle CRM-Entwicklung.
+- keine Diagnose, freie Termin-/Preisentscheidung, SLA oder individuelle
+  CRM-Entwicklung.
 
 ### H-PRICE-01 – Zahlungsbereitschaft
 
@@ -222,8 +259,9 @@ Providerkosten das Margenziel zulassen.
 ### H-TRIAL-01 – Trial
 
 Die zweiwöchige technische Akzeptanzphase ist ohne langfristige Bindung. Erst
-nach erfolgreichem Test-Textback beginnt die messbare Pilotnutzung. Exakte
-Zahlungs- und Trialbedingungen bleiben bis `PO-007`/`PO-008` offen.
+nach erfolgreichem synthetischem Voice-, Handoff- und Textback-Test beginnt die
+messbare Pilotnutzung. Exakte Zahlungs- und Trialbedingungen bleiben bis
+`PO-007`/`PO-008` offen.
 
 ### H-CANCEL-01 – Kündigung
 
@@ -247,7 +285,8 @@ Rechtsprüfung (`DEC-003`, `DEC-007`, `DEC-008`).
 
 ## 10. Nicht-Ziele dieses Piloten
 
-- vollständiger Voice-Agent, Aufzeichnung oder freie generative Kundenantworten;
+- unbeschränkter Voice-Agent, Aufzeichnung, Audio-/Rohtranskriptspeicherung
+  oder freie generative Kundenautonomie;
 - Notruf-, Stördienst- oder fachliche Diagnosefunktion;
 - verbindliche Termin-, Preis- oder Verfügbarkeitszusage;
 - Kalender-Schreibzugriff, CRM-Synchronisation oder Angebots-/Rechnungswesen;
@@ -288,8 +327,11 @@ Vier-Augen-Freigabe.
 
 - Mehrheit meldet kaum relevante verpasste Anrufe;
 - Betriebe lösen das Problem bereits zufriedenstellend und günstig;
-- Anrufer-/Betriebsakzeptanz für automatischen Textback ist niedrig;
+- Anrufer-/Betriebsakzeptanz für transparenten Voice-first oder den
+  freigegebenen Textback-Fallback ist niedrig;
 - zulässiger Kanal oder Providerfähigkeit ist nicht realistisch erreichbar;
+- Voice-Qualität, Handoff, Safety oder variable Minutenkosten sind im engen
+  Scope nicht tragfähig;
 - benötigter Support widerspricht dem Ziel eines skalierbaren Kleinteamprodukts;
 - Zahlungsbereitschaft liegt strukturell unter variablen und operativen Kosten.
 
@@ -314,19 +356,22 @@ heutiges Verhalten haben Vorrang vor Meinungen über eine hypothetische Lösung.
     dringend?
 11. Wie behandelt ihr Gasgeruch, Wasserschäden, Heizungsausfall oder andere
     Gefahrenfälle heute?
-12. Wie würden Stammkunden und Neukunden auf eine sofortige automatische SMS
-    oder WhatsApp-Nachricht reagieren?
-13. Welche Angaben wären für einen sinnvollen Rückruf unbedingt nötig, und
+12. Wie würden Stammkunden und Neukunden reagieren, wenn ein klar als KI
+    erkennbarer Assistent den Anruf zuerst annimmt? Wann muss ein Mensch
+    übernehmen?
+13. Wann wäre eine anschließende SMS mit sicherem Link hilfreich oder
+    unerwünscht?
+14. Welche Angaben wären für einen sinnvollen Rückruf unbedingt nötig, und
     welche wären zu viel?
-14. Welche Formulierungen oder Automatisierungen würden unprofessionell oder
+15. Welche Formulierungen oder Automatisierungen würden unprofessionell oder
     riskant wirken?
-15. Wer dürfte eine solche Funktion freigeben, und welche Einwände hätten
+16. Wer dürfte eine solche Funktion freigeben, und welche Einwände hätten
     Datenschutz, Büro oder Techniker?
-16. Was müsste in den ersten zwei Wochen passieren, damit du den Pilot als
+17. Was müsste in den ersten zwei Wochen passieren, damit du den Pilot als
     nützlich bewertest?
-17. Welche monatliche Größenordnung wäre bei nachgewiesenem Nutzen leicht,
+18. Welche monatliche Größenordnung wäre bei nachgewiesenem Nutzen leicht,
     gerade noch oder nicht vertretbar? Warum?
-18. Würdest du für einen achtwöchigen Pilot mit wöchentlichem Feedback Zeit und
+19. Würdest du für einen achtwöchigen Pilot mit wöchentlichem Feedback Zeit und
     99 EUR pro Monat verbindlich einplanen? Was müsste vorher geklärt sein?
 
 ## 14. Interview-Auswertungsschema
@@ -356,8 +401,9 @@ bleiben Aufgabe von `D-002` und `D-003`.
 ## 16. Review-Nachweis
 
 - Product-Owner-Review: abgenommen
-- Datum: 2026-08-08
-- Ergebnis: als Discovery-Baseline freigegeben
+- Datum: 2026-08-08; Scope-Rebaseline 2026-08-11
+- Ergebnis: Discovery-Baseline freigegeben; Voice-first und Textback als
+  gemeinsamer MVP durch `PM-002`/`ADR-013` ergänzt
 - Freigegebene Entscheidungen: `DEC-001`, `DEC-002`, `DEC-003`, `DEC-007`,
   `DEC-008`
 - Änderungsbedarf: keiner für den Start von `D-002`; Hypothesen bleiben durch

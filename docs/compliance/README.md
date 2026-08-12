@@ -1,15 +1,16 @@
 # Compliance-Arbeitsbasis
 
 - Status: Discovery-Entwurf, keine Rechtsfreigabe
-- Stand: 2026-08-08
+- Stand: 2026-08-11
 - Rechtsraum: Deutschland/EU
 - Betreiber: `[PLATTFORMBETREIBER_OFFEN]`
-- Task: `D-003`
+- Tasks: `D-003`, `PM-002`
 
 Diese Dokumente schaffen eine prüfbare Datenschutz-, Rechts- und
-Missbrauchsbasis. Sie sind keine Rechtsberatung und erlauben weder reale SMS,
-Providerkonten, Telefonnummern noch Voice-Anrufe. Bis zu den jeweils genannten
-Freigaben ist ausschließlich der synthetische Fake-/Replay-Pfad zulässig.
+Missbrauchsbasis für den gemeinsamen Voice-first-/Textback-MVP. Sie sind keine
+Rechtsberatung und erlauben weder reale SMS noch Providerkonten, Rufnummern oder
+Voice-Anrufe. Bis zu den jeweils genannten Freigaben ist ausschließlich der
+synthetische Fake-/Replay-Pfad zulässig.
 
 ## Dokumente
 
@@ -35,9 +36,9 @@ In diesem D-003-Stand existiert keine Position mit `approved_by_legal`.
 
 | Modus | Erlaubt | Nicht erlaubt |
 |---|---|---|
-| `fake` | synthetische Fixtures, Replay, Fake Messaging, Mailpit, lokale Testdaten | produktive Dumps, erreichbare Rufnummern, echte Provider-/E-Mail-Endpunkte |
+| `fake` | kombinierte synthetische Voice-/Handoff-/Lead-/Textback-Fixtures und Replays nach `G0V` und den jeweiligen Abhängigkeiten; Fake Messaging, Mailpit, lokale Testdaten | produktive Dumps, erreichbare Rufnummern, echte Provider-/E-Mail-Endpunkte |
 | `real` | nichts ohne separate Provider-, Legal-, Security- und Go-live-Freigabe | SMS, Calls, KYC, Nummernbestellung, Zahlung oder Kontaktaufnahme |
-| `voice` | synthetisches/freigegebenes Testkorpus erst nach `G7` | reale Calls, Recording, persistiertes Audio/Rohtranskript, Voiceprints, Emotionserkennung |
+| `voice` | synthetisches Audio-/Dialogkorpus nach `G0V`, Isolation und freigegebenem Testvertrag | reale Calls, Recording, persistiertes Audio/Rohtranskript/Promptinhalt, Voiceprints, Emotionserkennung oder Providertraining |
 
 ## Rückverfolgbarkeit
 
@@ -54,13 +55,20 @@ anonym behandelt.
 
 ## Harte Realbetriebsblocker
 
-1. Ein verpasster Anruf beweist weder den Anrufzweck noch eine SMS-Einwilligung.
-2. Das konkrete Textback-Template ist nach DSGVO, UWG, TDDDG und TKG zu prüfen.
-3. Betreiber, Verantwortlichkeiten, AVV, Subprozessoren und Transfers sind offen.
-4. Retention, Transparenz, Widerspruch, falsche Nummer und Betroffenenrechte
-   benötigen einen freigegebenen Prozess.
-5. Voice benötigt vor dem ersten Realanruf eine vollständige DSFA, AI-Act-
-   Transparenz, Anbieterprüfung und gesonderte Product-/Legal-/Safety-Freigabe.
+1. Betreiber, Nummerntopologie, Verantwortlichkeiten, AVV, Subprozessoren,
+   Transfers und jede juristische Einheit der Telephony-/STT-/Modell-/TTS-Kette
+   sind offen.
+2. Vor dem ersten Realanruf fehlen eine vollständige DSFA, Art.-50-Disclosure,
+   AI-Literacy, Safety-/Handoff-Abnahme, No-Retention/No-Training-Nachweise,
+   Security-Test und ausdrückliche Provider-/Budget-/Go-live-Freigabe.
+3. Retention, Transparenz, Notfallpfad, falsche Nummer, Betroffenenrechte und
+   strukturierte Voice-Summary benötigen freigegebene Prozesse.
+4. Ein Voice-Dialog oder verpasster Anruf beweist weder den Zweck noch eine
+   SMS-Erlaubnis. Das konkrete Textback-Template und die In-call-Permission sind
+   separat nach DSGVO, UWG, TDDDG und TKG zu prüfen.
+5. Audio, Rohtranskript, Prompt-/Toolinhalt und reale Review-Samples haben intern
+   und beim Provider Persistenz `0`; Voiceprints, Emotionserkennung und Training
+   mit Gesprächsdaten bleiben verboten.
 
 `PO-004` ist der Freigabepfad für reale Verarbeitung. Offene Rechtsfragen
 blockieren nicht die Entwicklung mit synthetischen Daten.

@@ -1,0 +1,327 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CI: 'true'
+  NEXT_TELEMETRY_DISABLED: '1'
+  TURBO_TELEMETRY_DISABLED: '1'
+
+jobs:
+  quality:
+    name: Quality and migration policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up exact Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - name: Frozen install
+        run: corepack pnpm install --frozen-lockfile
+      - name: Workflow, migration and negative-fixture policy
+        run: corepack pnpm ci:policy
+      - name: Formatting
+        run: corepack pnpm format:check
+      - name: Lint
+        run: corepack pnpm lint
+      - name: Typecheck
+        run: corepack pnpm typecheck
+      - name: Unit and tooling tests
+        run: corepack pnpm test
+      - name: Integration tests
+        run: corepack pnpm test:integration
+      - name: End-to-end runner
+        run: corepack pnpm test:e2e
+      - name: Reproducible build
+        run: corepack pnpm build
+      - name: Repository secret scan
+        run: corepack pnpm secret:scan
+
+  supply-chain:
+    name: Dependency, filesystem and SBOM
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up exact Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - name: Frozen install
+        run: corepack pnpm install --frozen-lockfile
+      - name: Create report directory
+        run: mkdir -p artifacts
+      - name: Dependency audit
+        id: dependency-audit
+        continue-on-error: true
+        run: corepack pnpm audit --audit-level=high --json > artifacts/pnpm-audit.json
+      - name: Generate CycloneDX SBOM
+        id: sbom
+        continue-on-error: true
+        run: >-
+          corepack pnpm sbom --sbom-format cyclonedx
+          --sbom-spec-version 1.7 --lockfile-only
+          --out artifacts/sbom.cdx.json
+      - name: Filesystem vulnerability and misconfiguration scan
+        id: filesystem-scan
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0 / Trivy 0.70.0
+        with:
+          cache: 'false'
+          exit-code: '1'
+          format: 'json'
+          ignore-unfixed: 'false'
+          output: artifacts/trivy-filesystem.json
+          scan-ref: .
+          scan-type: 'fs'
+          scanners: vuln,misconfig,secret
+          severity: HIGH,CRITICAL
+          skip-dirs: node_modules,.git
+      - name: Validate and inventory supply-chain reports
+        id: artifact-policy
+        if: always()
+        continue-on-error: true
+        run: >-
+          node tooling/ci/prepare-artifacts.mjs
+          artifacts/supply-chain-manifest.json
+          artifacts/pnpm-audit.json
+          artifacts/sbom.cdx.json
+          artifacts/trivy-filesystem.json
+      - name: Upload reports
+        if: always() && steps.artifact-policy.outcome == 'success'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          if-no-files-found: error
+          include-hidden-files: false
+          name: supply-chain-reports
+          path: |
+            artifacts/pnpm-audit.json
+            artifacts/sbom.cdx.json
+            artifacts/trivy-filesystem.json
+            artifacts/supply-chain-manifest.json
+          retention-days: 7
+      - name: Enforce supply-chain results
+        if: always()
+        env:
+          AUDIT_OUTCOME: ${{ steps.dependency-audit.outcome }}
+          ARTIFACT_OUTCOME: ${{ steps.artifact-policy.outcome }}
+          FILESYSTEM_OUTCOME: ${{ steps.filesystem-scan.outcome }}
+          SBOM_OUTCOME: ${{ steps.sbom.outcome }}
+        run: |
+          test "$AUDIT_OUTCOME" = success
+          test "$ARTIFACT_OUTCOME" = success
+          test "$FILESYSTEM_OUTCOME" = success
+          test "$SBOM_OUTCOME" = success
+
+  container-scan:
+    name: Container ${{ matrix.id }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: postgres
+            image: 'postgres:18.4-alpine3.23@sha256:996d0920e4ff9df1fc19dacb904492f3c1ec0ec1cc338f0ad7123be7731c5f5e'
+          - id: redis
+            image: 'redis:8.8.1-alpine3.23@sha256:8096655e437712b07503796fb64d81359256cfcff0ab29d95a7da72863786efb'
+          - id: keycloak
+            image: 'quay.io/keycloak/keycloak:26.7.0@sha256:0f198be292568439d700cdbfb893e69a6009bb43a94a06a945b1d3d506c76b13'
+          - id: go-builder
+            image: 'golang:1.26.5-alpine3.24@sha256:0178a641fbb4858c5f1b48e34bdaabe0350a330a1b1149aabd498d0699ff5fb2'
+          - id: minio-client
+            image: 'minio/mc:RELEASE.2025-07-16T15-35-03Z@sha256:d5bccfe71e95a34b25d626d86621930342553657e8776833b65ae0bc63cf4928'
+          - id: mailpit-upstream
+            image: 'axllent/mailpit:v1.30.0@sha256:0059ef81e492a7192af3816281eed6859eb078bd7bdc58b76757c13e10e53a7d'
+          - id: alpine-runtime
+            image: 'alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up exact Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - name: Create report directory
+        run: mkdir -p artifacts
+      - name: Scan digest-pinned image
+        id: container-scan
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0 / Trivy 0.70.0
+        with:
+          cache: 'false'
+          exit-code: '1'
+          format: 'json'
+          ignore-unfixed: 'false'
+          image-ref: ${{ matrix.image }}
+          output: artifacts/trivy-container-${{ matrix.id }}.json
+          scan-type: 'image'
+          scanners: vuln
+          severity: HIGH,CRITICAL
+      - name: Validate and inventory container report
+        id: artifact-policy
+        if: always()
+        continue-on-error: true
+        run: >-
+          node tooling/ci/prepare-artifacts.mjs
+          artifacts/container-manifest-${{ matrix.id }}.json
+          artifacts/trivy-container-${{ matrix.id }}.json
+      - name: Upload container report
+        if: always() && steps.artifact-policy.outcome == 'success'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          if-no-files-found: error
+          include-hidden-files: false
+          name: container-report-${{ matrix.id }}
+          path: |
+            artifacts/trivy-container-${{ matrix.id }}.json
+            artifacts/container-manifest-${{ matrix.id }}.json
+          retention-days: 7
+      - name: Enforce container result
+        if: always()
+        env:
+          ARTIFACT_OUTCOME: ${{ steps.artifact-policy.outcome }}
+          CONTAINER_OUTCOME: ${{ steps.container-scan.outcome }}
+        run: |
+          test "$CONTAINER_OUTCOME" = success
+          test "$ARTIFACT_OUTCOME" = success
+
+  infrastructure:
+    name: Local infrastructure and final images
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up exact Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - name: Frozen install
+        run: corepack pnpm install --frozen-lockfile
+      - name: Create report directory
+        run: mkdir -p artifacts
+      - name: Validate complete Compose model
+        run: >-
+          docker --config infra/compose/docker-anonymous compose
+          --env-file infra/compose/.env.example
+          --file infra/compose/compose.yaml
+          --profile tools config --quiet
+      - name: Build and start isolated local infrastructure
+        run: corepack pnpm compose:up
+      - name: Verify service health
+        run: corepack pnpm compose:health
+      - name: Verify synthetic persistence
+        run: corepack pnpm compose:verify
+      - name: Scan final local MinIO image
+        id: minio-scan
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0 / Trivy 0.70.0
+        with:
+          cache: 'false'
+          exit-code: '1'
+          format: 'json'
+          ignore-unfixed: 'false'
+          image-ref: voice-ai-agent/minio-local:RELEASE.2025-10-15T17-29-55Z
+          output: artifacts/trivy-local-minio.json
+          scan-type: 'image'
+          scanners: vuln
+          severity: HIGH,CRITICAL
+      - name: Scan final local Mailpit image
+        id: mailpit-scan
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0 / Trivy 0.70.0
+        with:
+          cache: 'false'
+          exit-code: '1'
+          format: 'json'
+          ignore-unfixed: 'false'
+          image-ref: voice-ai-agent/mailpit-local:v1.30.0
+          output: artifacts/trivy-local-mailpit.json
+          scan-type: 'image'
+          scanners: vuln
+          severity: HIGH,CRITICAL
+      - name: Validate and inventory final-image reports
+        id: artifact-policy
+        if: always()
+        continue-on-error: true
+        run: >-
+          node tooling/ci/prepare-artifacts.mjs
+          artifacts/local-infrastructure-manifest.json
+          artifacts/trivy-local-minio.json
+          artifacts/trivy-local-mailpit.json
+      - name: Upload final-image reports
+        if: always() && steps.artifact-policy.outcome == 'success'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          if-no-files-found: error
+          include-hidden-files: false
+          name: local-infrastructure-reports
+          path: |
+            artifacts/trivy-local-minio.json
+            artifacts/trivy-local-mailpit.json
+            artifacts/local-infrastructure-manifest.json
+          retention-days: 7
+      - name: Enforce final-image results
+        if: always()
+        env:
+          ARTIFACT_OUTCOME: ${{ steps.artifact-policy.outcome }}
+          MAILPIT_OUTCOME: ${{ steps.mailpit-scan.outcome }}
+          MINIO_OUTCOME: ${{ steps.minio-scan.outcome }}
+        run: |
+          test "$MINIO_OUTCOME" = success
+          test "$MAILPIT_OUTCOME" = success
+          test "$ARTIFACT_OUTCOME" = success
+      - name: Stop isolated local infrastructure
+        if: always()
+        run: corepack pnpm compose:down
+
+  merge-gate:
+    name: Merge gate
+    if: always()
+    needs: [quality, supply-chain, container-scan, infrastructure]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Require every blocking job
+        env:
+          CONTAINER_RESULT: ${{ needs.container-scan.result }}
+          INFRASTRUCTURE_RESULT: ${{ needs.infrastructure.result }}
+          QUALITY_RESULT: ${{ needs.quality.result }}
+          SUPPLY_CHAIN_RESULT: ${{ needs.supply-chain.result }}
+        run: |
+          test "$QUALITY_RESULT" = success
+          test "$SUPPLY_CHAIN_RESULT" = success
+          test "$CONTAINER_RESULT" = success
+          test "$INFRASTRUCTURE_RESULT" = success

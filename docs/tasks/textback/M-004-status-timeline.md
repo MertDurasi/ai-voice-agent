@@ -1,29 +1,32 @@
 ---
 id: M-004
-title: Status-Webhooks und Conversation Timeline
+title: Kanalstatus und gemeinsame Conversation Timeline
 phase: textback
 status: blocked
 priority: P1
 owner: Engineering
 dependencies: [M-003]
 gate: G5
-outputs: [status-webhook, message-state-machine, conversation-timeline]
+outputs: [status-webhook, message-state-machine, combined-conversation-timeline]
 completed_at: null
 ---
 
-# M-004 – Status-Webhooks und Conversation Timeline
+# M-004 – Kanalstatus und gemeinsame Conversation Timeline
 
 ## Ziel und Scope
 
-Signierte Statuscallbacks über Inbox verarbeiten, Message-Zustandsautomat und
-unveränderliche Timeline mit Zustellzeiten/Fehlergründen liefern. Manuelle
-Retries sind rollenbasiert und auf sichere Zustände begrenzt.
+Signierte Messaging-Statuscallbacks über Inbox verarbeiten und eine
+unveränderliche Timeline aus strukturierten Call-/VoiceSession-Metadaten,
+Disclosure-/Handoff-/Outcome-Events, Textback-Entscheid und Zustellstatus
+liefern. Manuelle Retries sind rollenbasiert und auf sichere Zustände begrenzt.
 
 ## Akzeptanz und Verifikation
 
-- [ ] Manipulierte/alte/duplizierte Callbacks bestehen Security-Negativtests.
-- [ ] Zustandsrückschritte werden ignoriert und auditiert.
+- [ ] Manipulierte, alte und duplizierte Callbacks bestehen Negativtests.
+- [ ] Zustandsrückschritte werden ignoriert und auditiert; Out-of-order-
+      Callbacks ergeben einen deterministischen Endzustand.
 - [ ] Unbekannte ProviderMessageId wird geparkt und alarmierbar.
-- [ ] Out-of-order-Callbacks ergeben deterministischen Endzustand.
-- [ ] Timeline zeigt keine Providersecrets oder internen Payloads.
-- [ ] Retry kann kein bereits zugestelltes Message-Duplikat erzeugen.
+- [ ] Timeline enthält keine Providersecrets, Payloads, Audio, Rohtranskripte,
+      Prompts oder Gesprächszitate.
+- [ ] Retry kann kein bereits zugestelltes oder cross-channel dupliziertes
+      Message-Duplikat erzeugen.

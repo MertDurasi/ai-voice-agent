@@ -15,17 +15,20 @@ completed_at: null
 
 ## Ziel und Scope
 
-Datensparsame versionierte Produkt-Events und Funnel für Aktivierung,
-Zustellung/Latenz, Leads, Usage und Kosten. Interne Betriebsmetriken und
-Tenant-Ansichten sind getrennt und gegen kanonische KPI-Definitionen gebaut.
+Datensparsame versionierte Produkt-Events und gemeinsamer Funnel für
+Aktivierung, Assistant Answer, Disclosure, Voice Completion, Handoff,
+Textback-Fortsetzung, genau einen Lead, Latenz, Usage, Kosten und Support.
+Interne Betriebsmetriken und Tenantansichten sind getrennt und gegen die
+kanonischen KPI-Definitionen gebaut.
 
 ## Akzeptanz und Verifikation
 
 - [ ] Eventkatalog definiert Name, Semantik, Version, Quelle und zulässige Felder.
-- [ ] Events enthalten keine Nummern, E-Mails, Texte oder Capability Tokens.
+- [ ] Events enthalten keine Nummern, E-Mails, Audio, Rohtranskripte, Prompts,
+      Nachrichten-/Formulartexte oder Capability Tokens.
 - [ ] KPI-Werte stimmen mit reproduzierbaren SQL-Stichproben überein.
 - [ ] Replay/Retry zählt Funnelereignisse nicht doppelt.
 - [ ] Tenant-Ansicht kann keine fremden oder internen Finanzdaten sehen.
 
-Gate `G6` verlangt zusätzlich Rechts-/Security-Review, Restore- und Runbook-
-Nachweise sowie Product-Owner-Aufgaben PO-004–PO-006.
+Gate `G6` verlangt zusätzlich Legal-/DSFA-/Safety-/Security-Review, Restore-,
+Kill-Switch- und Runbook-Nachweise sowie Product-Owner-Aufgaben PO-004–PO-006.

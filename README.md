@@ -1,8 +1,10 @@
 # KI-Telefonassistent für Handwerksbetriebe
 
-Mandantenfähiger SaaS-Assistent für verpasste Anrufe. Die erste verkaufbare
-Ausbaustufe ist bewusst ein zuverlässiger Textback-Workflow; Voice folgt nur
-nach nachgewiesener Nachfrage und dem Gate `G7`.
+Mandantenfähiger Voice-first-SaaS-Assistent für eingehende Anrufe. Der
+begrenzte Voice-Agent nimmt als primärer Pfad ab, macht sich zu Beginn als KI
+erkennbar, bearbeitet höchstens drei validierte Intents und übergibt sicher an
+einen Menschen. Textback gehört zum selben MVP und dient nur als ausdrücklich
+freigegebene Fortsetzung oder als kontrollierter Fallback.
 
 ## Einstieg
 
@@ -30,11 +32,16 @@ cp .env.example .env
 Danach prüft die vollständige Foundation:
 
 ```bash
-corepack pnpm lint
-corepack pnpm typecheck
-corepack pnpm test
-corepack pnpm build
+corepack pnpm ci:policy
+corepack pnpm dependency:scan
+corepack pnpm ci:quality
 ```
+
+Die Details zu Required Check, SBOM, Scans, Migrations-Guard und kurzlebigen
+CI-Artefakten stehen im
+[CI- und Supply-Chain-Vertrag](docs/operations/ci-supply-chain.md). Der erste
+GitHub-Lauf und der verpflichtende Branch-Ruleset bleiben Owner-Schritte; der
+Workflow selbst deployt nichts.
 
 `corepack pnpm dev` startet die drei providerfreien App-Basen. API-Vertrag,
 Health-Endpunkte, OpenAPI, Request-ID, Worker-Readiness und Shutdown sind in der
@@ -51,21 +58,21 @@ synthetischen Loopback-Abhängigkeiten und benötigen keine geöffneten
 Containerports.
 
 Aktuell in `Now`: Engineering hat
-[F-004 – API-, Web- und Worker-Basis](docs/tasks/foundation/F-004-application-baseline.md)
-abgeschlossen und zieht als Nächstes
-[F-005 – CI und Supply Chain](docs/tasks/foundation/F-005-ci-supply-chain.md);
-der Product-Owner-Track zieht
+[F-005 – CI und Supply Chain](docs/tasks/foundation/F-005-ci-supply-chain.md)
+lokal umgesetzt; der erste grüne GitHub-Lauf und der Required Ruleset stehen im
+Review noch aus. Der Product-Owner-Track zieht
 [PO-001 – Probleminterviews](docs/tasks/product-owner/PO-001-problem-interviews.md).
 `PO-002` und `PO-003` folgen wegen des Product-WIP-Limits nacheinander.
 
 ## Verbindliche Produktgrenze
 
-Das Zielbild ist: Ein verpasster Anruf erzeugt nach Kanal-, Rechts- und
-Providerfreigabe zuverlässig und höchstens einmal eine minimale Rückmeldung;
-der Anrufer kann sein Anliegen datensparsam erfassen und der Betrieb erhält
-einen nachvollziehbaren Lead. Bis dahin ist ausschließlich der synthetische
-Fake-/Replay-Pfad freigegeben. Provider-, Nachrichten-, Voice-, Zahlungs- und
-Produktionsaktionen bleiben deaktiviert.
+Das Zielbild ist: Der Assistent beantwortet einen eingehenden Anruf transparent,
+erledigt einen eng begrenzten Auftrag oder übergibt sicher an einen Menschen.
+Wenn der Anrufer es ausdrücklich wünscht und der Kanal separat freigegeben ist,
+setzt Textback denselben Vorgang fort. Voice, Formular und Textback erzeugen
+idempotent höchstens einen nachvollziehbaren Lead. Bis zu den jeweiligen Gates
+ist ausschließlich der synthetische Fake-/Replay-Pfad erlaubt; Providerkonten,
+echte Calls/Nachrichten, Zahlungen und Produktion bleiben deaktiviert.
 
 ## Historie
 

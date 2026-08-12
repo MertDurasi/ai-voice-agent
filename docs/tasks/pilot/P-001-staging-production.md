@@ -1,32 +1,39 @@
 ---
 id: P-001
-title: Staging- und Produktionsgrundlage
+title: Combined-Assistant Staging- und Pilot-Betriebsgrundlage
 phase: pilot
 status: blocked
 priority: P0
 owner: Operations/Security
-dependencies: [G6]
-gate: G7
-outputs: [staging-prod-infra, deployment-runbook, backup-restore, monitoring]
+dependencies: [G5]
+gate: G6
+outputs: [staging-prod-plan, deployment-runbook, backup-restore, monitoring]
 completed_at: null
 ---
 
-# P-001 – Staging- und Produktionsgrundlage
+# P-001 – Combined-Assistant Staging- und Pilot-Betriebsgrundlage
 
 ## Ziel und Scope
 
-Getrennte Accounts, Secrets und Netze; Caddy/TLS, immutable Images,
-DB-Migration-Job, Compose-tauglichen Rolling-/Blue-Green-Plan, Offsite-Backup,
-Monitoring und Alarmrouting schaffen. Staging entspricht Produktionsform ohne
-Produktionsdaten/-kontakte.
+Die Produktionsform für Voice-Runtime, API/Web/Worker, Realtime-Ingress,
+Textback und Datenhaltung als getrennte Accounts/Netze/Secrets planen und in
+einer freigegebenen isolierten Umgebung proben. Immutable Images,
+DB-Migrationsjob, Rolling-/Blue-Green-Plan, Offsite-Backup, Monitoring,
+Alarmrouting und kanalübergreifender Kill Switch werden nachgewiesen. Staging
+enthält keine Produktivdaten oder realen Kontakte.
 
 ## Akzeptanz und Verifikation
 
-- [ ] Restore, Rollback und Secret-Rotation sind in isolierter Umgebung geprobt.
-- [ ] Keine Managementports sind öffentlich; TLS/Security Header sind geprüft.
+- [ ] Restore, Rollback, Secret-/Session-Credential-Rotation und Kill Switch
+      sind in isolierter Umgebung geprobt.
+- [ ] Keine Managementports sind öffentlich; TLS/Security Header sowie
+      Realtime-Endpointgrenzen sind geprüft.
 - [ ] Migration ist expand/contract-kompatibel und Rollback dokumentiert.
-- [ ] RPO/RTO-, Alarm- und On-call-Nachweise sind vorhanden.
+- [ ] RPO/RTO-, Alarm-, Session-/Providerbudget- und On-call-Nachweise sind
+      vorhanden.
 - [ ] Images sind per Digest reproduzierbar, gescannt und mit SBOM verknüpft.
+- [ ] Logs, Traces, Backups und Crashartefakte bestehen Audio-/Rohtranskript-
+      Leak-Tests.
 
-Stop: Keine Produktionsressourcen, Domains oder Credentials ohne Freigabe
-erzeugen/ändern; kein Go-live in diesem Task.
+Stop: Keine Produktionsressourcen, Domains, Provideraccounts oder Credentials
+ohne Freigabe erzeugen/ändern; kein Go-live in diesem Task.

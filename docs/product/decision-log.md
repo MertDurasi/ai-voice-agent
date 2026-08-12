@@ -1,7 +1,7 @@
 # Decision Log – Discovery und Pilot
 
 - Status: aktiv
-- Stand: 2026-08-08
+- Stand: 2026-08-11
 - Owner: Product Owner
 - Zugehörige Tasks: `D-001`, `D-002`, `D-003`
 
@@ -24,8 +24,8 @@ ausdrückliche Freigabe.
 | DEC-001 | Welches Gewerk dient als erste Discovery-Kohorte? | SHK reversibel gewählt; Elektro als Pivotoption | Ownerentscheidung für Fokus; Interviews validieren Bedarf und lösen bei negativen Signalen den Pivot aus | Product Owner | 2026-08-08 | Discovery-Fokus | decided |
 | DEC-002 | Enges ICP innerhalb des Gewerks? | Service/Reparatur 2–30 MA / Installation / gemischt | Interviewsegmente und Ausschlusskriterien | Product Owner | 2026-08-21 | D-001-Abnahme | decided |
 | DEC-003 | Welches Pilotangebot? | 8 Wochen mit 2 Wochen Akzeptanz + 6 Wochen Messung | Reaktion aus Interviews, operativer Aufwand, Partnercommitment | Product Owner | 2026-08-21 | G0 | decided |
-| DEC-004 | Primärer Textback-Kanal im Realbetrieb? | SMS als bedingte D-002-Testhypothese / WhatsApp; kein stiller Dual-Send | D-002 Scorecard, D-003 Blockerpaket und qualifizierte Prüfung in PO-004 | Product/Legal | vor realer Provideraktivierung | Realversand | open |
-| DEC-005 | Welche Call-Ereignisse gelten als „verpasst“? | Providerstatus plus Timeout/Kurzanruf-Regel | Providerfixtures und fachliche Decision Table | Product/Engineering | D-002 | E-001/M-001 | open |
+| DEC-004 | Welcher Textback-Kanal darf Voice angefordert fortsetzen oder sicher degradieren? | SMS als bedingte D-002-Testhypothese / WhatsApp; kein stiller Dual-Send | neue Voice-first-Scorecard, D-003 Blockerpaket und qualifizierte Prüfung in PO-004 | Product/Legal | vor realer Provideraktivierung | Realversand | open |
+| DEC-005 | Welche Call-/Voice-Outcomes erlauben Handoff, Callback oder Textback? | Callabbruch, explizite Callerwahl, technische Degradation und Policygründe als versionierte Decision Table | Voice-/Providerfixtures, Permission- und fachliche Zustandsmatrix | Product/Engineering/Safety | vor E-001/M-001 | G4/G5 | open |
 | DEC-006 | Wie behandeln wir Notfall-/Dringlichkeitsfälle? | freigegebener Hinweis, Suppression, priorisierter Rückruf | Legal/Safety-Review und Interviews; Erreichbarkeitsmodell | Product/Legal | D-003 | betroffener Realbetrieb | open |
 | DEC-007 | Welche Trial-/Pricing-Hypothese wird getestet? | 99 EUR netto/Monat, Sensitivität 49/149; keine Auto-Overages | PO-003 Kostenmodell und Interviewcommitments | Product/Finance | vor G0 | Pilotangebot | decided |
 | DEC-008 | Welche Supportgrenzen gelten? | Werktage 09–17, kritisch 4 Betriebsstunden, sonst 1 Arbeitstag | erwartete Fälle, Kapazität und Designpartnerfeedback | Product/Operations | vor G0 | Pilotangebot | decided |
@@ -33,16 +33,17 @@ ausdrückliche Freigabe.
 | DEC-010 | Wie werden Nummern im Pilot verbunden? | Conditional Forwarding als bedingte D-002-Testhypothese / neue Nummer / Portierung | D-002 Providerfähigkeit, Setupzeit, Verträge | Product/Engineering | vor O-002 | O-002 | open |
 | DEC-011 | Welches Attribution Window nutzt Lead-Conversion? | 24 h / 72 h / tokengebundene Lebensdauer | Pilotverhalten und Capability-Retention | Product/Data | vor B-006 | KPI-Vergleich | open |
 | DEC-012 | Welche manuellen Backoffice-Schritte sind im Pilot vertretbar? | Liste aus Product Brief, mit Zeitbudget | gemessene Support-/Onboardingzeit | Product/Operations | vor G6 | Kohortenbreite | open |
+| DEC-013 | Welches Nutzenversprechen und welche Kanalreihenfolge umfasst das MVP? | Voice als primärer, transparenter und begrenzter Anrufassistent; Textback als positiv freigegebene Fortsetzung/Fallback desselben Vorgangs; ein Gewerk, höchstens drei Intents | ausdrückliche Ownerentscheidung, `PO-001` validiert Bedarf/Intents, `V-001` Qualität/Kosten/Architektur | Product Owner | 2026-08-11 | Rebaseline `G0V` | decided |
 
 ## Bereits verbindliche Leitplanken – keine erneute D-001-Entscheidung
 
 | Referenz | Leitplanke | Neubewertung |
 |---|---|---|
-| ADR-009 | Textback vor Voice | nur durch neues ADR nach `G7` |
+| ADR-013 | Voice-first als gemeinsamer Voice-/Textback-MVP | nur durch neues ersetzendes ADR mit Product-/Safety-/Engineering-Review |
 | ADR-008 | keine Gesprächsaufzeichnung | nur mit neuem Rechts-/Risiko-/Architekturentscheid |
 | Produktstrategie | Deutschland, Deutsch, ein Gewerk, 2–30 MA als MVP-Fokus | nach Discovery-Evidenz |
 | Qualitätsbaseline | exakt null doppelte Außenwirkungen | nicht als Produkttrade-off abschwächen |
-| Security/Compliance | kein echter Versand ohne Kanal-/Rechtsfreigabe | vor Realbetrieb |
+| Security/Compliance | kein echter Call, Voice-/Textversand oder Providerweg ohne konkrete Rechts-/Safety-/Security-/Go-live-Freigabe | vor Realbetrieb |
 
 ## Entscheidungsprotokoll
 
@@ -103,6 +104,29 @@ ausdrückliche Freigabe.
   danach die Fake-/Replay-Foundation ab `F-001`.
 - Review-Trigger: jede reale Datenverarbeitung, Kanal-/Provider-/Regionänderung,
   Echtgeld, Cloudmigration oder Voice; qualifizierte Freigabe in `PO-004`.
+
+### PM-002-/G0V-Abnahme – 2026-08-11
+
+- Entscheider: Product Owner.
+- Entscheidung: Voice ist der primäre Anrufassistent des gemeinsamen MVP;
+  Textback bleibt ein integrierter, nur nach positiver Eligibility und
+  Rechtsfreigabe nutzbarer Fortsetzungs-/Fallbackkanal. Der MVP bleibt auf ein
+  Gewerk, höchstens drei validierte Intents, strukturierte Erstaufnahme und
+  Human-/Rückruf-Handoff begrenzt.
+- Evidenz: ausdrückliche Nutzerentscheidung vom 2026-08-11,
+  [ADR-013](../adr/ADR-013-voice-first-combined-mvp.md), Product Brief v2.0 und
+  das durch D-003 bereits erfasste Voice-Daten-/Abuse-Inventar.
+- Trade-off: Das Produktversprechen wird früher validiert; Scope, Kosten,
+  Latenz-, Safety-, Datenschutz- und Betriebsaufwand steigen wesentlich.
+- Nicht entschieden: Anbieter, Build-vs-Buy, Rufnummerntopologie, STT/LLM/TTS,
+  Datenregion, Budget, Texte, Rechtsgrundlage, DSFA-Ausgang oder Realbetrieb.
+- Betroffene Tasks/Gates: ersetzt `ADR-009`, verwirft die nicht angenommene
+  Textback-first-Empfehlung `ADR-012` und ordnet `V-*`, `P-*`, `G5`–`G8` neu.
+  `G0V` erlaubt nur synthetische Planung/Entwicklung; `F-005` bleibt der nächste
+  Engineering-Pull.
+- Review-Trigger: negative `PO-001`-/`V-001`-Evidenz, untragbare Kosten oder
+  Latenz, ungelöster Legal-/Safety-Blocker, fehlender Human-Handoff oder
+  kritischer Security-/Privacy-Fund.
 
 Bei einer Entscheidung wird hier ein Eintrag ergänzt:
 

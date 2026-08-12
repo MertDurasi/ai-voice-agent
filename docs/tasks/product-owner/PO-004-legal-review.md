@@ -1,22 +1,36 @@
 ---
 id: PO-004
-title: Datenschutz-, AVV- und Kommunikationsrechtsprüfung
+title: Voice-/Textback-Rechts-, Datenschutz- und DSFA-Prüfung
 phase: product-owner
 status: blocked
 priority: P0
 owner: Product/Legal
-dependencies: [D-003, selected-channel]
+dependencies: [G3]
 gate: G6
-outputs: [legal-review-record, approved-texts, processing-decisions]
+outputs: [legal-review-record, dsfa-decision, approved-texts, processing-decisions]
 completed_at: null
 ---
 
-# PO-004 – Datenschutz-/Kommunikationsrechtsprüfung
+# PO-004 – Voice-/Textback-Rechts-, Datenschutz- und DSFA-Prüfung
 
-Konkreten Kanal, Datenfluss, Providerverträge/AVV, Rollen, Rechtsgrundlagen,
-Opt-in, Transparenztexte, Retention, Transfers und DSFA-Screening durch
-qualifizierte Beratung prüfen lassen.
+## Ziel und Scope
 
-Akzeptanz: Scope/Datum/Prüfer, freigegebene Texte und Zwecke, Auflagen,
-offene/abgelehnte Flüsse und nächstes Review sind dokumentiert. Technische
-Roadmap oder allgemeine Aussagen gelten nicht als Rechtsfreigabe.
+Den konkreten kombinierten Datenfluss, Provider-/Subprozessorenkandidaten,
+AVV, Rollen, Rechtsgrundlagen, Telekommunikationsbezug, KI-Disclosure,
+Textback-Befugnis/Opt-in, Human-Fallback, Retention, Transfers und vollständige
+DSFA durch qualifizierte Beratung prüfen lassen.
+
+## Akzeptanz und Verifikation
+
+- [ ] Scope, Datum, Prüfer und betrachtete Provider-/Regionvarianten sind
+      dokumentiert.
+- [ ] Freigegebene Zwecke, Texte, Retention, Auflagen sowie offene oder
+      abgelehnte Flüsse sind maschinenlesbar auf Datenfluss und Gate bezogen.
+- [ ] Audio- und Rohtranskriptpersistenz bleiben `0`; Abweichungen stoppen den
+      Scope und benötigen eine neue Entscheidung.
+- [ ] Voice, Human-Handoff und jeder Textback-Fall sind einzeln und gemeinsam
+      bewertet.
+- [ ] Nächstes Review und verantwortete Restrisiken sind benannt.
+
+Technische Roadmap, Workshop oder allgemeine Anbieterangabe gelten nicht als
+Rechtsfreigabe.

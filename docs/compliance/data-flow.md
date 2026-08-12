@@ -1,10 +1,10 @@
 # Datenflüsse und Dateninventar
 
 - Status: `research_hypothesis`; alle Realflüsse `real_blocker`
-- Stand: 2026-08-08
+- Stand: 2026-08-11
 - Owner: Product/Privacy/Security/Engineering
 - Betreiber: `[PLATTFORMBETREIBER_OFFEN]`
-- Scope: Textback-MVP plus Datenschutzgrenzen der späteren Voice-Stufe
+- Scope: gemeinsamer Voice-first-/Textback-MVP; keine Realfreigabe
 
 ## 1. System- und Vertrauensgrenzen
 
@@ -12,9 +12,11 @@
 flowchart LR
   TU[Tenant-Nutzer] -->|OIDC / Konfiguration| APP[Web, API, Worker]
   CALLER[Anrufer] --> CARRIER[Bestands-Carrier]
-  CARRIER -->|Conditional Forwarding| CP[Telephony-/Messaging-Provider]
-  CP -->|signierter Webhook| APP
-  APP -->|SMS erst nach Freigabe| CP
+  CARRIER -->|Voice-first Routing offen| CP[Telephony-/Messaging-Provider]
+  CP -->|Audio/Call Control| VOICE[ephemere Voice Runtime]
+  VOICE -->|schema-validierte Commands| APP[Web, API, Worker / Tool Gateway]
+  CP -->|signierter Event-Webhook| APP
+  APP -->|Textback erst nach Freigabe| CP
   CP --> DEVICE[Endgerät des Anrufers]
   DEVICE -->|Capability-Link| FORM[Öffentliches Formular]
   FORM --> APP
@@ -24,31 +26,35 @@ flowchart LR
   APP --> OBS[PII-freie Telemetrie]
   DB --> BACKUP[verschlüsseltes Backup]
   APP -. synthetisch .-> FAKE[Fake/Replay + Mailpit]
-  CP -. später Audio-Stream .-> VOICE[Voice Service + Modellprovider]
+  VOICE --> STT[STT / Dialogmodell / TTS offen]
 ```
 
 Vertrauensgrenzen bestehen zwischen Browser und Produkt, öffentlichem Formular
 und Tenantbereich, Produkt und jedem Provider, Runtime und Persistenz,
 Tenantdaten und Support sowie Produktiv-, Test- und Analyticsumgebung. Carrier,
 Provider, Endgeräte, E-Mail-Postfächer und Backups besitzen eigene Kopien und
-Löschsemantiken.
+Löschsemantiken. Control Plane, ephemere Media Plane und Effect Plane sind
+separate Trust Boundaries. Telefonie-, STT-, Dialogmodell- und TTS-Anbieter
+werden je juristischer Einheit betrachtet; eine gemeinsame Marke hebt diese
+Grenzen nicht auf.
 
 ## 2. Ende-zu-Ende-Flows
 
 | ID | Modus | Ablauf | Datenklassen | Status und Gate |
 |---|---|---|---|---|
-| `FLOW-00` | fake | synthetisches Replay -> Inbox/Call -> Outbox/Queue -> Eligibility -> Fake Message/Callback -> synthetisches Formular/Lead -> Mailpit/Audit | `DATA-08`–`DATA-20`, `DATA-27` | erlaubt; Egress zu Telefon, SMS, ESP und Payment technisch verweigern |
+| `FLOW-00` | fake | synthetischer Inbound Call -> simuliertes Audio -> KI-Hinweis -> begrenzter Dialog/Handoff -> schema-validierter Lead-Command -> gemeinsamer synthetischer Lead -> optional positive Fake-Textback-Eligibility -> Fake Message/Formular -> Mailpit/Audit | `DATA-08`–`DATA-20`, `DATA-27`, `DATA-V01`–`DATA-V09` | nach jeweiligem Gate erlaubt; Egress zu Telefon, Voice-, Modell-, SMS-, ESP- und Paymentprovidern technisch verweigern |
 | `FLOW-01` | fake/real | Nutzer -> Keycloak OIDC Code/PKCE -> sichere Websession -> API -> Membership/Tenant-Kontext -> Audit | `DATA-01`–`DATA-04`, `DATA-18`, `DATA-19`, `DATA-26` | Realbetrieb erst ab `G2`; Providerwahl nicht erforderlich |
-| `FLOW-02` | fake/real | Tenant-Nutzer -> Betriebsprofil, Nummer, Templates und Regeln -> Versionierung/Audit -> Testverifikation -> Aktivierung | `DATA-04`–`DATA-07`, `DATA-18`, `DATA-25` | nur Fake-Aktivierung bis Nummern-, Template- und Legal-Freigabe |
-| `FLOW-03` | real | Caller -> Carrier -> bedingte Weiterleitung -> CPaaS -> Signaturprüfung -> kurzlebige Inbox -> kanonischer Call -> MissedCall-Outbox | `DATA-05`, `DATA-08`–`DATA-10`, `DATA-24`–`DATA-26` | `real_blocker`: TDDDG/TKG, Provider, Nummernmodell, DPA/TIA und Accounttests offen |
-| `FLOW-04` | real | MissedCall -> Eligibility/Suppression/Entitlement -> Message/Usage atomar -> Queue -> Provider/Carrier -> Endgerät -> Statuscallback | `DATA-06`, `DATA-07`, `DATA-10`–`DATA-13`, `DATA-18`–`DATA-21` | `real_blocker`: erste SMS, Absender, Widerspruch und Kosten ungeklärt |
+| `FLOW-02` | fake/real | Tenant-Nutzer -> Betriebsprofil, Nummer/Routing, Voice-Policy, KnowledgeSnapshot, Disclosure/Handoff, Textbackregeln -> Versionierung/Audit -> Voice-/Text-Faketest -> Aktivierung | `DATA-04`–`DATA-07`, `DATA-18`, `DATA-25`, `DATA-V03`–`DATA-V05` | nur Fake-Aktivierung bis Nummern-, Voice-, Template-, DSFA- und Legal-Freigabe |
+| `FLOW-03` | real | Caller -> Carrier -> noch zu entscheidendes Voice-first-Routing -> CPaaS -> authentisierte Call-/Media-Session -> kanonischer Call/VoiceSession | `DATA-05`, `DATA-08`–`DATA-10`, `DATA-24`–`DATA-26`, `DATA-V01`, `DATA-V07`, `DATA-V08` | `real_blocker`: TDDDG/TKG, Topologie, Providerkette, DPA/TIA, No-Retention und Accounttests offen |
+| `FLOW-04` | real | expliziter Voice-Textwunsch oder freigegebener unvollständiger CallOutcome -> Channel-Eligibility/Permission/Suppression/Entitlement -> Message/Usage atomar -> Provider/Carrier/Endgerät -> Statuscallback | `DATA-06`, `DATA-07`, `DATA-10`–`DATA-13`, `DATA-18`–`DATA-21`, `DATA-V03` | `real_blocker`: erste SMS, In-call-Permission, Absender, Widerspruch und Kosten ungeklärt |
 | `FLOW-05` | fake/real | Capability-Link -> Tokenprüfung/-exchange -> minimales Formular -> idempotente Submission -> Lead -> Tenant-Dashboard | `DATA-12`, `DATA-14`–`DATA-16`, `DATA-18`–`DATA-20` | Fake erlaubt; real erst mit Transparenz, Feldminimum, Retention und Security-Abnahme |
 | `FLOW-06` | fake/real | Lead -> minimale E-Mail/tenantgebundener Link; Fachereignisse -> Audit, pseudonyme Analytics und PII-freie Telemetrie | `DATA-17`–`DATA-21`, `DATA-23`, `DATA-24` | Mailpit/Fake erlaubt; realer ESP und Analyticsanbieter separat freigeben |
 | `FLOW-07` | fake/real | verifizierte Anfrage -> systemweites Lookup -> Export oder idempotente Löschung/Suppression -> Provider-/Backup-Nachlauf -> inhaltloser Nachweis | `DATA-07`, `DATA-18`, `DATA-22`–`DATA-25` | Prozessentwurf; produktive Ausführung erst nach `B-004`/`PO-004` |
-| `FLOW-V01` | voice | Caller/Telephony -> flüchtige Audioframes -> STT -> flüchtiges Transkript -> Dialog/LLM/Tools -> TTS -> Caller | `DATA-V01`–`DATA-V03`, `DATA-V07`, `DATA-V08` | vor `G7` nur synthetisch; real benötigt DSFA, Legal, Safety und Providerfreigabe |
-| `FLOW-V02` | voice | KI-Hinweis -> Nachweis/Alternativpfad -> Safety-Klassifikation/Handoff -> optional freigegebene strukturierte Summary | `DATA-V04`–`DATA-V07` | Summary erst nach `V-004`; Rohdatenpersistenz verboten |
+| `FLOW-V01` | voice | Caller/Telephony -> flüchtige Audioframes -> STT -> flüchtiges Transkript -> begrenzte Dialog-State-Machine/Modell -> TTS -> Caller | `DATA-V01`–`DATA-V03`, `DATA-V07`, `DATA-V08` | synthetisch nach `G0V` und technischen Abhängigkeiten; real benötigt vollständige DSFA, Legal, Safety, Security und Providerfreigabe |
+| `FLOW-V02` | voice | nicht überspringbarer KI-Hinweis -> Alternativpfad -> Safety-/Confidence-Policy -> DTMF/Sprach-Handoff oder kontrolliertes Ende | `DATA-V03`–`DATA-V05`, `DATA-V07` | vor Realanruf unabhängig freigeben; keine generative Verzögerung nach Safety-Trigger |
+| `FLOW-V03` | voice/fake | bestätigte strukturierte Voice-Felder -> tenant-/sessiongebundener ToolGateway-Command -> idempotent genau ein Lead -> optional `TextbackRequested` in `FLOW-04` | `DATA-10`, `DATA-15`, `DATA-16`, `DATA-18`–`DATA-21`, `DATA-V03`, `DATA-V06`, `DATA-V07` | synthetisch erlaubt nach Isolation/Use-Case-Vertrag; Summary real erst nach `V-004`/DSFA/Legal; Rohdatenpersistenz verboten |
 
-## 3. Textback-MVP-Dateninventar
+## 3. Gemeinsames MVP-Dateninventar
 
 ### 3.1 Fachliche und technische Zuordnung
 
@@ -58,13 +64,13 @@ Löschsemantiken.
 | `DATA-02` | fake/real | OIDC-Subjekt, Name/E-Mail, Passwort-Hash beim IdP, MFA/Recovery, Session-, Login-, IP-/Gerätesicherheitsdaten | Tenant-Nutzer, Support | Nutzer -> Keycloak/Web/API | `PUR-02`, `PUR-08` | Identity/Security; Nutzer, Identity-Admin, Security-JIT |
 | `DATA-03` | fake/real | Membership, Tenant-Referenz, Rolle, Einladung, Aktivität, Rollenänderung | Tenant-Nutzer | Tenant-Owner/API -> PostgreSQL | `PUR-01`, `PUR-02` | Tenancy; Tenant-Owner, autorisierte Nutzer, Audit |
 | `DATA-04` | fake/real | Betriebsprofil, Anschrift/Kontakt, Eskalationskontakt, Öffnungszeiten, Feiertage, Zeitzone, Version | Inhaber, Mitarbeitende | Tenant-Nutzer -> Onboarding/PostgreSQL | `PUR-03` | Onboarding/Config; Tenantrollen, Support nur JIT |
-| `DATA-05` | real | Tenant-E.164 verschlüsselt plus Suchhash, Provider-/Routingref, Besitz-/Verifikationsnachweis, Forwardingstatus | Anschlussinhaber, Tenant | Tenant/Provider -> Config/PostgreSQL/Provider | `PUR-03`, `PUR-04` | Config/Telephony; Tenant-Admin, Provider-Adapter, Support-JIT |
+| `DATA-05` | real | Tenant-E.164 verschlüsselt plus Suchhash, Provider-/Routingref, Besitz-/Verifikationsnachweis, Voice-first-/Handoff-Routingstatus | Anschlussinhaber, Tenant | Tenant/Provider -> Config/PostgreSQL/Provider | `PUR-03`, `PUR-04` | Config/Telephony; Tenant-Admin, Provider-Adapter, Support-JIT |
 | `DATA-06` | fake/real | Template-, Link-, Hinweis- und Policyversion, Variablen, Kanal, Ruhezeit, Cooldown, Aktivierungsactor/-zeit | Caller, Tenant-Nutzer | Product/Legal/Tenant -> Config/PostgreSQL | `PUR-03`, `PUR-05` | Product/Config/Legal; versionierte freigegebene Bearbeitung |
 | `DATA-07` | real | `CommunicationPermissionEvidence`: Nummernhash/verschlüsselt, Zweck, Kanal, Quelle, Policyversion, Status, Widerspruch/Suppression | Caller | Caller/Tenant/Support -> Compliance/PostgreSQL | `PUR-05`, `PUR-11` | Compliance; minimaler Fachzugriff, kein pauschales Consent-Modell |
 | `DATA-08` | fake/real | Webhook Raw Body mit From/To, Header ohne Secrets, Provider-/Event-ID, IP, Empfangszeit, Body-/URL-Hash, Validierungsstatus | Caller, Tenant | Provider/Fake -> Inbound Adapter/Inbox | `PUR-04`, `PUR-08` | Telephony/Security; Adapter, eingeschränkte Ops |
-| `DATA-09` | fake/real | Call/CallEvent: interne/provider IDs, From/To E.164 plus Hash, Richtung, Status, Sequenz, Zeit/Dauer, Missed Reason, Correlation | Caller, Tenant | Inbox -> Telephony/PostgreSQL | `PUR-04` | Telephony; Tenant-Fachzugriff minimiert, Ops nur Metadaten |
+| `DATA-09` | fake/real | Call/CallEvent: interne/provider IDs, From/To E.164 plus Hash, Richtung, Call-/Leg-/Outcome-Status, Sequenz, Zeit/Dauer, Correlation | Caller, Tenant | Inbox/Call Control -> Telephony/PostgreSQL | `PUR-04` | Telephony; Tenant-Fachzugriff minimiert, Ops nur Metadaten |
 | `DATA-10` | fake/real | Inbox/Outbox/Job: IDs, Typ, Tenantref, Idempotency Key, Retry/Lease, Fehlercode, DLQ-/Requeue-Actor und Grund | indirekt Caller/Tenant | App -> PostgreSQL/Redis | `PUR-08` | Engineering/Ops; IDs statt Payload/PII |
-| `DATA-11` | fake/real | Eligibility/TextbackAttempt: Konfig-/Policyversion, Callref, Nummernhash, Cooldown, Entitlement, Entscheidung/Reason, Zustand/Zeit | Caller, Tenant | Textback Engine -> PostgreSQL | `PUR-05`, `PUR-08` | Textback; Tenant-Lesezugriff, Engineering über Reason Codes |
+| `DATA-11` | fake/real | ChannelEligibility/Attempt: Voice-Outcome-/Caller-Intentref, Konfig-/Permission-/Policyversion, Callref, Nummernhash, Cooldown, Entitlement, Entscheidung/Reason, Zustand/Zeit | Caller, Tenant | Channel Orchestrator -> PostgreSQL | `PUR-05`, `PUR-08` | Textback/Compliance; Tenant-Lesezugriff, Engineering über Reason Codes |
 | `DATA-12` | fake/real | Conversation/Message: Zielnummer verschlüsselt, Templateversion, Renderhash, Kanal, Idempotency Key, Status; Capability nur im Klartext zum Empfänger, serverseitig starker Hash/Binding/Expiry | Caller | Textback -> PostgreSQL/Provider/Endgerät | `PUR-05`, `PUR-06` | Conversations; Provider-Adapter, Tenanttimeline ohne Token |
 | `DATA-13` | fake/real | ProviderMessageId, DLR/Status, Zeit, Fehlerklasse/-code, Segment-/Kostenmetadaten, Callbackhash | Caller, Tenant | Provider/Fake -> Inbox/Message/Billing | `PUR-05`, `PUR-08`, `PUR-10` | Messaging/Ops/Billing; DLR nicht als Personenbeweis |
 | `DATA-14` | fake/real | Formularsecurity: Token-Eingabe/Exchange, Session/CSRF, IP, User-Agent, Rate-/Bot-Signale, Zeit | Formularnutzer | Browser -> Edge/API/kurzer Security Store | `PUR-02`, `PUR-06`, `PUR-08` | Security/Public Form; keine Dritttracker, Token aus Logs/Referrer |
@@ -102,8 +108,9 @@ Löschsemantiken.
 
 ## 4. Voice-Dateninventar
 
-Voice bleibt bis `G7` außerhalb jeder realen Verarbeitung. Die folgende
-Inventur setzt Datenschutzgrenzen, ohne Provider oder Implementierung zu wählen.
+Voice ist primärer MVP-Pfad, bleibt aber bis zum kombinierten Pilot-Gate
+außerhalb jeder realen Verarbeitung. Die folgende Inventur setzt unmittelbare
+MVP-Datenschutzgrenzen, ohne Provider oder Implementierung zu wählen.
 
 | ID | Datenart/Flow | Zweck/Owner/Zugriff | Speicher und externe Kopie | Rolle/Sensitivität | Retention | Status/Blocker |
 |---|---|---|---|---|---|---|
@@ -112,7 +119,7 @@ Inventur setzt Datenschutzgrenzen, ohne Provider oder Implementierung zu wählen
 | `DATA-V03` | Policy-/Promptversion, Dialogzustand, Toolargument/-ergebnis, Bestätigung | `PUR-V01`, `PUR-V02`; Runtime/Tool Gateway | Inhalt nur Memory; in Audit nur Version, State, Resultcode | hoch; Tenant voraussichtlich Verantwortlicher | `RET-V00`, Metadaten `RET-08` | Prompt-/Toolvertrag erst nach `V-001`/`V-003` |
 | `DATA-V04` | KI-Hinweis: Textversion, erreicht/abgelehnt, Zeit, Fallback | `PUR-V01`; Compliance/Product | minimales Ereignis in Audit/PostgreSQL, kein Audio | vertraulich; Rollen zu prüfen | `RET-08` | Art.-50-Text und Alternativweg freigeben |
 | `DATA-V05` | Safety: Regelhit/Score/Reason, DTMF, Transferziel/-status, Handoff-/Incidentmetadaten | `PUR-V02`; Safety/Human Handoff | PII-arm in Audit/Incident Store; keine Audiosequenz | sehr hoch; Notfall-/Gesundheitsbezug möglich | `RET-08`, exakte Frist Legal | vollständige Safety-/Legal-Abnahme erforderlich |
-| `DATA-V06` | strukturierte Summary, Unsicherheit, Feldherkunft, menschliche Korrekturhistorie | `PUR-V03`; Tenantnutzer/Leads | erst nach Freigabe PostgreSQL/Backup; kein wörtliches Transkript | hoch bis sehr hoch; Tenant voraussichtlich Verantwortlicher | `RET-V01` | `real_blocker` bis `V-004`/DSFA/Legal |
+| `DATA-V06` | strukturierte Summary mit `value`/`unknown`, Confidence, Caller-Bestätigung, Policy-/Schemaversion und menschlicher Korrekturhistorie | `PUR-V03`; Tenantnutzer/Leads | erst nach Freigabe PostgreSQL/Backup; kein Wortlaut und keine rekonstruierbare Audio-/Rohtext-/Quellsegmentreferenz | hoch bis sehr hoch; Tenant voraussichtlich Verantwortlicher | `RET-V01` | `real_blocker` bis `V-004`/DSFA/Legal/Safety |
 | `DATA-V07` | Session-/Provider-ID, Latenz, Audiolänge, Token/Zeichen, Kosten, Fehler | `PUR-V03`, `PUR-10`; Ops/Billing | PII-freie Metrik plus minimales Usage Ledger | pseudonym/vertraulich | `RET-08`, `RET-11` | Reidentifikation/Providerkopie prüfen |
 | `DATA-V08` | ephemere Credentials, Buffer, Sessionkey | `PUR-V01`, `PUR-08`; Runtime/Security | Memory/Secret Store, kein Log/Backup | kritisch | `RET-V00` | Cleanup-/Leak-Test vor jeder Freigabe |
 | `DATA-V09` | synthetisches Testkorpus und Annotationen | `PUR-12`; QA/Safety | versionierter geschützter Testbestand | synthetisch | `RET-00` | keine echten oder pseudonymisierten Produktivgespräche als Testdaten |
@@ -144,10 +151,11 @@ Inventur setzt Datenschutzgrenzen, ohne Provider oder Implementierung zu wählen
 |---|---|---|
 | Betreiberidentität und Rollen je Zweck | Product/Legal | vor Datenschutzinformation, AVV oder Realbetrieb |
 | SMS-Einordnung, Absender, Widerspruch und Suppressionsnachweis | Product/Legal | blockiert `FLOW-04` |
-| TDDDG-/TKG-Rolle und Nutzung erfolgloser Anrufdaten | Legal/Provider | blockiert `FLOW-03`/`FLOW-04` |
-| Missed-Call-Regel | Product/Engineering (`DEC-005`) | vor `E-001`/Realbetrieb |
+| TDDDG-/TKG-Rolle für Call-, Media-, Transfer- und erfolglose Verbindungsdaten | Legal/Provider | blockiert `FLOW-03`/`FLOW-04`/`FLOW-V01` |
+| Voice-first-Nummerntopologie, Original-Caller-ID, Call-Legs und Ausfallrouting | Product/Engineering/Legal (`V-001`) | vor Anbieterentscheid/Realbetrieb |
+| CallOutcome-/Kanalwechselregel | Product/Engineering/Safety (`DEC-005`) | vor `E-001`/`M-001`/Realbetrieb |
 | Formularminimum/Freitext | Product/Privacy (`DEC-009`) | vor `M-005` |
 | Token-/Attribution-Lebensdauer | Product/Data (`DEC-011`) | vor `M-005`/`B-006` |
 | Notfalltext und menschlicher Pfad | Product/Legal/Safety (`DEC-006`) | vor Formular- oder Voice-Realbetrieb |
 | Provider-/ESP-/Hosting-/Analytics-Subprozessoren und Transfers | Legal/Security | vor jeweiliger externer Verbindung |
-| Voice-Provider, AI-Act-Rolle und No-Retention/No-Training | Product/Legal/Security | nach `G7`, vor `V-002`/Realanruf |
+| Telefonie-/STT-/Dialogmodell-/TTS-Rollen, vollständige DSFA, AI-Act-Disclosure und No-Retention/No-Training | Product/Legal/Safety/Security | vor jedem Voice-Realanruf |

@@ -2,7 +2,7 @@
 id: F-005
 title: CI-Baseline und Supply Chain
 phase: foundation
-status: ready
+status: review
 priority: P0
 owner: Engineering/Security
 dependencies: [F-001, F-002, F-003, F-004]
@@ -26,11 +26,53 @@ Artefaktaufbewahrung. Actions/Images pinnen, minimale CI-Berechtigungen nutzen.
 
 ## Akzeptanz und Verifikation
 
-- [ ] Defekter Test, Typfehler und Migrationsdrift blockieren Merge.
-- [ ] Undokumentiertes Critical Finding blockiert Merge.
-- [ ] CI nutzt Frozen Lockfile, minimale Rechte und gepinnte Referenzen.
-- [ ] SBOM und relevante Reports sind nachvollziehbare Artefakte ohne Secrets.
-- [ ] Negativfixtures beweisen die wichtigsten Blockierregeln.
+- [x] Defekter Test, Typfehler und Migrationsdrift blockieren Merge.
+- [x] Undokumentiertes Critical Finding blockiert Merge.
+- [x] CI nutzt Frozen Lockfile, minimale Rechte und gepinnte Referenzen.
+- [x] SBOM und relevante Reports sind nachvollziehbare Artefakte ohne Secrets.
+- [x] Negativfixtures beweisen die wichtigsten Blockierregeln.
 
 Gate-Nachweis: sauberer Setup-Lauf, alle Apps healthy, CI grün und kein Secret
 im Repo. Keine automatische Produktionsauslieferung hinzufügen.
+
+## Lieferobjekte
+
+- [GitHub-Workflow](../../../.github/workflows/ci.yml)
+- [ausführbarer CI-/Supply-Chain-Vertrag](../../operations/ci-supply-chain.md)
+- `tooling/ci/`: Workflow-, Image-, Migrations-, Finding- und Artefaktpolicy
+- `tooling/security/`: gehärteter Secret-Scanner einschließlich
+  YAML-, Marker-Bypass- und NUL-Negativfällen
+- CycloneDX-1.7-SBOM, Dependency-/Filesystem-/Containerreports und
+  SHA-256-Manifeste als kurzlebige CI-Artefakte
+
+## Lokaler Nachweis vom 2026-08-11
+
+Unter Node `24.18.0` und pnpm `11.20.0` sind erfolgreich:
+
+- Frozen Install und Dependency-Audit ohne bekannte Schwachstelle;
+- Workflow-/Image-/Migrationspolicy einschließlich Guard-Ausführung;
+- 16 CI-/Migrations-/Finding-/Artefakt-Policytests;
+- 7 Secret-Scanner-Tests und Arbeitsbaum-/Git-History-Scan mit genau einem
+  synthetischen Canary, ohne unerwartetes Finding;
+- vollständiges `ci:quality`: Format, Lint, Typecheck, Unit-/Architektur-/
+  OpenAPI-/Runtime-Integrationstests, E2E-Runner und Build;
+- native CycloneDX-1.7-SBOM-Erzeugung und Parserprüfung;
+- Healthprüfung aller fünf lokalen Infrastrukturservices.
+
+Der Workflow pusht, publiziert und deployt nichts. Reale Provider-, Voice-,
+Textback-, Payment- und Produktionspfade bleiben deaktiviert.
+
+## Reviewgrenze und Owner-Nachweis
+
+Die lokale Implementierung ist reviewbereit, aber `G1` bleibt offen: Der neue
+Workflow wurde noch nicht auf GitHub ausgeführt und kann lokal weder den
+gehosteten Trivy-/Containerlauf noch einen Branch-Ruleset beweisen. Vor `done`
+benötigt der Repository-Owner:
+
+1. Push/PR und einen grünen Lauf von `CI / Merge gate`;
+2. einen `main`-Ruleset mit diesem Required Check, aktuellem Branch, ohne
+   Admin-Bypass, Force-Push oder Branch-Löschung;
+3. den Link auf Lauf und Ruleset als Gate-Nachweis.
+
+Der vorhandene fremde Arbeitsbaumstand in `apps/web/next-env.d.ts` wurde nicht
+bereinigt oder als Taskartefakt beansprucht.

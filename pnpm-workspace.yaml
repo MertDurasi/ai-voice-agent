@@ -12,3 +12,8 @@ allowBuilds:
   '@scarf/scarf': false
   esbuild@0.28.1: true
   unrs-resolver@1.12.2: true
+
+overrides:
+  # @nestjs/swagger currently resolves the affected 5.2.1 release; keep the
+  # compatible patched transitive version until upstream no longer needs this.
+  'js-yaml@>=5.0.0 <=5.2.1': 5.2.3

@@ -1,11 +1,19 @@
 # ADR-012 – Pilotprovider und primärer Textback-Kanal
 
-- Status: proposed
+- Status: superseded
 - Datum: 2026-08-08
 - Entscheider: Product Owner, Engineering, Legal/Privacy
 - Ersetzt: –
-- Ersetzt durch: –
+- Ersetzt durch: [ADR-013](ADR-013-voice-first-combined-mvp.md) für Produkt- und
+  Routingstrategie; neuer Providerentscheid folgt aus `V-001`
 - Task: `D-002`
+
+> Historische, nicht angenommene Spike-Empfehlung: Die Scorecard bleibt als
+> Evidenz erhalten. Der vorgeschlagene Textback-first-/Conditional-Forwarding-
+> Pfad kann nach der Voice-first-Entscheidung nicht mehr in dieser Form
+> akzeptiert werden. `V-001` bewertet Voice-Orchestrierung, Telefonietopologie,
+> Textback und Provider unter identischen neuen Kriterien; bis dahin bleibt
+> ausschließlich Fake-/Replay-Betrieb aktiv.
 
 ## Kontext
 

@@ -8,6 +8,13 @@
 - Vergleich: Twilio vs. Vonage; SMS vs. WhatsApp
 - Entscheidungsstatus: Empfehlung, keine Anbieter-/Vertragsfreigabe
 
+> Historischer Scope: Diese Scorecard belegt den damaligen
+> Missed-Call-/Textback-Spike `D-002`. Seit `ADR-013` ist Voice der primäre
+> MVP-Anrufpfad. Die untenstehende Conditional-Forwarding- und SMS-Empfehlung
+> ist dafür weder eine Anbieter- noch eine Nummern- oder Runtimeentscheidung.
+> `V-001` muss den Voice-first-Pfad neu bewerten; bis dahin bleiben alle
+> Provideradapter Fake-/Replay-only.
+
 ## 1. Ergebnis in Kürze
 
 Für einen kontrollierten Pilot ist derzeit folgende Kombination am besten
@@ -33,6 +40,9 @@ Die Empfehlung ist nur dann freigabefähig, wenn die offenen Tests aus Abschnitt
 
 ### 2.1 Pilotkontext
 
+Die folgenden Annahmen dokumentieren den Stand von `D-002` und gelten nicht
+als aktueller Voice-first-Pilotscope.
+
 - SHK-Service-/Reparaturbetriebe mit 2–30 Mitarbeitenden
 - Deutschland, deutschsprachig
 - eine Rufnummer je Tenant
@@ -41,7 +51,31 @@ Die Empfehlung ist nur dann freigabefähig, wenn die offenen Tests aus Abschnitt
 - kein Voice-Agent und keine Aufzeichnung
 - keine echte Nachricht ohne separate Rechts-/Kanal-/Go-live-Freigabe
 
-### 2.2 Rufnummern-Topologien
+### 2.2 Zusätzlicher Entscheidungsbedarf für Voice-first
+
+`V-001` vergleicht Build-vs-Buy und Anbieterketten Ende-zu-Ende, mindestens
+anhand dieser Kriterien:
+
+- Primärnummer, Portierung oder SIP-/unconditional Routing inklusive
+  Original-Caller-ID, Ausfallroute, Transfer-Leg und Port-out;
+- bidirektionales Media Streaming, Sessionauthentisierung, DTMF, Barge-in,
+  Reconnect, Transfer und kontrolliertes Beenden;
+- de-DE-Qualität inklusive Fachbegriffen, Namen, Zahlen und relevanten
+  Dialekten für STT und TTS;
+- Rollen, Regionen, Subprozessoren und Transfers für Telephony, STT, Modell
+  und TTS je juristischer Einheit;
+- vertraglich und technisch belegtes No-Retention/No-Training für Audio,
+  Rohtranskript, Prompts und Modellinhalte;
+- Antwort-, Turn- und Transferlatenz, Parallelität, Verfügbarkeit,
+  Kosten/Minute und Kosten/Call sowie harte Budgetgrenzen;
+- Portabilität der Rufnummer, kanonische providerneutrale Verträge,
+  Failover, Datenexport/-löschung und Exitkosten.
+
+Für synthetische Tests ist eine dedizierte Testnummer die reversible
+Topologiehypothese. Vor einem Realtest sind Anbieter, Account, Nummer,
+Datenflüsse, Budget, DSFA, Legal, Safety und Security separat freizugeben.
+
+### 2.3 Historische Rufnummern-Topologien aus D-002
 
 | Topologie | Beschreibung | Vorteil | Hauptrisiko | Pilotvotum |
 |---|---|---|---|---|

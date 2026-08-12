@@ -1,22 +1,34 @@
 ---
 id: PO-003
-title: Providerkosten- und Preissensitivitätsmodell
+title: Voice-/Textback-Kosten- und Preissensitivitätsmodell
 phase: product-owner
-status: ready
+status: blocked
 priority: P0
 owner: Product/Finance
-dependencies: [D-002]
-gate: G0
-outputs: [cost-model, sensitivity-scenarios]
+dependencies: [D-002, V-001]
+gate: G3
+outputs: [cost-model, sensitivity-scenarios, pilot-budget-cap]
 completed_at: null
 ---
 
-# PO-003 – Providerkosten- und Preissensitivitätsmodell
+# PO-003 – Voice-/Textback-Kosten- und Preissensitivitätsmodell
 
-Fixe und variable Kosten je aktivem Tenant, 100 Missed Calls, Nachricht, Lead
-und Supportstunde modellieren. Low/Base/High-Szenarien mit Volumen, Zustellrate,
-Fallback und Anbieterpreisdatum berechnen.
+## Ziel und Scope
 
-Akzeptanz: Quellen/Annahmen, Bruttomarge, Break-even, größte Sensitivitäten und
-Reviewdatum sind sichtbar. Noch keine finale Preis- oder Anbieterfreigabe
-ableiten.
+Fixe und variable Kosten je aktivem Tenant, Voice-Minute/-Session, Call,
+Handoff, Textback, Lead und Supportstunde modellieren. Low/Base/High-Szenarien
+nutzen die gemessenen Bandbreiten aus `V-001` und berücksichtigen Telefonie,
+STT/LLM/TTS beziehungsweise Managed Runtime, Messaging, Degradation und
+Sessionlimits providerneutral.
+
+## Akzeptanz und Verifikation
+
+- [ ] Quellen, Preisdatum, Annahmen und noch nicht vergleichbare Einheiten sind
+      sichtbar.
+- [ ] Kosten pro Minute, Session, Call und verwertbarem Lead sowie Bruttomarge
+      und Break-even sind als Bandbreiten berechnet.
+- [ ] Volumen, Dialogdauer, Transfer-/Textbackquote, Support und Providerfehler
+      besitzen Sensitivität und Stopwerte.
+- [ ] Ein harter synthetischer/Pilot-Budget-Cap ist als Ownerentscheidung
+      vorbereitet.
+- [ ] Das Modell erteilt weder finale Preis- noch Anbieter-/Budgetfreigabe.

@@ -1,27 +1,32 @@
 # Gate-Status
 
-Stand: 2026-08-10
+Stand: 2026-08-11
 
 | Gate | Status | Voraussetzungen | Freigabe/Datum | Nachweis |
 |---|---|---|---|---|
-| G0 Discovery | passed | D-001–D-003; reversible SHK-/Angebots-/SMS-Hypothesen; realistischer synthetischer Replay-Pfad; Realbetriebsblocker sichtbar | Product Owner / 2026-08-08 | [D-003](../tasks/discovery/D-003-privacy-abuse-workshop.md), [Compliance-Paket](../compliance/README.md), [D-002-Abnahme](../product/decision-log.md) |
-| G1 Skelett | open | F-001–F-005; Setup reproduzierbar, Apps healthy, CI grün, keine Secrets | – | – |
-| G2 Isolation | blocked_by_G1 | T-001–T-004; Cross-Tenant-Negativsuite und Rollenmatrix | – | – |
-| G3 Konfiguration | blocked_by_G2 | O-001–O-004; Onboarding-E2E, Versionierung und Audit | – | – |
-| G4 Call Ingestion | blocked_by_G3 | E-001–E-004; 1.000 Fixtures ohne Verlust/Duplikat, Restart-Tests | – | – |
-| G5 Textback MVP | blocked_by_G4 | M-001–M-007; kompletter Audit-/Trace-Pfad und 24-h-Soak | – | – |
-| G6 Pilotbereit | blocked_by_G5 | B-001–B-006; Recht/Security, Restore, Runbooks, fünf Designpartner | – | – |
-| G7 Voice Go/No-Go | blocked_by_pilot_data | P-001–P-004 und datengestützter Entscheid | – | – |
-| G8 Voice produktionsreif | blocked_by_G7 | V-001–V-008; unabhängige Abnahme von Recht, Qualität, Sicherheit, Handoff, Marge | – | – |
+| G0 Discovery | passed | D-001–D-003; reversible SHK-/Angebots-/Kanalhypothesen; realistischer synthetischer Replay-Pfad; Realbetriebsblocker sichtbar | Product Owner / 2026-08-08 | [D-003](../tasks/discovery/D-003-privacy-abuse-workshop.md), [Compliance-Paket](../compliance/README.md), [D-002-Abnahme](../product/decision-log.md) |
+| G0V Voice-first Rebaseline | passed | PM-002; akzeptierte Voice-first-Entscheidung und ADR-013; Produkt-, Architektur-, Compliance-, Roadmap-, Gate- und Taskdelta konsistent; ausschließlich Fake-/Replay-Scope | Product Owner / 2026-08-11 | [PM-002](../tasks/project-management/PM-002-voice-first-mvp-rebaseline.md), [ADR-013](../adr/ADR-013-voice-first-combined-mvp.md), [Product Brief v2.0](../product/product-brief.md), [Compliance](../compliance/README.md) |
+| G1 Skelett | open | F-001–F-005; Setup reproduzierbar, Apps healthy, CI grün, keine Secrets | – | [F-005 lokal reviewbereit; GitHub-Lauf/Ruleset offen](../tasks/foundation/F-005-ci-supply-chain.md) |
+| G2 Isolation | blocked_by_G1 | T-001–T-004; Cross-Tenant-Negativsuite und Rollenmatrix; `G0V` bestanden | – | – |
+| G3 Voice+Text Configuration | blocked_by_G2_and_product_checkpoint | `PO-001`–`PO-003`; `V-001` benchmarkt Anbieter-/Build-vs-Buy-/Runtimeoptionen ohne Vorentscheidung; O-001–O-004; kombinierter Fake-Onboarding-E2E, Versionierung und Audit | – | – |
+| G4 Realtime Telephony & Media | blocked_by_G3 | E-001–E-004, V-002 und V-005; providerneutrale Call-/Media-Verträge, authentisierter Fake-/Replay-Ingress, kanonisches CallOutcome, Session-Cleanup sowie Restart-/Lastnachweise | – | – |
+| G5 Combined Assistant MVP (synthetisch) | blocked_by_G4 | V-003, V-004, V-006, V-007 und M-001–M-007; synthetischer Voice→CallOutcome→optional-Textback→ein-Lead-Golden-Path; Disclosure, Handoff, Idempotenz und 24-h-Soak; keine Audio-/Rohtranskriptpersistenz | – | – |
+| G6 Pilot Ready | blocked_by_G5 | B-001, B-002 und B-004–B-006; V-008; P-001; PO-004–PO-006; konkrete Legal-/DSFA-/Safety-/Security-/Provider-/Budgetnachweise, Restore, Runbooks, Kill Switch und Designpartner | – | – |
+| G7 Controlled Voice+Text Pilot | blocked_by_G6_and_explicit_approvals | P-002, P-003 und PO-009; explizite Provider-, Vertrags-, Legal-, Safety-, Security-, Budget- und Go-live-Freigaben; kontrollierte Kohorten mit Stop-/Rollbacknachweis | – | – |
+| G8 Post-pilot Continue/Scale | blocked_by_sufficient_pilot_evidence | P-004 und PO-010; ausreichende kombinierte Voice-/Textback-Evidenz zu Nutzen, Qualität, Handoff, Safety, Support, Kosten und Incidents; expliziter `stop | continue | scale`-Entscheid | – | – |
 
 ## Nächste zulässige Arbeit
 
-- Engineering `Now`: `F-005` als nächster Pull-Kandidat nach abgeschlossenem
-  `F-004`; `G1` bleibt bis zum CI-/Supply-Chain-Nachweis offen.
-- Product/Discovery `Now`: `PO-001`; danach nacheinander `PO-002`, `PO-003`
+- Engineering `Now`: `F-005` bleibt im Review, bis der erste grüne GitHub-Lauf
+  und der Required Ruleset nachgewiesen sind; `G1` bleibt offen.
+- Product/Discovery `Now`: `PO-001` als erster Evidenz-Pull nach bestandenem
+  `G0V`.
+- `PO-002`, `V-001` und `PO-003` werden anschließend WIP-gesteuert gezogen.
+  Kein Ergebnis aus `V-001` aktiviert einen echten Provider.
 
-`G0` entsperrt ausschließlich die reversible Fake-/Replay-Foundation. Es ist
-keine Kanal-, Provider-, Rechts- oder Realbetriebsfreigabe.
+`G0` bleibt ein historischer, bestandener Discovery-Nachweis. Weder `G0` noch
+`G0V` ist eine Kanal-, Provider-, Rechts-, Vertrags-, Budget- oder
+Realbetriebsfreigabe.
 
 Ein Gate wird erst geschlossen, wenn Freigabeperson, Datum und Links auf
 Testberichte, Entscheidungen oder Reviews in der Tabelle ergänzt sind.

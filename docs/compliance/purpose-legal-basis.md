@@ -1,9 +1,10 @@
 # Zwecke, Rollenhypothesen und Rechtsfragen
 
 - Status: Rechtsrecherche und Prüfauftrag, keine Rechtsberatung/Freigabe
-- Stand/Quellenabruf: 2026-08-08
+- Stand/Quellenabruf: 2026-08-11
 - Owner: Product/Legal/Privacy/Security
 - Betreiber: `[PLATTFORMBETREIBER_OFFEN]`
+- Tasks: `D-003`, `PM-002`
 
 ## 1. Rechtswirkung dieses Dokuments
 
@@ -36,7 +37,7 @@ allein nach Vertragsbezeichnung.
 | Produktanalytics | Tenantinteresse möglich | bei eigenem Produktverbesserungszweck wahrscheinlich eigener Verantwortlicher | Analyticsanbieter nur nach Freigabe; öffentliches Formular ohne Dritttracking | `real_blocker`: nur pseudonym ist nicht anonym; Zweck/Opt-out/Retention prüfen |
 | Provider-KYC, Nummerierung, Billing und Fraud | Tenant/Anschlussinhaber je Modell | Vertragspartner und ggf. eigener Verantwortlicher | CPaaS/Carrier wahrscheinlich teilweise eigenständige Verantwortliche | `real_blocker`: konkrete Providerbedingungen und Datenklassen fehlen |
 | Betroffenenrechte und Löschung | Verantwortlicher entscheidet für Caller-/Leaddaten | unterstützt nach Art. 28; für eigene Daten selbst verantwortlich | Provider/Unterauftragsverarbeiter müssen unterstützen | `real_blocker`: einheitlicher Intake, Identitätsprüfung und Abschlussnachweis fehlen |
-| Voice-Interaktion | datenschutzrechtlich später voraussichtlich Verantwortlicher für Gesprächszweck; AI-Act-Rolle regelmäßig Betreiber/`deployer` | datenschutzrechtlich ggf. Auftragsverarbeiter; AI-Act-`provider`, falls das System unter eigenem Namen/Marke entwickelt und bereitgestellt wird | Telephony/STT/LLM/TTS datenschutz- und AI-Act-seitig separat klassifizieren; eigene Retention-/Training-/Sicherheitszwecke möglich | `real_blocker`: vollständige DSFA, konkrete AI-Act-Rollen nach Art. 3 und Verträge fehlen |
+| Voice-Interaktion | voraussichtlich Verantwortlicher für Gesprächszweck und regelmäßig AI-Act-Betreiber/`deployer` | datenschutzrechtlich ggf. Auftragsverarbeiter; AI-Act-`provider`, falls das System unter eigenem Namen/Marke entwickelt und bereitgestellt wird | Telephony/STT/LLM/TTS je juristischer Einheit datenschutz- und AI-Act-seitig klassifizieren; eigene Retention-/Training-/Sicherheitszwecke möglich | `real_blocker`: vollständige DSFA vor erstem Realanruf, konkrete AI-Act-Rollen, Verträge und No-Retention/No-Training-Nachweise fehlen |
 
 Erforderliche Vertragsbausteine vor Realbetrieb:
 
@@ -56,8 +57,8 @@ Erforderliche Vertragsbausteine vor Realbetrieb:
 | `PUR-01` | Tenant, Membership und Vertragszugang; `DATA-01`, `DATA-03`; `FLOW-01` | Art. 6 Abs. 1 lit. b für Vertragsdurchführung mit natürlicher Vertragspartei; sonst lit. f für B2B-Administration, jeweils je Person/Zweck prüfen | Art. 13 bei direkter Erhebung; Beschäftigtenkontext separat | `research_hypothesis`; Betreiber/Vertrag/Information fehlen |
 | `PUR-02` | Authentifizierung, Session und Zugriffsschutz; `DATA-02`, `DATA-14`, `DATA-26`; `FLOW-01`, `FLOW-05` | Art. 6 Abs. 1 lit. b/f; rechtliche Securitypflichten ggf. lit. c, konkrete Norm benennen | Ausnahme nach TDDDG § 25 Abs. 2 nur für technisch unbedingt erforderlichen Zugriff zur Erbringung des ausdrücklich gewünschten Dienstes und dokumentiert je Mechanismus; `Secure`/`HttpOnly`/`SameSite` sind zusätzliche Schutzmerkmale, keine Ausnahmebegründung | `research_hypothesis`; Identityanbieter, Cookie-/Sessioninventar und Retention freigeben |
 | `PUR-03` | Betriebsprofil, Nummer, Routing, Templates und Aktivierung; `DATA-04`–`DATA-06`, `DATA-25`; `FLOW-02` | Tenantvertrag Art. 6 Abs. 1 lit. b oder B2B-Interesse lit. f; KYC-/Nummernpflicht ggf. lit. c beim jeweiligen Provider | TKG-/Nummernregeln, Providervertrag und Art. 13 | `real_blocker` für echte Nummer/Provider; Fake-Konfiguration erlaubt |
-| `PUR-04` | Empfang, Validierung und Ableitung eines verpassten Calls; `DATA-05`, `DATA-08`, `DATA-09`; `FLOW-03` | Art. 6 Abs. 1 lit. b/f wird geprüft, reicht aber nicht ohne telekommunikationsrechtliche Erlaubnis | TDDDG §§ 3/9 schützen auch Umstände erfolgloser Verbindungen; Art. 13/14 und TKG-Rollen offen | `real_blocker`: fachanwaltliche TDDDG-/TKG-Rollen- und Zweckprüfung |
-| `PUR-05` | genau ein Textback und Zustellstatus; `DATA-06`, `DATA-07`, `DATA-11`–`DATA-13`; `FLOW-04` | mögliche Art.-6-Hypothesen: lit. b nur bei Maßnahme auf nachweisbare Anfrage; lit. f nur nach dokumentiertem Drei-Stufen-Test; lit. a nur mit wirksamer vorheriger Einwilligung | § 7 UWG bei Werbung; Ein verpasster Anruf beweist Zweck/Consent nicht. Absender, Art. 13/14, Widerspruch und falsche Nummer klären | `real_blocker`: kein Realversand, bis exaktes Template und Flow qualifiziert freigegeben sind |
+| `PUR-04` | Empfang, Validierung, Routing und kanonischer Outcome eines eingehenden Calls einschließlich erfolgloser Verbindung; `DATA-05`, `DATA-08`, `DATA-09`; `FLOW-03`, `FLOW-V01` | Art. 6 Abs. 1 lit. b/f wird geprüft, reicht aber nicht ohne telekommunikationsrechtliche Erlaubnis | TDDDG §§ 3/9 schützen Inhalt und Umstände einschließlich erfolgloser Verbindungen; Art. 13/14 und TKG-Rollen offen | `real_blocker`: fachanwaltliche TDDDG-/TKG-Rollen-, Routing- und Zweckprüfung |
+| `PUR-05` | höchstens ein ausdrücklich angefordertes Textback als Voice-Fortsetzung/Fallback und Zustellstatus; `DATA-06`, `DATA-07`, `DATA-11`–`DATA-13`; `FLOW-04`, `FLOW-V03` | mögliche Art.-6-Hypothesen: lit. b nur bei Maßnahme auf nachweisbare Anfrage; lit. f nur nach dokumentiertem Drei-Stufen-Test; lit. a nur mit wirksamer vorheriger Einwilligung | § 7 UWG bei Werbung; Voice-Dialog, verpasster Anruf und Caller-ID beweisen Zweck/Permission nicht. Absender, Art. 13/14, Widerspruch und falsche Nummer klären | `real_blocker`: kein Realversand, bis In-call-Permission, exaktes Template und Flow qualifiziert freigegeben sind |
 | `PUR-06` | Capability-Formular und Leadannahme; `DATA-12`, `DATA-14`, `DATA-15`; `FLOW-05` | Art. 6 Abs. 1 lit. b für vorvertragliche Schritte auf bewusste Formulareingabe oder lit. f prüfen; für beabsichtigte Verarbeitung besonderer Kategorien sind Art. 6 und eine Ausnahme nach Art. 9 Abs. 2 kumulativ erforderlich | Begrenzung und schnelle Löschung unerwarteter Art.-9-Daten reduzieren nur das Risiko und ersetzen keine Ausnahme; Art. 13 beim Formular; TDDDG § 25; keine Tracker; kein Diagnostik-/Notrufversprechen | `real_blocker`: Feldminimum, Freitext, Transparenz, Tokenlaufzeit und Art.-9-Prozess offen |
 | `PUR-07` | Leadbearbeitung und minimale Betriebsbenachrichtigung; `DATA-16`, `DATA-17`; `FLOW-06` | Art. 6 Abs. 1 lit. b/f abhängig von Anrufer-/Tenantbeziehung | ESP als Unterauftragsverarbeiter; E-Mail nur Minimaldaten + authentifizierter Link | `real_blocker`: ESP, Empfänger, Rollen, Template und Retention fehlen |
 | `PUR-08` | Idempotenz, Betrieb, Audit, Security, Abuse und Incident Response; `DATA-08`, `DATA-10`, `DATA-13`, `DATA-18`, `DATA-19`, `DATA-23`, `DATA-24`, `DATA-26` | Art. 6 Abs. 1 lit. f mit Notwendigkeit/Interessenabwägung; konkrete rechtliche Pflichten ggf. lit. c; im Auftrag auch Art.-28-Weisung | Art. 5 Datenminimierung, Art. 25/32, Art. 33/34; TDDDG-Zweckgrenzen für Verkehrsdaten beachten | `research_hypothesis`; nur PII-freie Fake-Telemetrie freigegeben, Realfelder/-fristen offen |
@@ -65,9 +66,9 @@ Erforderliche Vertragsbausteine vor Realbetrieb:
 | `PUR-10` | Plan, Usage, Kosten, Vertrag und spätere Abrechnung; `DATA-01`, `DATA-13`, `DATA-21`, `DATA-25` | Art. 6 Abs. 1 lit. b/c/f zweckspezifisch; gesetzliche Aufbewahrung nur für tatsächlich qualifizierte Unterlagen | Steuer-/Handelsrecht erst bei konkreter Gesellschaft und Echtgeld prüfen | `research_hypothesis`; kein Payment/Echtgeld in D-003 |
 | `PUR-11` | Transparenz, Rechte, Export, Löschung, Support und Retention; `DATA-07`, `DATA-18`, `DATA-22`–`DATA-25`; `FLOW-07` | Art. 6 Abs. 1 lit. c für DSGVO-Pflichten, lit. f für sichere Verifikation/Abwehr missbräuchlicher Anträge, Vertragsunterstützung nach Art. 28 | Art. 12–22, 30, 32–34 DSGVO; Suppression/Legal Hold nicht mit normalem Leadbestand vermischen | `real_blocker`: Identitätsprüfung, Fristen, Provider-/Backupsemantik und Rollen offen |
 | `PUR-12` | Entwicklung und Qualität mit synthetischen Daten; `DATA-27`, `DATA-V09`; `FLOW-00` | `not_applicable`, sofern keine reale Person direkt/indirekt bestimmbar ist | aktuelle Baseline ausschließlich synthetisch; keine echten oder pseudonymisierten Produktivdumps/-payloads als Fixture | erlaubt, solange synthetisch, egress-gesperrt und klar testmarkiert; späteres anonymisiertes Korpus nur nach separatem Reidentifikationsnachweis |
-| `PUR-V01` | spätere direkte KI-Sprachinteraktion; `DATA-V01`, `DATA-V02`, `DATA-V03`, `DATA-V04`, `DATA-V08`; `FLOW-V01` | Art. 6/9-Hypothesen erst nach konkretem Zweck/Intent; kein pauschales Consent oder Vertragsargument | AI Act Art. 4/5/50, DSGVO, TDDDG/TKG und § 201 StGB; KI-Hinweis vor Fachinteraktion, Alternative zum Menschen | `real_blocker`: volle DSFA, Anbieter, No-Retention/No-Training und Legal/Product-Freigabe |
+| `PUR-V01` | primäre, begrenzte KI-Sprachinteraktion; `DATA-V01`, `DATA-V02`, `DATA-V03`, `DATA-V04`, `DATA-V08`; `FLOW-V01`, `FLOW-V03` | Art. 6/9-Hypothesen erst nach konkretem Zweck/Intent; kein pauschales Consent oder Vertragsargument | AI Act Art. 4/5/50, DSGVO, TDDDG/TKG und § 201 StGB; KI-Hinweis vor Fachinteraktion, Alternative zum Menschen | `real_blocker`: volle DSFA vor erstem Realanruf, Anbieter, No-Retention/No-Training und Legal/Product/Safety/Security-Freigabe |
 | `PUR-V02` | Notfall-/Safety-Erkennung und Handoff; `DATA-V03`–`DATA-V05`; `FLOW-V02` | Art. 6 Abs. 1 lit. d kann nur im echten Einzelfall lebenswichtiger Interessen relevant sein und ist keine allgemeine Produktgrundlage; Art.-9-Ausnahme separat prüfen | kein Notrufdienst, keine Diagnose, keine generative Verzögerung; freigegebener menschlicher Fallback | `real_blocker`: unabhängige Safety-/Legal-Abnahme und Golden-Testkorpus |
-| `PUR-V03` | strukturierte Summary und Voice-Usage; `DATA-V06`, `DATA-V07`; `FLOW-V02` | Art. 6 Abs. 1 lit. b/f und ggf. Art. 9 erst nach Feld-/Zweckprüfung | keine wörtlichen Passagen, Stimmeigenschaften oder verdeckten Inferenzen; Unsicherheit/menschliche Korrektur | `real_blocker`: Summary erst nach `V-004`; Rohtranskript bleibt flüchtig |
+| `PUR-V03` | strukturierte Summary, gemeinsamer Lead und Voice-Usage; `DATA-V06`, `DATA-V07`; `FLOW-V02`, `FLOW-V03` | Art. 6 Abs. 1 lit. b/f und ggf. Art. 9 erst nach Feld-/Zweckprüfung | nur schema-validierte Felder mit `unknown`, Confidence und Caller-Bestätigung; keine Zitate, Quellsegmente, Stimmeigenschaften oder verdeckten Inferenzen | `real_blocker`: Summary erst nach `V-004`; Rohtranskript bleibt flüchtig |
 | `PUR-V04` | verbotene Voice-Ableitungen; `DATA-V10`; `FLOW-V01` | kein Zweck im genehmigten Scope; `not_applicable` nur aufgrund des verbindlichen Produktverbots | keine Voiceprints, Sprecheridentifikation, Emotionserkennung, sensitive biometrische Kategorisierung oder Aufzeichnung | Erhebung, Ableitung, Persistenz und Providertraining verboten; Änderung nur durch neue ADR, DSFA und Legal-/Product-Freigabe |
 
 ## 4. Erste SMS – Rechtsfragenpaket
@@ -114,8 +115,10 @@ von Verkehrsdaten. Vor `FLOW-03`/`FLOW-04` sind daher zu klären:
 - Was gehört zur Telekommunikationsleistung, was zur nachgelagerten
   Geschäftsanwendung, und welche Zweck-/Löschgrenze folgt daraus?
 - Erfüllt der Absender Nummernnutzungsrecht und eindeutige Identität nach TKG?
-- Ist Conditional Forwarding einschließlich Caller-ID-Übermittlung rechtlich,
-  vertraglich und technisch zulässig?
+- Sind Primärnummer, Portierung oder SIP-/unconditional Routing einschließlich
+  Caller-ID-Übermittlung, Ausfallroute und Transfer-Legs rechtlich,
+  vertraglich und technisch zulässig? Conditional Forwarding bleibt nur eine
+  historische Overflow-Hypothese aus `D-002`.
 - Welche Melde-, Geheimhaltungs-, Sicherheits- oder Auskunftspflichten treffen
   den Betreiber bei der gewählten Topologie?
 
@@ -165,11 +168,12 @@ erneut anhand der Kommissionsliste geprüft. `IE1` ersetzt DPA/TIA nicht.
 
 ## 8. DSFA-Screening
 
-### 8.1 Textback-MVP
+### 8.1 Gemeinsamer Voice-first-/Textback-MVP
 
-Die DSK-Muss-Liste zeigt für den engen, regelbasierten Textback keinen bereits
-zweifelsfrei feststehenden Automatismus. Das ist keine Feststellung, dass keine
-DSFA erforderlich ist. Vor Pilot wird ein formales Screening protokolliert.
+Der Textback-Teil bleibt eng und regelbasiert; das gemeinsame Produkt beginnt
+jedoch mit KI-gestützter Sprachinteraktion. Deshalb genügt dieses Screening
+nicht als Freigabe: Vor jedem Realanruf wird eine vollständige DSFA erstellt,
+geprüft und zusammen mit Legal, Safety und Security abgenommen.
 
 | Prüfkriterium | MVP-Beobachtung | Vorläufiges Risiko/Entscheid |
 |---|---|---|
@@ -183,10 +187,9 @@ DSFA erforderlich ist. Vor Pilot wird ein formales Screening protokolliert.
 | innovative Technologie | Textback regelbasiert; Provider-/Capability-Verknüpfung | Security-/Privacy-by-Design nachweisen |
 | Verhinderung von Rechten/Leistung | Token-/Suppression-/Eligibility kann Zugang beeinflussen | alternative Kontaktmöglichkeit und Rechteprozess |
 
-Ergebnisstatus: `real_blocker`, bis Product/Privacy/Security das Screening
-protokolliert und Legal die Schwelle bewertet hat. Verursacht die geplante
-Verarbeitung voraussichtlich ein hohes Risiko, wird vor Beginn eine vollständige
-DSFA nach Art. 35 durchgeführt. Verbleibt danach trotz Maßnahmen ein hohes
+Ergebnisstatus: `real_blocker`. Die vollständige DSFA nach Art. 35 ist für den
+projektintern genehmigten Voice-first-Scope zwingend; das Textback-Screening
+bleibt als eigener Kanalteil erhalten. Verbleibt trotz Maßnahmen ein hohes
 Risiko, ist vor Verarbeitung die Konsultation nach Art. 36 zu prüfen.
 
 ### 8.2 Voice
@@ -211,12 +214,12 @@ neu erstellt; D-003 ist nur die Vorstruktur.
 
 ## 9. Voice und EU AI Act
 
-Für das spätere Voice-System gelten mindestens folgende Produktgrenzen:
+Für den Voice-first-MVP gelten mindestens folgende Produktgrenzen:
 
 - angemessene AI-Literacy-Maßnahmen für Entwicklung, Betrieb, Support und
   Tenant-Nutzer gemäß Art. 4 AI Act;
-- klarer, zugänglicher KI-Hinweis spätestens zu Beginn der ersten Interaktion
-  und vor fachlicher Datenerhebung gemäß Art. 50;
+- klarer, unterscheidbarer und zugänglicher KI-Hinweis ab Beginn der ersten
+  Interaktion und vor fachlicher Datenerhebung gemäß Art. 50;
 - erreichbarer menschlicher oder asynchroner Rückruf-Alternativweg;
 - keine manipulative/täuschende Gesprächsführung und keine Ausnutzung von Alter,
   Behinderung oder sozioökonomischer Lage;
@@ -237,19 +240,19 @@ Für das spätere Voice-System gelten mindestens folgende Produktgrenzen:
 |---|---|---|---|---|
 | `LQ-01` | juristische Identität, Anschrift, Datenschutzkontakt, Aufsicht und DSB-Pflicht des Betreibers | Product/Legal | vor Vertrag/Information | alle Realflüsse |
 | `LQ-02` | exaktes SMS-Template: Service oder Werbung; DSGVO-/UWG-Grundlage | Product/Legal | vor `M-001` real | `FLOW-04` |
-| `LQ-03` | TDDDG/TKG-Rollen, Verkehrsdatenzweck, Conditional Forwarding und Nummernnutzungsrecht | Legal/Provider | vor Account/Nummer | `FLOW-03`, `FLOW-04` |
+| `LQ-03` | TDDDG/TKG-Rollen, Verkehrsdatenzweck, Voice-first-Routing, Nummerninhaberschaft sowie Call-/Transfer-Legs | Legal/Provider | vor Account/Nummer | `FLOW-03`, `FLOW-04`, `FLOW-V01`–`FLOW-V03` |
 | `LQ-04` | Art.-13/14-Information, Absender, Widerspruch und Wrong-Number-Prozess | Product/Legal/Privacy | vor Templatefreigabe | `FLOW-04`, `FLOW-05` |
 | `LQ-05` | AVV, Subprozessoren, DPA/TIA, Supportstandorte und Exit je Anbieter | Legal/Security | vor externer Verbindung | jeweiliger Providerflow |
 | `LQ-06` | Feldminimum, Freitext/Sonderdaten, Minderjährige und Notfalltext | Product/Legal/Safety | vor `M-005` | Formular-/Leadrealbetrieb |
 | `LQ-07` | Retention, Suppression, Legal Hold, Backups und Providerlöschung | Legal/Privacy/Ops | vor `B-004`/Pilot | persistente Realdaten |
 | `LQ-08` | DSAR-Verifikation, Exportweg, Antwort-/Löschabschluss | Legal/Privacy/Security | vor Pilot | Betroffenenrechte |
-| `LQ-09` | Textback-DSFA-Screening und ggf. DSB | Product/Privacy/Security/Legal | vor Pilot | Textback-Go-live |
-| `LQ-10` | Voice-DSFA, AI-Act-Rollen/Disclosure/Literacy, § 201 StGB, Provider-No-Retention/No-Training | Product/Legal/Safety/Security | nach `G7`, vor Realanruf | alle Voice-Realflüsse |
+| `LQ-09` | vollständige kombinierte Voice-MVP-DSFA, Textback-Kanalprüfung und DSB-Nachweis | Product/Privacy/Security/Legal | vor erstem Realanruf | Voice-/Textback-Go-live |
+| `LQ-10` | Voice-DSFA, AI-Act-Rollen/Disclosure/Literacy, § 201 StGB, Provider-No-Retention/No-Training | Product/Legal/Safety/Security | vor jedem Realanruf | alle Voice-Realflüsse |
 | `LQ-11` | Incident-/Breach-Rollen, Processor-Meldezeit und Art.-33/34-Prozess | Security/Privacy/Legal | vor Realdaten | Incidentbetrieb |
 
 ## 11. Amtliches Quellenregister
 
-Alle Quellen wurden am 2026-08-08 geprüft. Recht, Guidance, Providerstatus und
+Alle Quellen wurden zuletzt am 2026-08-11 geprüft. Recht, Guidance, Providerstatus und
 Transfermechanismen werden vor jeder Realfreigabe erneut verifiziert.
 
 ### Datenschutz und Rollen
@@ -292,4 +295,5 @@ Transfermechanismen werden vor jeder Realfreigabe erneut verifiziert.
 
 - [AI Act – Verordnung (EU) 2024/1689](https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A32024R1689)
 - [EU-Kommission – Transparenzpflichten nach Art. 50](https://digital-strategy.ec.europa.eu/en/faqs/transparency-obligations-under-article-50-ai-act)
+- [EU-Kommission – Leitlinien zu Art.-50-Transparenzpflichten](https://digital-strategy.ec.europa.eu/en/library/guidelines-transparency-obligations-providers-and-deployers-ai-systems)
 - [StGB § 201 – Vertraulichkeit des Wortes](https://www.gesetze-im-internet.de/stgb/__201.html)

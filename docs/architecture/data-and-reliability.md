@@ -18,7 +18,12 @@ nach Threat Model feldverschlüsselt; Schlüssel liegen nicht in derselben DB.
 
 ```text
 Call:             received -> ringing -> answered | missed | failed -> completed
+VoiceSession:     received -> assistant_answered -> disclosure_pending
+                  -> active | declined -> handoff_requested
+                  -> transferred | handoff_failed -> callback_requested
+                  | textback_requested -> completed | failed
 Message:          planned -> queued -> provider_accepted -> delivered | failed | suppressed
+ChannelAttempt:   requested -> eligible | suppressed -> planned -> effected | failed
 TextbackAttempt:  eligible -> scheduled -> sent | suppressed | exhausted
 Lead:             new -> contacted -> qualified -> won | lost | archived
 Subscription:     trialing -> active -> past_due -> canceled | suspended
@@ -26,6 +31,31 @@ ErasureRequest:   requested -> verified -> processing -> completed | rejected
 ```
 
 Jeder Übergang ist explizit, getestet und über einen Use Case erreichbar.
+VoiceSession persistiert nur inhaltsfreie Zustände, Policyversionen, Zeiten,
+Reason Codes und Ergebnisse. Audio, Rohtranskript und Prompt-/Toolinhalt haben
+Persistenz `0`.
+
+## Kanonischer Voice-Effektvertrag
+
+Die ephemere Runtime meldet ausschließlich inhaltsfreie Zustandsereignisse:
+
+```text
+VoiceSessionStarted
+AiDisclosureCompleted | AiDisclosureDeclined
+HandoffRequested | HandoffSucceeded | HandoffFailed
+CallbackRequested
+TextContinuationRequested | TextContinuationSuppressed
+VoiceLeadCaptured
+VoiceSessionEnded
+VoiceUsageRecorded
+```
+
+Ein schreibender Command trägt `tenantRef`, `sessionId`, `policyVersion`,
+`effectType`, den Schlüssel `sessionId|effectType`, bestätigte strukturierte
+Felder und gegebenenfalls eine `CommunicationPermissionEvidenceRef`. Er trägt
+nie Audio oder Rohtranskript. Pro Effektklasse erzwingt ein Unique Constraint
+höchstens eine fachliche Wirkung; Retry und Reconnect verwenden denselben
+Schlüssel.
 
 ## PostgreSQL Row-Level Security
 
@@ -64,3 +94,7 @@ erzeugen einen alarmierten Operations-Fall.
 - Out-of-order-Events führen deterministisch zum gleichen Endzustand.
 - Redis-/Queue-Verlust vernichtet keine fachlichen Source-of-Truth-Daten.
 - Replays, Reconciliation und kontrolliertes Requeue sind auditierbar.
+- Voice-, Handoff-, Textback- und Formularpfad referenzieren denselben
+  tenantgebundenen Kontaktvorgang; ein Kanalwechsel erzeugt keinen zweiten Lead.
+- Realtime-Medien sind nicht replaybar. Ein Runtimecrash darf keine alte
+  Außenwirkung erneut auslösen und führt in einen sicheren End-/Fallbackzustand.

@@ -1,31 +1,41 @@
 ---
 id: P-002
-title: Pilot-Rollout in Kohorten
+title: Kontrollierter Voice+Text-Kohortenrollout
 phase: pilot
 status: blocked
 priority: P0
 owner: Product/Operations
-dependencies: [P-001, explicit-go-live-approval]
+dependencies: [G6, explicit-go-live-approval]
 gate: G7
 outputs: [rollout-plan, tenant-kill-switch, pilot-checklist, daily-review]
 completed_at: null
 ---
 
-# P-002 – Pilot-Rollout in Kohorten
+# P-002 – Kontrollierter Voice+Text-Kohortenrollout
 
 ## Ziel und Scope
 
-Kontrollierter Rollout intern → 1 Designpartner → 3 → 5–10. Erweiterung erst
-nach sieben stabilen Tagen oder dokumentierter, verantworteter Ausnahme. Kill
-Switch je Tenant, Providerbudget, Rate Limits und tägliche KPI-/Fehlerprüfung.
+Den kombinierten Assistenten kontrolliert intern → 1 Designpartner → 3 →
+höchstens 5–10 ausrollen. Voice ist primär; Handoff und positiv geprüfter
+Textback bleiben derselbe Vorgang. Erweiterung erfolgt erst nach dem je Kohorte
+festgelegten stabilen Beobachtungsfenster und explizitem Review. Kill Switch je
+Tenant, Session-/Providerbudget, Rate Limits und tägliche Guardrail-/KPI-
+Prüfung begrenzen die reale Außenwirkung.
 
 ## Akzeptanz und Verifikation
 
-- [ ] Explizite Go-live-Freigabe, Verträge und Kanal-/Rechtsfreigabe liegen vor.
-- [ ] Kill Switch und Budget-/Rate-Grenzen sind vor erstem Kontakt getestet.
-- [ ] Jede Kohorte besitzt Entry/Exit-, Rollback- und Kommunikationskriterien.
-- [ ] Sieben-Tage-Nachweis oder Ausnahme ist vor Expansion dokumentiert.
-- [ ] Kein Bulk-Onboarding oder ungesteuerte Tenant-Aktivierung ist möglich.
+- [ ] `G6`, konkrete Provider-/Vertrags-/Legal-/DSFA-/Safety-/Security-/Budget-
+      Nachweise und explizite Go-live-Freigabe liegen vor.
+- [ ] Kill Switch, Budget-/Rate-/Sessiongrenzen sowie nicht erreichbarer
+      Human-Fallback sind vor erstem Kontakt getestet.
+- [ ] Jede Kohorte besitzt Entry/Exit-, Beobachtungs-, Rollback- und
+      Kommunikationskriterien.
+- [ ] Expansion ist mit Datenqualität, Voice-/Textback-/Handoffmetriken,
+      Incidents und verantworteter Entscheidung dokumentiert.
+- [ ] Kein Bulk-Onboarding oder ungesteuerte Tenantaktivierung ist möglich.
+- [ ] Pilotfreigabe autorisiert keine verdeckte Gesprächsaufzeichnung oder
+      stille manuelle Produktivbewertung.
 
-Stop: Jede Kohortenexpansion ist eine reale Außenwirkung und benötigt die
-vorgesehene Freigabe; Incidents können Expansion jederzeit stoppen.
+Stop: Erster Realanruf, erster Textback und jede Kohortenexpansion sind reale
+Außenwirkungen und benötigen die vorgesehenen Freigaben; Incidents stoppen
+Expansion jederzeit.

@@ -13,7 +13,8 @@ completed_at: null
 
 # PO-008 – Commercial Policies
 
-Kündigung, Erstattung, Zahlungsverzug, Suspension, Reaktivierung, Export- und
+Kündigung, Erstattung, Zahlungsverzug, Suspension, Reaktivierung, Abschalten
+laufender/neuer Voice-Sessions, Unterdrückung von Textback, Export- und
 Löschzeitfenster sowie Kundenkommunikation fachlich/rechtlich festlegen.
 
 Akzeptanz: Jeder Lifecycle-Zustand hat Trigger, Kundenwirkung, Nachricht, Frist,

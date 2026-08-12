@@ -13,6 +13,12 @@ completed_at: 2026-08-08
 
 # D-003 – Datenschutz-, Rechts- und Abuse-Workshop
 
+> Historischer Taskstand: D-003 wurde am 2026-08-08 für die damalige
+> Textback-first-Baseline abgenommen. `PM-002` und `ADR-013` erweitern die
+> gepflegten Compliance-Artefakte auf den gemeinsamen Voice-first-/Textback-MVP,
+> ohne diese Abnahme oder die weiterhin offenen Realbetriebsblocker
+> rückwirkend umzudeuten.
+
 ## Ziel und Kontext
 
 Die geplanten Textback-MVP-Datenflüsse und die Datenschutzgrenzen einer späteren

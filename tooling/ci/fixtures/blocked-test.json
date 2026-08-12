@@ -1,0 +1,13 @@
+{
+  "checks": [
+    { "id": "tests", "status": "failed" },
+    { "id": "typecheck", "status": "passed" },
+    { "id": "migrations", "status": "passed" },
+    { "id": "dependencies", "status": "passed" },
+    { "id": "containers", "status": "passed" },
+    { "id": "secret-scan", "status": "passed" },
+    { "id": "sbom", "status": "passed" }
+  ],
+  "findings": [],
+  "exceptions": []
+}

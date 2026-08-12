@@ -1,10 +1,10 @@
 # Retention- und Löschentwurf
 
 - Status: `research_hypothesis`; **keine Produktionsfrist ist rechtlich freigegeben**
-- Stand: 2026-08-08
+- Stand: 2026-08-11
 - Owner: Privacy/Legal/Product/Security/Operations
-- Task: `D-003`
-- Freigabepfad: qualifizierte Prüfung in `PO-004`, technische Umsetzung später in `B-004`
+- Tasks: `D-003`, `PM-002`
+- Freigabepfad: qualifizierte Prüfung in `PO-004`, technische Umsetzung in `B-004`
 
 ## 1. Geltungsgrenze
 
@@ -44,8 +44,8 @@ Wirkung `fail_closed` – nicht unbegrenzte Speicherung.
 | `RET-13` | `CommunicationPermissionEvidence`, Widerspruch und Suppression ab Statusänderung | **keine Frist festgelegt**; getrennt vom Lead und nur minimaler Scope/Kanal/Zweck-Nachweis | Nummer nur verschlüsselt oder als geeigneter Suchwert, kein Profiling/Analytics und keine Reaktivierung für Versand | `real_blocker`: Rechtsgrund, Erasure-Konflikt, Nachweis- und Verjährungsbedarf durch Legal festlegen |
 | `RET-14` | Provider-/Vertrags-/KYC-Register ab Vertrags- oder Accountende | **keine Frist festgelegt** | Produktdatenbank bereinigen; qualifizierte Vertrags-/KYC-Unterlagen nur im freigegebenen Register | `real_blocker`: konkrete juristische Einheiten, Providerpflichten und Legal-/Tax-Klassifikation |
 | `RET-15` | Secrets, Schlüssel und ephemere Credentials | Sessioncredential nur in Memory bis Sessionende; langlebige Secrets bis Rotation mit eng begrenztem Überlappungsfenster | revoke, rotate und zeroize statt Betroffenenlöschung; nie in Repo, DB, Log, Export oder Backup ohne Kryptokonzept | `research_hypothesis`: Rotation, Schlüsselzugriff und Crypto-/Backupdesign später technisch abnehmen |
-| `RET-V00` | Voice-Audioframes, Rohtranskript, inhaltliche Prompts/Outputs/Tooldaten und Sessionbuffer | **Persistenz 0**; nur flüchtig während später freigegebener Session, Cleanup bei Ende/Abbruch/Timeout; Provider vertraglich und technisch No-Retention/No-Training | kein DB-, Object-Store-, Backup-, Log-, Trace-, Crashdump- oder Review-Sample; Buffer und Credential aktiv nullen | `real_blocker`: vollständige DSFA, § 201 StGB/TDDDG, Providervertrag und `V-001`/`V-004` |
-| `RET-V01` | erst später freigegebene strukturierte Voice-Summary ab Lead-/Summaryaktivität | keine Speicherung vor Legal-/DSFA-/Productfreigabe; danach höchstens Kandidat `RET-07` | Summary und Korrekturen löschen; keine Audio-/Rohtextquelle rekonstruierbar halten | `real_blocker`: separates Schema, Zweck, Art.-9-Prüfung, Safety-Abnahme und `V-004` |
+| `RET-V00` | Voice-Audioframes, Rohtranskript, inhaltliche Prompts/Outputs/Tooldaten und Sessionbuffer | **Persistenz 0**; nur flüchtig während einer separat freigegebenen Session, Cleanup bei Ende/Abbruch/Timeout; Provider vertraglich und technisch No-Retention/No-Training | kein DB-, Object-Store-, Backup-, Log-, Trace-, APM-, Crashdump-, Cache-, Abuse-/Promptlog-, Review-Sample- oder Trainingssink; Buffer und Credential aktiv nullen | `real_blocker`: vollständige DSFA vor erstem Realanruf, § 201 StGB/TDDDG, Providervertrag und `V-001`/`V-004` |
+| `RET-V01` | nur separat freigegebene strukturierte Voice-Summary ab Lead-/Summaryaktivität | keine Speicherung vor Legal-/DSFA-/Product-/Safety-Freigabe; danach höchstens Kandidat `RET-07` | nur schema-validierte Werte, `unknown`, Confidence, Caller-Bestätigung und Policy-/Schemaversion; keine Zitate/Quellsegmente; Summary/Korrekturen löschen, ohne Audio-/Rohtextquelle rekonstruierbar zu halten | `real_blocker`: separates Schema, Zweck, Art.-9-Prüfung, Safety-Abnahme und `V-004` |
 
 ## 3. Vollständiges `DATA-* -> RET-*`-Mapping
 
@@ -72,7 +72,7 @@ Wirkung `fail_closed` – nicht unbegrenzte Speicherung.
 | `DATA-V02` | `RET-V00` | Rohtranskript-Persistenz 0 |
 | `DATA-V03` | Inhalt `RET-V00`; minimale inhaltsfreie Resultmetadaten ggf. `RET-08` | keine Prompt-/Toolinhalte im Audit |
 | `DATA-V04` | `RET-08` | nur Hinweisversion, Ergebnis und Zeit; kein Audio/Wortlaut |
-| `DATA-V05` | `RET-08` | nur später freigegebene PII-arme Safety-/Handoffmetadaten |
+| `DATA-V05` | `RET-08` | nur separat freigegebene PII-arme Safety-/Handoffmetadaten; konkrete Frist rechtlich offen |
 | `DATA-V06` | `RET-V01`, Backup erst nach Freigabe `RET-12` | ausschließlich strukturierte Summary |
 | `DATA-V07` | Betrieb `RET-08`/`RET-09`; Usage `RET-11`; Provider `RET-12` | keine Audio-/Textinhalte |
 | `DATA-V08` | `RET-V00`/`RET-15` | Buffer/Credential aktiv nullen |
@@ -133,7 +133,7 @@ Providertraining zweckentfremdet werden.
 
 | System/Kopie | Vor Realbetrieb nachzuweisen | Löschsemantik |
 |---|---|---|
-| Telephony-/Messaging-Provider und Carrier | Content-/Log-/Fraud-/Billingdefaults, Region, Subprozessoren, Supportzugriff, Lösch-API/Ticket/Account-Close | Ursprungspolicy soweit möglich konfigurieren; rechtlich verbleibende Providerkopie separat dokumentieren |
+| Telephony-/Messaging-/STT-/Modell-/TTS-Provider und Carrier | Content-/Log-/Fraud-/Billingdefaults, Media-/Promptcache, APM/Crashdump, Training/Abuse-Review, Region, Subprozessoren, Supportzugriff, Lösch-API/Ticket/Account-Close | Ursprungspolicy soweit möglich konfigurieren; für `RET-V00` No-Retention/No-Training und Persistenz 0 nachweisen; rechtlich verbleibende Providerkopie separat dokumentieren |
 | Identity/Keycloak | Session-, Event-, Account- und Backupfristen | Session sofort widerrufen; Account/Event/Backup nach `RET-07`/`RET-08`/`RET-12` |
 | ESP und Empfängerpostfach | Content-/Bounce-/Logfristen, DPA/TIA, Datenminimum | ESP-Löschung nachweisen; fremdes Postfach/Endgerät als nicht technisch kontrollierbar benennen |
 | Observability/Analytics | Feld-Allowlist, Region, Delete-API und Backups | `RET-09`; niemals Rawpayload, Token, Text oder direkte PII einspeisen |
@@ -146,7 +146,7 @@ externe Aufträge dokumentiert und der letzte betroffene Backup-Snapshot gealter
 ist. Gesetzliche Antwortfristen werden separat überwacht und nicht durch
 technische Backupalterung still verlängert.
 
-## 7. Spätere technische Nachweise für `B-004`
+## 7. Technische Nachweise für `B-004`
 
 - Policyzuordnung für jede `DATA-*`-/`DATA-V*`-Klasse; neue Klasse ohne Policy
   blockiert CI und jeden Realmodus.
@@ -162,7 +162,8 @@ technische Backupalterung still verlängert.
 - Provider-Contracttests für `requested`, `provider_pending`, Erfolg, Timeout,
   Ablehnung und dokumentierte nicht löschbare Pflichtkopie.
 - Voice-Leak-Test findet Audio, Rohtranskript, Prompt-/Toolinhalt in keinem
-  Store, Log, Trace, Crashdump oder Backup und beweist Cleanup bei Sessionende.
+  Store, Cache, APM, Log, Trace, Crashdump, Review-Sample, Trainingssink oder
+  Backup und beweist Cleanup bei Sessionende.
 
 ## 8. Freigabe- und Reviewregister
 
@@ -174,10 +175,10 @@ technische Backupalterung still verlängert.
 | Billing-/Tax-Dokumentklassifikation | Legal/Finance/Tax | vor Echtgeld | `RET-11` |
 | Provider-/Subprozessor-/Backupfristen | Legal/Security/Ops | vor Anbieterfreigabe | externe Realdaten |
 | Legal-Hold-Autorität und Verfahren | Legal/Privacy/Security | vor Pilot | Erasure-Abschluss |
-| Voice No-Retention/No-Training, DSFA und Summaryfrist | Legal/Product/Safety/Security | nach `G7`, vor Realanruf | alle Voiceflüsse |
+| Voice No-Retention/No-Training, DSFA und Summaryfrist | Legal/Product/Safety/Security | vor jedem Realanruf | alle Voiceflüsse |
 
 Review-Trigger sind eine neue Datenklasse oder ein neuer Zweck, Anbieter,
 Subprozessor, Region, Kanal, Nummerntopologie, Gesetzesänderung,
-Securityvorfall, Restoreproblem sowie der Übergang zu Echtgeld oder Voice. Bis
+Securityvorfall, Restoreproblem, Voice-Intent-/Provideränderung sowie der Übergang zu Echtgeld. Bis
 zur dokumentierten Freigabe bleibt die Entwicklungsbaseline synthetisch und
 providerfrei.

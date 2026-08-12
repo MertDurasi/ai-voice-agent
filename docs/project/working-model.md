@@ -2,13 +2,16 @@
 
 ## Rahmen
 
-- Stand: 2026-08-10
+- Stand: 2026-08-11
 - Kapazitätshypothese: Solo-/Kleinteam, ungefähr 20 Netto-Stunden pro Woche
-- Produktstrategie: Textback zuerst; Voice ausschließlich nach Evidenz und `G7`
-- Architekturstrategie: mandantenfähiger modularer Monolith, zuverlässige
-  Events und spätere Extraktion nur bei messbarem Bedarf
-- Betriebsgrenze: `G0` erlaubt nur synthetische Fake-/Replay-Entwicklung; reale
-  Anbieter, Kontakte, Zahlungen, Deployments und Voice benötigen eigene Gates
+- Produktstrategie: Voice ist der primäre, begrenzte Anrufassistent; Textback
+  ist die integrierte Fortsetzung beziehungsweise der Fallback desselben
+  Vorgangs.
+- Architekturstrategie: mandantenfähiger modularer Monolith; die Form einer
+  Voice-Runtime und alle Provider bleiben bis zum Benchmark `V-001` offen.
+- Betriebsgrenze: Das historisch bestandene `G0` und das neue `G0V` erlauben
+  nur synthetische Fake-/Replay-Arbeit. Reale Provider, Kontakte, Zahlungen,
+  Deployments sowie Voice-/Textkommunikation benötigen spätere Freigaben.
 
 Forecasts sind Bandbreiten, keine Lieferzusagen. Gates beruhen auf verlinkten
 Nachweisen und benannten Entscheidungen, nie allein auf Kalenderzeit.
@@ -24,8 +27,8 @@ Nachweisen und benannten Entscheidungen, nie allein auf Kalenderzeit.
 - Eine neue Task wird erst gezogen, wenn der Slot frei, die Definition of Ready
   erfüllt und keine höher priorisierte Sicherheits-/Rechtsblockade offen ist.
 - Parallelarbeit innerhalb einer Spur oder verstecktes „fast fertig“ ist nicht
-  zulässig. Geblockte aktive Arbeit wird sichtbar zurück auf `blocked` gesetzt
-  oder mit einer konkreten unblockenden Task ersetzt.
+  zulässig. Geblockte aktive Arbeit wird sichtbar auf `blocked` gesetzt oder
+  durch eine konkrete unblockende Task ersetzt.
 - Ein P0-Security-/Privacy-Incident darf als Expedite beide Spuren pausieren.
   Owner, Grund, Start und Exitkriterium werden im Decision Log dokumentiert;
   Expedite erhöht nicht still das WIP.
@@ -53,12 +56,14 @@ Eine Task darf nach `Now` und `in_progress` nur, wenn:
 - keine echte Provider-, Kontakt-, Rechts-, Zahlungs- oder Deploymentfreigabe
   stillschweigend vorausgesetzt wird.
 
-Fehlende Detailplanung für `Next`/`Later` ist kein Mangel. Fehlende Klarheit in
-`Now` verhindert den Pull.
+Für `V-001` bedeutet Ready ausdrücklich: Vergleichskriterien und synthetischer
+Korpus sind vorhanden, aber Anbieter, Programmiersprache, Prozessgrenze und
+Runtime sind noch nicht gewählt. Fehlende Detailplanung in `Next`/`Later` ist
+kein Mangel; fehlende Klarheit in `Now` verhindert den Pull.
 
 ## 4. Task- und Statusvertrag
 
-Jede Task-Datei besitzt ID, Owner, Status, Priorität, Abhängigkeiten, Horizont,
+Jede Task-Datei besitzt ID, Owner, Status, Priorität, Abhängigkeiten, Gate,
 Ziel/Outcome, Scope/Nicht-Ziele, Lieferobjekte, prüfbare Akzeptanz,
 Verifikation, Risiken, Reversibilität und Aktivierungs-/Review-Trigger.
 
@@ -77,10 +82,18 @@ Teilimplementierung oder ein positiver Happy Path reichen nicht.
 - Die expliziten Voraussetzungen in
   [Gate-Status](gate-status.md) sind autoritativ. Ein Gate schließt nur mit
   Freigabeperson, Datum und verlinktem Nachweis.
-- Product-Discovery `PO-001`–`PO-003` lief parallel zu G0 und ist ein harter
-  Investment-Checkpoint vor `O-001`, nicht vor Git/Toolchain/Fake-Foundation.
-- `G0` ist keine Anbieter-, Kanal-, Rechts-, Vertrags- oder
-  Realbetriebsfreigabe. `PO-004` und spätere Gates bleiben davon unberührt.
+- `G0` bleibt der historische Discovery-/Fake-Nachweis. `G0V` dokumentiert die
+  nachfolgende Voice-first-Rebaseline, ohne `G0` umzudeuten oder eine
+  Realbetriebsfreigabe zu erteilen.
+- `PO-001`–`PO-003` bilden den harten Investment-Checkpoint vor
+  domänenspezifischer Voice+Text-Konfiguration. `PO-001` validiert Problem und
+  Intents; `V-001` benchmarkt erst danach technische Optionen; `PO-003`
+  übernimmt dessen Kostenbandbreiten.
+- Der gemeinsame synthetische Walking Skeleton wird vertikal geschnitten:
+  Fake-Call/Media → Disclosure und begrenzter Voice-Dialog → kanonisches
+  CallOutcome → optionaler Fake-Textback → genau ein strukturierter Lead.
+- Erst `G6` kann einen Antrag auf Realpilot zulassen; Provider-, Legal-, DSFA-,
+  Safety-, Security-, Budget- und Go-live-Freigaben bleiben jeweils explizit.
 
 ## 6. Wöchentlicher Rhythmus
 
@@ -100,10 +113,10 @@ dokumentiertem Expedite erlaubt.
 
 ## 7. Priorisierung und Forecast
 
-Priorität: Sicherheit/Recht/Betriebsfähigkeit, dann zuverlässiger Kernpfad,
-Aktivierung, Conversion/Wirtschaftlichkeit und zuletzt Komfort. Innerhalb
-gleicher Priorität entscheiden Risikoreduktion, Lernwert, Abhängigkeiten,
-Reversibilität und kleinster vertikaler Nutzen.
+Priorität: Sicherheit/Recht/Betriebsfähigkeit, dann zuverlässiger gemeinsamer
+Kernpfad, Aktivierung, Conversion/Wirtschaftlichkeit und zuletzt Komfort.
+Innerhalb gleicher Priorität entscheiden Risikoreduktion, Lernwert,
+Abhängigkeiten, Reversibilität und kleinster vertikaler Nutzen.
 
 Schätzungen werden als Aufwandsspanne und Annahmen dokumentiert. Belastbarere
 Terminbandbreiten entstehen erst aus mehreren abgeschlossenen Tasks mit

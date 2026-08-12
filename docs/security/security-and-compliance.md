@@ -1,8 +1,9 @@
 # Security, Datenschutz und regulatorische Leitplanken
 
-Dies ist eine technische Baseline, keine Rechtsberatung. Vor dem Pilot müssen
-Rechtsgrundlagen, Telekommunikations-/Direktmarketingregeln, WhatsApp-Opt-in,
-AV-Verträge und Kommunikationstexte fachlich geprüft werden.
+Dies ist eine technische Baseline, keine Rechtsberatung. Vor dem ersten realen
+Voice-Anruf oder Textback müssen Rechtsgrundlagen, Telekommunikations-/
+Direktmarketingregeln, KI-Transparenz, Human-/Safety-Pfad, AV-Verträge,
+Subprozessoren, Transfers und Kommunikationstexte fachlich geprüft werden.
 
 Das vollständige D-003-Paket steht im
 [Compliance-Index](../compliance/README.md); konkrete Angriffs- und
@@ -22,7 +23,8 @@ Konfigurations-, Klassifikations- und Rotationsvertrag steht im
 - Keine sequenziellen öffentlichen Lead-IDs. Formularzugriff über kurzlebiges,
   gehasht gespeichertes Capability Token.
 - Least-Privilege-DB-Rollen; Migration und Runtime getrennt.
-- SBOM, Secret-, Dependency- und Container-Scan in CI.
+- SBOM, Secret-, Dependency- und Container-Scan gemäß
+  [CI-/Supply-Chain-Vertrag](../operations/ci-supply-chain.md).
 - verschlüsselte Backups und regelmäßige Restore-Tests.
 
 ## Datenschutz-Arbeitspunkte
@@ -30,7 +32,8 @@ Konfigurations-, Klassifikations- und Rotationsvertrag steht im
 - Verzeichnis der Verarbeitungstätigkeiten und Datenflusskarte
 - Rollenklärung Verantwortlicher/Auftragsverarbeiter je Datenfluss
 - Rechtsgrundlage je Zweck statt pauschalem Consent
-- DSFA-Screening vor Pilot und erneut vor Voice
+- vollständige DSFA vor dem ersten realen Voice-Anruf; Review bei Anbieter-,
+  Zweck-, Intent-, Kanal-, Region- oder Modelländerung
 - Subprozessorregister, Datenstandort, Lösch- und Transfermechanismen
 - Transparenzhinweis bei direkter KI-Interaktion
 - AI-Literacy-/Betriebsunterweisung
@@ -45,8 +48,11 @@ Sprachaufnahme ist personenbezogen, aber nicht automatisch biometrische
 Sonderkategorie nach Art. 9 DSGVO. Biometrische Daten setzen eine spezifische
 technische Verarbeitung zur eindeutigen Identifizierung voraus. Auch flüchtige
 Transkription benötigt Zweck, Rechtsgrundlage, Transparenz, Datenminimierung,
-Auftragsverarbeitung und Löschung. Für den geplanten Voice-KI-Kundensupport ist
-eine vollständige DSFA vor Realbetrieb verbindliches Projektgate.
+Auftragsverarbeitung und Löschung. Für den primären Voice-KI-Assistenten ist
+eine vollständige DSFA vor jedem Realanruf verbindliches Projektgate.
+Telefonie-, Media-, STT-, Dialogmodell- und TTS-Anbieter werden je juristischer
+Einheit, Zweck, Region, Supportzugriff, Retention und Training geprüft; ein
+allgemeines „EU Hosting“ reicht nicht.
 
 Sprecheridentifikation, Voiceprints, Emotionserkennung oder biometrische
 Kategorisierung sind ohne neuen Rechts-, Risiko- und Architekturentscheid
@@ -59,4 +65,5 @@ Werbenachricht, Minderjährige, beleidigende Inhalte, Notfallmeldung,
 Auskunft/Löschung, Supportzugriff und Providerkompromittierung.
 
 Offene Rechtsfragen blockieren den betroffenen Realbetrieb, nicht die
-Entwicklung mit Fake-/Replay-Adaptern und synthetischen Daten.
+Entwicklung mit Fake-/Replay-Adaptern, simuliertem Audio und synthetischen
+Golden-/Red-Team-Korpora nach den jeweiligen Engineering-Gates.

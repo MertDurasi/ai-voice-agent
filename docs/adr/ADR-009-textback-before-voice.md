@@ -1,7 +1,12 @@
 # ADR-009 – Textback vor Voice
 
-- Status: accepted
+- Status: superseded
 - Datum: 2026-08-07
+- Ersetzt durch: [ADR-013](ADR-013-voice-first-combined-mvp.md)
+
+> Historischer Entscheid: Die Product-Owner-Entscheidung vom 2026-08-11 macht
+> Voice zum primären Anrufpfad desselben MVP. Die nachfolgende Begründung bleibt
+> als damaliger Trade-off erhalten, ist aber nicht mehr ausführungsleitend.
 
 ## Kontext
 

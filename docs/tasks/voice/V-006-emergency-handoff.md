@@ -1,31 +1,35 @@
 ---
 id: V-006
-title: Emergency und Human Handoff
+title: Safety-, Emergency- und Human-Handoff
 phase: voice
 status: blocked
 priority: P0
 owner: Product/Safety/Engineering
 dependencies: [V-003]
-gate: G8
-outputs: [emergency-classifier, transfer-flow, golden-dataset, emergency-runbook]
+gate: G5
+outputs: [safety-policy, transfer-flow, golden-dataset, emergency-runbook]
 completed_at: null
 ---
 
-# V-006 – Emergency und Human Handoff
+# V-006 – Safety-, Emergency- und Human-Handoff
 
 ## Ziel und Scope
 
-Konservative regel- plus modellgestützte Klassifikation, sofortigen Transfer,
-DTMF-/Sprachfallback, nicht erreichbaren Menschen, freigegebene Disclaimer,
-Events und Runbook. Das System berät nicht medizinisch und ist kein Notrufdienst.
+Konservative, versionierte Safety-Regeln, sofortigen Human-/Rückruf-Handoff,
+DTMF-/Sprachchoice, nicht erreichbaren Menschen, technische Degradation,
+synthetische Testtexte, Events und Runbook umsetzen. Das System diagnostiziert
+nicht, ist kein Notrufdienst und gibt keine technische Selbsthilfe.
 
 ## Akzeptanz und Verifikation
 
-- [ ] Freigegebenes Golden Dataset erreicht vorab definierte hohe Sensitivität.
-- [ ] Transfer-E2E deckt Annahme, Nichtannahme, Abbruch und Providerfehler ab.
-- [ ] Nach kritischer Klassifikation startet kein FAQ-/Termin-/Lead-Dialog mehr.
-- [ ] Generative Antwort verzögert niemals den Notfallpfad.
-- [ ] Handoff, Alarm und Incidentdaten minimieren PII und sind auditierbar.
+- [ ] Das vorab definierte synthetische Golden Set erreicht die freigegebenen
+      Sensitivitäts-/False-positive-Ziele oder der Task stoppt.
+- [ ] Transfer-E2E deckt Annahme, Nichtannahme, Abbruch, Timeout und
+      Provider-/Runtimefehler mit Fakes ab.
+- [ ] Nach kritischer Klassifikation startet kein FAQ-, Lead-, Textback- oder
+      Tooldialog ohne explizit erlaubten Safety-Pfad.
+- [ ] Generative Antwort verzögert niemals den nichtgenerativen Notfallpfad.
+- [ ] Handoff-, Alarm- und Incidentmetadaten minimieren PII und sind auditiert.
 
-Stop: Schwellenwerte, Texte und Pilotbetrieb benötigen unabhängige Safety- und
-Legal-Abnahme.
+Stop: Schwellenwerte, produktive Texte und Realbetrieb benötigen unabhängige
+Safety-, Product- und Legal-Abnahme in `G6`.

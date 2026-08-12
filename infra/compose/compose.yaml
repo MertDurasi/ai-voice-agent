@@ -109,7 +109,7 @@ services:
     <<: *service-defaults
     build:
       context: ./mailpit
-    image: voice-ai-agent/mailpit-local:v1.30.0
+    image: voice-ai-agent/mailpit-local:v1.30.7
     environment:
       MP_DATABASE: /data/mailpit.db
       MP_DISABLE_VERSION_CHECK: 'true'

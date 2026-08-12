@@ -33,7 +33,7 @@ und beweist anschließend deren Persistenz. Der Test ist wiederholbar.
 | Redis 8.8.1 | `redis:6379` | `redis-data`, AOF |
 | Keycloak 26.7.0 | `keycloak:8080` | PostgreSQL |
 | MinIO | API `minio:9000`, Console `minio:9001` | `minio-data` |
-| Mailpit 1.30.0 | SMTP `mailpit:1025`, UI `mailpit:8025` | `mailpit-data` |
+| Mailpit 1.30.7 | SMTP `mailpit:1025`, UI `mailpit:8025` | `mailpit-data` |
 
 Lokale Testzugänge stehen in `.env.example`. Sie sind absichtlich als
 `local-only` markiert und dürfen niemals für Staging, Produktion oder echte
@@ -76,5 +76,5 @@ bewertet.
 Quellen: [PostgreSQL Official Image](https://hub.docker.com/_/postgres),
 [Redis Official Image](https://hub.docker.com/_/redis),
 [Keycloak 26.7.0](https://www.keycloak.org/2026/07/keycloak-2670-released),
-[Mailpit 1.30.0](https://github.com/axllent/mailpit/releases/tag/v1.30.0) und
+[Mailpit 1.30.7](https://github.com/axllent/mailpit/releases/tag/v1.30.7) und
 [MinIO Security-Fix-Tag](https://github.com/minio/minio/releases/tag/RELEASE.2025-10-15T17-29-55Z).

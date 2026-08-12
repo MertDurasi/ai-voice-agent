@@ -24,7 +24,9 @@ const requiredWorkflowFragments = Object.freeze([
   'corepack pnpm test:integration',
   'corepack pnpm test:e2e',
   'corepack pnpm build',
-  'corepack pnpm ci:policy',
+  'corepack pnpm ci:workflow',
+  'corepack pnpm ci:migrations',
+  'corepack pnpm test:ci-policy',
   'corepack pnpm secret:scan',
   'corepack pnpm audit --audit-level=high',
   'corepack pnpm sbom --sbom-format cyclonedx',
@@ -32,12 +34,17 @@ const requiredWorkflowFragments = Object.freeze([
   'corepack pnpm compose:health',
   'corepack pnpm compose:verify',
   'node tooling/ci/prepare-artifacts.mjs',
+  'node tooling/ci/check-vulnerability-report.mjs',
+  '--policy ${{ matrix.policy }}',
+  '--policy baseline',
   '--profile tools config --quiet',
   'image-ref: voice-ai-agent/minio-local:RELEASE.2025-10-15T17-29-55Z',
-  'image-ref: voice-ai-agent/mailpit-local:v1.30.0',
+  'image-ref: voice-ai-agent/mailpit-local:v1.30.7',
   "scan-type: 'image'",
   'scanners: vuln,misconfig,secret',
   'severity: HIGH,CRITICAL',
+  'test "$VULNERABILITY_OUTCOME" = success',
+  'test "$MINIO_POLICY_OUTCOME" = success',
   'needs: [quality, supply-chain, container-scan, infrastructure]',
 ]);
 
@@ -124,6 +131,13 @@ export function workflowPolicyViolations(source) {
     imageValues.some((image) => !/@sha256:[a-f0-9]{64}$/u.test(image))
   ) {
     add('container_image_not_digest_pinned');
+  }
+  const matrixPolicies = [...source.matchAll(/^\s+policy:\s*(blocking|baseline)\s*$/gmu)].map(
+    (match) => match[1],
+  );
+  if (matrixPolicies.length !== imageValues.length) add('container_policy_missing');
+  if ((source.match(/^\s+policy:\s*baseline\s*$/gmu) ?? []).length !== 3) {
+    add('container_baseline_scope_changed');
   }
 
   return unique(violations);

@@ -115,8 +115,8 @@ describe('workflow policy', () => {
     const unpinnedDockerfile = {
       ...dockerfiles,
       mailpit: dockerfiles.mailpit.replace(
-        /axllent\/mailpit:v1\.30\.0@sha256:[a-f0-9]{64}/u,
-        'axllent/mailpit:v1.30.0',
+        /axllent\/mailpit:v1\.30\.7@sha256:[a-f0-9]{64}/u,
+        'axllent/mailpit:v1.30.7',
       ),
     };
     expect(
@@ -125,6 +125,14 @@ describe('workflow policy', () => {
         dockerfiles: unpinnedDockerfile,
         workflowSource: workflow,
       }),
-    ).toContain('dockerfile_base_unpinned:mailpit:axllent/mailpit:v1.30.0');
+    ).toContain('dockerfile_base_unpinned:mailpit:axllent/mailpit:v1.30.7');
+  });
+
+  it('rejects a silently widened container baseline', () => {
+    const widened = workflow.replace(
+      /(id: mailpit-upstream[\s\S]*?policy:) blocking/u,
+      '$1 baseline',
+    );
+    expect(workflowPolicyViolations(widened)).toContain('container_baseline_scope_changed');
   });
 });

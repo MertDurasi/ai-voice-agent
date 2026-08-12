@@ -11,8 +11,8 @@
 |---|---|---|
 | `Quality and migration policy` | exakte Toolchain, Frozen Install, Workflow-/Migrationspolicy, Format, Lint, Typecheck, Unit-/Integration-/E2E-Tests, Build und Secret-Scan | jedem Fehler, Lockfile-Drift, unerlaubter Migration oder Secret-Finding |
 | `Dependency, filesystem and SBOM` | Dependency-Audit, CycloneDX-1.7-SBOM aus dem Lockfile sowie Dateisystem-/Misconfiguration-/Secret-Scan | High/Critical, Secret-Finding, Scannerfehler, fehlendem oder unsicherem Report |
-| `Container <id>` | jedes externe Runtime-, Tool- und Dockerfile-Basisimage am exakten Digest | High/Critical, ungepinntem oder nicht erfasstem Image, Scannerfehler |
-| `Local infrastructure and final images` | kompletter Compose-Vertrag einschließlich Tools-Profil, Build, Health, synthetische Persistenz sowie Scan der finalen MinIO-/Mailpit-Images | Build-/Health-/Persistenzfehler, High/Critical oder Scannerfehler |
+| `Container <id>` | jedes externe Runtime-, Tool- und Dockerfile-Basisimage am exakten Digest | neuem/verändertem High/Critical, abgelaufener Baseline, ungepinntem oder nicht erfasstem Image, Scannerfehler |
+| `Local infrastructure and final images` | kompletter Compose-Vertrag einschließlich Tools-Profil, Build, Health, synthetische Persistenz sowie Scan der finalen MinIO-/Mailpit-Images | Build-/Health-/Persistenzfehler, neuem/verändertem High/Critical, abgelaufener Baseline oder Scannerfehler |
 | `Merge gate` | alle vorherigen Jobs enden mit `success` | fehlgeschlagenem, abgebrochenem oder übersprungenem Pflichtjob |
 
 Der stabile Required-Check heißt in GitHub `CI / Merge gate`. Änderungen an
@@ -55,15 +55,28 @@ Migrationspfad am Gate vorbei zu.
 
 ## Findings und Ausnahmen
 
-High und Critical blockieren Dependencies, Dateisystem und Container. Ein
-Scanner-/Datenbankfehler gilt ebenfalls als Fehler, nicht als „kein Finding“.
-`ignore-unfixed` ist deaktiviert.
+High und Critical blockieren Dependencies, Dateisystem, Applikations- und
+produktionsfähige Container. Ein Scanner-/Datenbankfehler gilt ebenfalls als
+Fehler, nicht als „kein Finding“. `ignore-unfixed` ist deaktiviert.
 
-Der produktive Workflow besitzt absichtlich **keine Finding-Ausnahme**. Die
-Policy-Negativtests definieren bereits den Mindestvertrag für eine spätere,
-separat gereviewte Ausnahme: exakte Finding-ID, benannter Owner, konkrete
-Begründung und nicht überschrittenes Ablaufdatum. Eine pauschale Ignore-Datei
-oder ein direkter Workflow-Bypass ist unzulässig.
+Für die ausschließlich lokal und synthetisch nutzbaren Upstreamimages von
+PostgreSQL, Keycloak und MinIO existiert eine enge Übergangsbaseline in
+`tooling/ci/vulnerability-baseline.json`. Sie ist keine pauschale Ausnahme:
+
+- jeder Fund ist über Severity, ID, Paket und installierte Version exakt
+  gebunden; jeder neue, entfernte oder veränderte Fund blockiert;
+- der konkrete Image-Digest beziehungsweise lokale Build-Tag ist gebunden;
+- Nutzung ist `local-synthetic-only`, Promotion ist technisch als `forbidden`
+  festgeschrieben;
+- Critical-Baselines dürfen höchstens sieben, reine High-Baselines höchstens
+  30 Tage gelten; die aktuelle Baseline endet am 2026-08-19;
+- Owner und Begründung sind Pflicht. Verlängerung oder Imagewechsel brauchen
+  einen neuen Security-Review und einen vollständig grünen Lauf.
+
+Mailpit 1.30.7, Redis, Builder und Basisruntime sind aktuell ohne High/Critical
+und bleiben strikt blockierend. Staging-/Produktionsimages dürfen diese
+lokale Baseline niemals übernehmen. Eine globale Ignore-Datei oder ein
+direkter Workflow-Bypass ist unzulässig.
 
 ## Reports und Aufbewahrung
 
@@ -98,7 +111,17 @@ corepack pnpm ci:quality
 
 Der vollständige Infrastruktur- und Containernachweis läuft in GitHub CI. Die
 lokale Infrastruktur kann separat mit `compose:up`, `compose:health`,
-`compose:verify` und `compose:down` geprüft werden.
+`compose:verify` und `compose:down` geprüft werden. Eine lokale Baseline lässt
+sich gegen einen gespeicherten Trivy-JSON-Report reproduzierbar prüfen:
+
+```bash
+node tooling/ci/check-vulnerability-report.mjs \
+  --report /path/to/trivy-report.json \
+  --subject postgres \
+  --policy baseline \
+  --image 'postgres:18.4-alpine3.23@sha256:…' \
+  --baseline tooling/ci/vulnerability-baseline.json
+```
 
 ## Owner-Schritte vor G1
 

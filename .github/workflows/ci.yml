@@ -36,8 +36,12 @@ jobs:
           package-manager-cache: false
       - name: Frozen install
         run: corepack pnpm install --frozen-lockfile
-      - name: Workflow, migration and negative-fixture policy
-        run: corepack pnpm ci:policy
+      - name: Workflow policy
+        run: corepack pnpm ci:workflow
+      - name: Migration policy
+        run: corepack pnpm ci:migrations
+      - name: CI negative-fixture policy
+        run: corepack pnpm test:ci-policy
       - name: Formatting
         run: corepack pnpm format:check
       - name: Lint
@@ -146,18 +150,25 @@ jobs:
         include:
           - id: postgres
             image: 'postgres:18.4-alpine3.23@sha256:996d0920e4ff9df1fc19dacb904492f3c1ec0ec1cc338f0ad7123be7731c5f5e'
+            policy: baseline
           - id: redis
             image: 'redis:8.8.1-alpine3.23@sha256:8096655e437712b07503796fb64d81359256cfcff0ab29d95a7da72863786efb'
+            policy: blocking
           - id: keycloak
             image: 'quay.io/keycloak/keycloak:26.7.0@sha256:0f198be292568439d700cdbfb893e69a6009bb43a94a06a945b1d3d506c76b13'
+            policy: baseline
           - id: go-builder
             image: 'golang:1.26.5-alpine3.24@sha256:0178a641fbb4858c5f1b48e34bdaabe0350a330a1b1149aabd498d0699ff5fb2'
+            policy: blocking
           - id: minio-client
             image: 'minio/mc:RELEASE.2025-07-16T15-35-03Z@sha256:d5bccfe71e95a34b25d626d86621930342553657e8776833b65ae0bc63cf4928'
+            policy: baseline
           - id: mailpit-upstream
-            image: 'axllent/mailpit:v1.30.0@sha256:0059ef81e492a7192af3816281eed6859eb078bd7bdc58b76757c13e10e53a7d'
+            image: 'axllent/mailpit:v1.30.7@sha256:d5ecbb067db3705fa953d79e1b7f81ef84038df67aba6c52825d8c02a1ea748a'
+            policy: blocking
           - id: alpine-runtime
             image: 'alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b'
+            policy: blocking
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -177,7 +188,7 @@ jobs:
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0 / Trivy 0.70.0
         with:
           cache: 'false'
-          exit-code: '1'
+          exit-code: ${{ matrix.policy == 'blocking' && '1' || '0' }}
           format: 'json'
           ignore-unfixed: 'false'
           image-ref: ${{ matrix.image }}
@@ -185,6 +196,17 @@ jobs:
           scan-type: 'image'
           scanners: vuln
           severity: HIGH,CRITICAL
+      - name: Evaluate vulnerability baseline
+        id: vulnerability-policy
+        if: always()
+        continue-on-error: true
+        run: >-
+          node tooling/ci/check-vulnerability-report.mjs
+          --report artifacts/trivy-container-${{ matrix.id }}.json
+          --subject ${{ matrix.id }}
+          --policy ${{ matrix.policy }}
+          --image ${{ matrix.image }}
+          --baseline tooling/ci/vulnerability-baseline.json
       - name: Validate and inventory container report
         id: artifact-policy
         if: always()
@@ -209,9 +231,11 @@ jobs:
         env:
           ARTIFACT_OUTCOME: ${{ steps.artifact-policy.outcome }}
           CONTAINER_OUTCOME: ${{ steps.container-scan.outcome }}
+          VULNERABILITY_OUTCOME: ${{ steps.vulnerability-policy.outcome }}
         run: |
           test "$CONTAINER_OUTCOME" = success
           test "$ARTIFACT_OUTCOME" = success
+          test "$VULNERABILITY_OUTCOME" = success
 
   infrastructure:
     name: Local infrastructure and final images
@@ -250,7 +274,7 @@ jobs:
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0 / Trivy 0.70.0
         with:
           cache: 'false'
-          exit-code: '1'
+          exit-code: '0'
           format: 'json'
           ignore-unfixed: 'false'
           image-ref: voice-ai-agent/minio-local:RELEASE.2025-10-15T17-29-55Z
@@ -258,6 +282,17 @@ jobs:
           scan-type: 'image'
           scanners: vuln
           severity: HIGH,CRITICAL
+      - name: Evaluate local MinIO vulnerability baseline
+        id: minio-vulnerability-policy
+        if: always()
+        continue-on-error: true
+        run: >-
+          node tooling/ci/check-vulnerability-report.mjs
+          --report artifacts/trivy-local-minio.json
+          --subject minio-local
+          --policy baseline
+          --image voice-ai-agent/minio-local:RELEASE.2025-10-15T17-29-55Z
+          --baseline tooling/ci/vulnerability-baseline.json
       - name: Scan final local Mailpit image
         id: mailpit-scan
         continue-on-error: true
@@ -267,7 +302,7 @@ jobs:
           exit-code: '1'
           format: 'json'
           ignore-unfixed: 'false'
-          image-ref: voice-ai-agent/mailpit-local:v1.30.0
+          image-ref: voice-ai-agent/mailpit-local:v1.30.7
           output: artifacts/trivy-local-mailpit.json
           scan-type: 'image'
           scanners: vuln
@@ -299,8 +334,10 @@ jobs:
           ARTIFACT_OUTCOME: ${{ steps.artifact-policy.outcome }}
           MAILPIT_OUTCOME: ${{ steps.mailpit-scan.outcome }}
           MINIO_OUTCOME: ${{ steps.minio-scan.outcome }}
+          MINIO_POLICY_OUTCOME: ${{ steps.minio-vulnerability-policy.outcome }}
         run: |
           test "$MINIO_OUTCOME" = success
+          test "$MINIO_POLICY_OUTCOME" = success
           test "$MAILPIT_OUTCOME" = success
           test "$ARTIFACT_OUTCOME" = success
       - name: Stop isolated local infrastructure

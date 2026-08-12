@@ -45,28 +45,32 @@ im Repo. Keine automatische Produktionsauslieferung hinzufügen.
 - CycloneDX-1.7-SBOM, Dependency-/Filesystem-/Containerreports und
   SHA-256-Manifeste als kurzlebige CI-Artefakte
 
-## Lokaler Nachweis vom 2026-08-11
+## Lokaler Nachweis vom 2026-08-12
 
 Unter Node `24.18.0` und pnpm `11.20.0` sind erfolgreich:
 
 - Frozen Install und Dependency-Audit ohne bekannte Schwachstelle;
 - Workflow-/Image-/Migrationspolicy einschließlich Guard-Ausführung;
-- 16 CI-/Migrations-/Finding-/Artefakt-Policytests;
+- 22 CI-/Migrations-/Finding-/Artefakt-Policytests einschließlich exakter,
+  ablaufender Local-only-Containerbaseline;
 - 7 Secret-Scanner-Tests und Arbeitsbaum-/Git-History-Scan mit genau einem
   synthetischen Canary, ohne unerwartetes Finding;
 - vollständiges `ci:quality`: Format, Lint, Typecheck, Unit-/Architektur-/
   OpenAPI-/Runtime-Integrationstests, E2E-Runner und Build;
 - native CycloneDX-1.7-SBOM-Erzeugung und Parserprüfung;
-- Healthprüfung aller fünf lokalen Infrastrukturservices.
+- Health- und Persistenzprüfung aller fünf lokalen Infrastrukturservices;
+- Mailpit 1.30.7 als Upstream- und finales lokales Image ohne High/Critical;
+- PostgreSQL-, Keycloak- und MinIO-Funde exakt inventarisiert, Promotion
+  verboten und bis 2026-08-19 befristet. Jeder Drift blockiert.
 
 Der Workflow pusht, publiziert und deployt nichts. Reale Provider-, Voice-,
 Textback-, Payment- und Produktionspfade bleiben deaktiviert.
 
 ## Reviewgrenze und Owner-Nachweis
 
-Die lokale Implementierung ist reviewbereit, aber `G1` bleibt offen: Der neue
-Workflow wurde noch nicht auf GitHub ausgeführt und kann lokal weder den
-gehosteten Trivy-/Containerlauf noch einen Branch-Ruleset beweisen. Vor `done`
+Die lokale Implementierung ist reviewbereit, aber `G1` bleibt offen: Der erste
+GitHub-Lauf hat die nun kontrollierten Upstream-Funde sichtbar gemacht. Der
+korrigierte Lauf und der Branch-Ruleset sind noch nachzuweisen. Vor `done`
 benötigt der Repository-Owner:
 
 1. Push/PR und einen grünen Lauf von `CI / Merge gate`;

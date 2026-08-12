@@ -128,8 +128,11 @@ node tooling/ci/check-vulnerability-report.mjs \
 
 ## Owner-Schritte vor G1
 
-Der Workflow allein verhindert keinen Merge. Der Repository-Owner muss nach
-dem ersten grünen Lauf einen Ruleset für `main` aktivieren:
+Der Workflow ist in
+[GitHub Actions Run 31616117821](https://github.com/MertDurasi/ai-voice-agent/actions/runs/31616117821)
+einschließlich `CI / Merge gate` vollständig grün. Der Workflow allein
+verhindert jedoch keinen Merge. Der Repository-Owner muss einen Ruleset für
+`main` aktivieren:
 
 - `CI / Merge gate` ist Required Check und der Branch muss aktuell sein;
 - keine Admin-/Owner-Umgehung, kein Force-Push und keine Branch-Löschung;

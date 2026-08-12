@@ -1,12 +1,12 @@
 # Gate-Status
 
-Stand: 2026-08-11
+Stand: 2026-08-12
 
 | Gate | Status | Voraussetzungen | Freigabe/Datum | Nachweis |
 |---|---|---|---|---|
 | G0 Discovery | passed | D-001–D-003; reversible SHK-/Angebots-/Kanalhypothesen; realistischer synthetischer Replay-Pfad; Realbetriebsblocker sichtbar | Product Owner / 2026-08-08 | [D-003](../tasks/discovery/D-003-privacy-abuse-workshop.md), [Compliance-Paket](../compliance/README.md), [D-002-Abnahme](../product/decision-log.md) |
 | G0V Voice-first Rebaseline | passed | PM-002; akzeptierte Voice-first-Entscheidung und ADR-013; Produkt-, Architektur-, Compliance-, Roadmap-, Gate- und Taskdelta konsistent; ausschließlich Fake-/Replay-Scope | Product Owner / 2026-08-11 | [PM-002](../tasks/project-management/PM-002-voice-first-mvp-rebaseline.md), [ADR-013](../adr/ADR-013-voice-first-combined-mvp.md), [Product Brief v2.0](../product/product-brief.md), [Compliance](../compliance/README.md) |
-| G1 Skelett | open | F-001–F-005; Setup reproduzierbar, Apps healthy, CI grün, keine Secrets | – | [F-005 lokal reviewbereit; GitHub-Lauf/Ruleset offen](../tasks/foundation/F-005-ci-supply-chain.md) |
+| G1 Skelett | open | F-001–F-005; Setup reproduzierbar, Apps healthy, CI grün, keine Secrets | – | [CI vollständig grün; nur Required Ruleset offen](https://github.com/MertDurasi/ai-voice-agent/actions/runs/31616117821), [F-005](../tasks/foundation/F-005-ci-supply-chain.md) |
 | G2 Isolation | blocked_by_G1 | T-001–T-004; Cross-Tenant-Negativsuite und Rollenmatrix; `G0V` bestanden | – | – |
 | G3 Voice+Text Configuration | blocked_by_G2_and_product_checkpoint | `PO-001`–`PO-003`; `V-001` benchmarkt Anbieter-/Build-vs-Buy-/Runtimeoptionen ohne Vorentscheidung; O-001–O-004; kombinierter Fake-Onboarding-E2E, Versionierung und Audit | – | – |
 | G4 Realtime Telephony & Media | blocked_by_G3 | E-001–E-004, V-002 und V-005; providerneutrale Call-/Media-Verträge, authentisierter Fake-/Replay-Ingress, kanonisches CallOutcome, Session-Cleanup sowie Restart-/Lastnachweise | – | – |
@@ -17,8 +17,9 @@ Stand: 2026-08-11
 
 ## Nächste zulässige Arbeit
 
-- Engineering `Now`: `F-005` bleibt im Review, bis der erste grüne GitHub-Lauf
-  und der Required Ruleset nachgewiesen sind; `G1` bleibt offen.
+- Engineering `Now`: `F-005` bleibt nur bis zum Required Ruleset im Review;
+  der GitHub-Lauf ist vollständig grün. `G1` bleibt bis zur Owner-Einstellung
+  offen.
 - Product/Discovery `Now`: `PO-001` als erster Evidenz-Pull nach bestandenem
   `G0V`.
 - `PO-002`, `V-001` und `PO-003` werden anschließend WIP-gesteuert gezogen.

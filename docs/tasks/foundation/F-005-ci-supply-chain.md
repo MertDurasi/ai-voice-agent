@@ -70,15 +70,21 @@ Textback-, Payment- und Produktionspfade bleiben deaktiviert.
 
 ## Reviewgrenze und Owner-Nachweis
 
-Die lokale Implementierung ist reviewbereit, aber `G1` bleibt offen: Der erste
-GitHub-Lauf hat die nun kontrollierten Upstream-Funde sichtbar gemacht. Der
-korrigierte Lauf und der Branch-Ruleset sind noch nachzuweisen. Vor `done`
-benötigt der Repository-Owner:
+Die Implementierung und der gehostete Lauf sind reviewbereit, aber `G1` bleibt
+bis zum Repository-Ruleset offen. Der erste Lauf hat die nun kontrollierten
+Upstream-Funde sichtbar gemacht; der korrigierte Lauf ist vollständig grün.
 
-1. Push/PR und einen grünen Lauf von `CI / Merge gate`;
-2. einen `main`-Ruleset mit diesem Required Check, aktuellem Branch, ohne
+- Grüner Nachweis:
+  [GitHub Actions Run 31616117821](https://github.com/MertDurasi/ai-voice-agent/actions/runs/31616117821),
+  Commit `4de91a9`, einschließlich `CI / Merge gate`.
+- Offen: `main`-Ruleset mit `CI / Merge gate` als Required Check und ohne
+  Admin-Bypass.
+
+Vor `done` benötigt der Repository-Owner noch:
+
+1. einen `main`-Ruleset mit diesem Required Check, aktuellem Branch, ohne
    Admin-Bypass, Force-Push oder Branch-Löschung;
-3. den Link auf Lauf und Ruleset als Gate-Nachweis.
+2. den Link oder Screenshot des aktiven Rulesets als Gate-Nachweis.
 
 Der vorhandene fremde Arbeitsbaumstand in `apps/web/next-env.d.ts` wurde nicht
 bereinigt oder als Taskartefakt beansprucht.

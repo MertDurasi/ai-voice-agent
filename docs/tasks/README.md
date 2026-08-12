@@ -10,7 +10,7 @@ Gatevoraussetzungen stehen in [Gate-Status](../project/gate-status.md).
 
 | Horizont/Spur | Task/Outcome |
 |---|---|
-| `Now` Engineering | `F-005` im Review: erster grüner GitHub-Lauf und Required Ruleset |
+| `Now` Engineering | `F-005` im Review: CI grün, nur Required Ruleset offen |
 | `Now` Product | `PO-001`: Problem-/Vertrauensinterviews und Intent-Evidenz |
 | `Next` | nach `F-005` Gate `G1`/Tenancy; nach `PO-001` `PO-002`/`V-001`; weitere Arbeit WIP-gesteuert |
 | `Later` | `G3` Voice+Text Configuration → `G4` Realtime Telephony & Media → `G5` synthetischer Combined Assistant → Pilot-Readiness und kontrollierter Pilot |

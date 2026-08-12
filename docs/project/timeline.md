@@ -7,7 +7,7 @@ Freigabe. Die verbindliche Reihenfolge steht in der
 
 | Horizont | Forecastannahme | erwartetes Ergebnis | Konfidenz |
 |---|---|---|---|
-| `Now` | je ein WIP-Slot pro Spur; Abschluss vor neuem Pull | `F-005` im Engineering-Track und `PO-001` im Product-Track; `PM-002`/`G0V` ist abgeschlossen | mittel für Reihenfolge, niedrig für Datum bis weitere Cycle Time vorliegt |
+| `Now` | je ein WIP-Slot pro Spur; Abschluss vor neuem Pull | `T-001` im Engineering-Track und `PO-001` im Product-Track; `F-005`/`G1` ist abgeschlossen | mittel für Reihenfolge, niedrig für Datum bis weitere Cycle Time vorliegt |
 | `Next` | ungefähr 2–6 Wochen, abhängig von Evidenz, Taskzuschnitt und Durchsatz | `PO-001`–`PO-003`/`V-001` als Investment-Checkpoint, `G1`/`G2` und danach Voice+Text-Konfiguration für `G3` | niedrig; Anbieter-/Runtimebenchmark und erste 3–5 vergleichbare Tasks fehlen |
 | `Later` | keine Kalenderprognose | `G4` Realtime Telephony & Media, `G5` synthetischer Combined Assistant, `G6` Pilot Ready, `G7` kontrollierter Pilot und `G8` Post-pilot-Entscheid | absichtlich keine Termin-Konfidenz |
 

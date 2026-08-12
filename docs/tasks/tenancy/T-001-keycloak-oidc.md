@@ -2,7 +2,7 @@
 id: T-001
 title: Keycloak/OIDC integrieren
 phase: tenancy
-status: blocked
+status: ready
 priority: P0
 owner: Engineering/Security
 dependencies: [G1]

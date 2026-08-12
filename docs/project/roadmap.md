@@ -9,11 +9,12 @@ gleichzeitig aktiv.
 
 | Spur | Task | überprüfbares Outcome | Stop-/Reviewpunkt |
 |---|---|---|---|
-| Engineering | `F-005` | jeder Merge besitzt reproduzierbare Qualitäts- und Supply-Chain-Nachweise | keine Produktionsauslieferung; die providerfreie Runtime-Basis bleibt unverändert |
+| Engineering | `T-001` | sichere lokale OIDC-Authentisierung für Web/API ohne Tenantautorisierung | keine produktive Realm-/Domainkonfiguration und keine echten Nutzer |
 | Product/Discovery | `PO-001` | zehn Problem-/Vertrauensinterviews prüfen Bedarf, begrenzte Intents, KI-Transparenz, Handoff und Textfortsetzung in der SHK-Kohorte | Interviewevidenz kann Scope oder Kohorte ändern; keine Anbieter-/Realfreigabe |
 
-`Now` enthält bewusst nur diese zwei Tasks. `PM-002`/`G0V` ist abgeschlossen;
-andere Product-Tasks werden nicht parallel zu `PO-001` begonnen.
+`Now` enthält bewusst nur diese zwei Tasks. `PM-002`/`G0V` und `F-005`/`G1`
+sind abgeschlossen; andere Product-Tasks werden nicht parallel zu `PO-001`
+begonnen.
 
 ## Next – ungefähr 2–6 Wochen, wöchentlich neu zu forecasten
 

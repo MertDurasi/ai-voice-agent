@@ -62,6 +62,8 @@ Unter Node `24.18.0` und pnpm `11.20.0` sind erfolgreich:
 - Mailpit 1.30.7 als Upstream- und finales lokales Image ohne High/Critical;
 - PostgreSQL-, Keycloak- und MinIO-Funde exakt inventarisiert, Promotion
   verboten und bis 2026-08-19 befristet. Jeder Drift blockiert.
+- Corepack-/pnpm-Auflösung und Lint auf einem frischen Linux-amd64-Runner ohne
+  vorinstallierten pnpm-Shim reproduziert.
 
 Der Workflow pusht, publiziert und deployt nichts. Reale Provider-, Voice-,
 Textback-, Payment- und Produktionspfade bleiben deaktiviert.

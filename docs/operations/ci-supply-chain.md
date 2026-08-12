@@ -24,6 +24,9 @@ keine Repository-Secrets und enthält weder Publish- noch Deploymentpfade.
 
 - Node `24.18.0` kommt ausschließlich aus `.node-version`; pnpm `11.20.0`
   ausschließlich aus `packageManager`.
+- Jeder pnpm-/Turbo-Job aktiviert zuerst den Corepack-Shim und prüft die
+  exakte pnpm-Version. So kann Turbo den Paketmanager auch auf einem frischen
+  Linux-Runner deterministisch auflösen.
 - Jede Installation nutzt `pnpm install --frozen-lockfile`. Ein inkonsistentes
   Manifest oder Lockfile ist ein Fehler.
 - GitHub Actions sind über vollständige Commit-SHAs erlaubt und in der lokalen

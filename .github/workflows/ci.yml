@@ -34,6 +34,8 @@ jobs:
         with:
           node-version-file: .node-version
           package-manager-cache: false
+      - name: Enable exact package manager
+        run: corepack enable && test "$(pnpm --version)" = "11.20.0"
       - name: Frozen install
         run: corepack pnpm install --frozen-lockfile
       - name: Workflow policy
@@ -74,6 +76,8 @@ jobs:
         with:
           node-version-file: .node-version
           package-manager-cache: false
+      - name: Enable exact package manager
+        run: corepack enable && test "$(pnpm --version)" = "11.20.0"
       - name: Frozen install
         run: corepack pnpm install --frozen-lockfile
       - name: Create report directory
@@ -252,6 +256,8 @@ jobs:
         with:
           node-version-file: .node-version
           package-manager-cache: false
+      - name: Enable exact package manager
+        run: corepack enable && test "$(pnpm --version)" = "11.20.0"
       - name: Frozen install
         run: corepack pnpm install --frozen-lockfile
       - name: Create report directory

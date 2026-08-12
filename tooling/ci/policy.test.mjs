@@ -97,6 +97,9 @@ describe('workflow policy', () => {
     expect(
       workflowPolicyViolations(workflow.replaceAll('--frozen-lockfile', '--no-frozen-lockfile')),
     ).toContain('required_step_missing:corepack pnpm install --frozen-lockfile');
+    expect(
+      workflowPolicyViolations(workflow.replaceAll('corepack enable', 'corepack disable')),
+    ).toContain('package_manager_shim_not_enabled');
   });
 
   it('rejects unpinned or unscanned infrastructure images', () => {

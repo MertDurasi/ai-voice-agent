@@ -16,6 +16,7 @@ export const requiredGateChecks = Object.freeze([
 ]);
 
 const requiredWorkflowFragments = Object.freeze([
+  'corepack enable && test "$(pnpm --version)" = "11.20.0"',
   'corepack pnpm install --frozen-lockfile',
   'corepack pnpm format:check',
   'corepack pnpm lint',
@@ -99,6 +100,10 @@ export function workflowPolicyViolations(source) {
   if (setupNodeCount !== versionFileCount || setupNodeCount !== cacheDisableCount) {
     add('node_setup_not_exact_or_cache_implicit');
   }
+  const corepackEnableCount = (
+    source.match(/corepack enable && test "\$\(pnpm --version\)" = "11\.20\.0"/gu) ?? []
+  ).length;
+  if (corepackEnableCount !== 3) add('package_manager_shim_not_enabled');
 
   const uploadCount = uses.filter((value) => value.startsWith('actions/upload-artifact@')).length;
   const retentionValues = [...source.matchAll(/retention-days:\s*(\d+)/gu)].map((match) =>

@@ -10,9 +10,9 @@ Gatevoraussetzungen stehen in [Gate-Status](../project/gate-status.md).
 
 | Horizont/Spur | Task/Outcome |
 |---|---|
-| `Now` Engineering | `F-005` im Review: CI grün, nur Required Ruleset offen |
+| `Now` Engineering | `T-001`: sichere lokale Keycloak-/OIDC-Basis ohne Tenantautorisierung |
 | `Now` Product | `PO-001` in Arbeit: Interview-Kit fertig; zehn Interviews und Intent-Evidenz offen |
-| `Next` | nach `F-005` Gate `G1`/Tenancy; nach `PO-001` `PO-002`/`V-001`; weitere Arbeit WIP-gesteuert |
+| `Next` | `T-002`–`T-004` für G2; nach `PO-001` `PO-002`/`V-001`; weitere Arbeit WIP-gesteuert |
 | `Later` | `G3` Voice+Text Configuration → `G4` Realtime Telephony & Media → `G5` synthetischer Combined Assistant → Pilot-Readiness und kontrollierter Pilot |
 
 WIP: höchstens eine Engineering- und eine Product-/Discovery-Task. `Next` ist
@@ -51,13 +51,13 @@ offen.
 | [F-002 Lokale Infrastruktur](foundation/F-002-local-infrastructure.md) | done | F-001 |
 | [F-003 Konfiguration und Secrets](foundation/F-003-configuration-secrets.md) | done | F-001 |
 | [F-004 API/Web/Worker-Basis](foundation/F-004-application-baseline.md) | done | F-002, F-003 |
-| [F-005 CI und Supply Chain](foundation/F-005-ci-supply-chain.md) | review (`Now`) | F-001–F-004 |
+| [F-005 CI und Supply Chain](foundation/F-005-ci-supply-chain.md) | done | F-001–F-004 |
 
 ## Identity, Tenancy und Datenbasis – Gate G2
 
 | Task | Status | Abhängigkeit |
 |---|---|---|
-| [T-001 Keycloak/OIDC](tenancy/T-001-keycloak-oidc.md) | blocked | G1 |
+| [T-001 Keycloak/OIDC](tenancy/T-001-keycloak-oidc.md) | ready (`Next`) | G1 |
 | [T-002 Tenant und Kontext](tenancy/T-002-tenant-context.md) | blocked | T-001 |
 | [T-003 RLS und DB-Rollen](tenancy/T-003-rls-db-roles.md) | blocked | T-002 |
 | [T-004 Audit-Grundlage](tenancy/T-004-audit-foundation.md) | blocked | T-002 |

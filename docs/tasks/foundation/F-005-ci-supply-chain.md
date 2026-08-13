@@ -2,13 +2,13 @@
 id: F-005
 title: CI-Baseline und Supply Chain
 phase: foundation
-status: review
+status: done
 priority: P0
 owner: Engineering/Security
 dependencies: [F-001, F-002, F-003, F-004]
 gate: G1
 outputs: [ci-workflow, sbom, scan-policy, artifact-policy]
-completed_at: null
+completed_at: 2026-08-12
 ---
 
 # F-005 – CI-Baseline und Supply Chain
@@ -68,23 +68,19 @@ Unter Node `24.18.0` und pnpm `11.20.0` sind erfolgreich:
 Der Workflow pusht, publiziert und deployt nichts. Reale Provider-, Voice-,
 Textback-, Payment- und Produktionspfade bleiben deaktiviert.
 
-## Reviewgrenze und Owner-Nachweis
+## Abschluss- und Owner-Nachweis
 
-Die Implementierung und der gehostete Lauf sind reviewbereit, aber `G1` bleibt
-bis zum Repository-Ruleset offen. Der erste Lauf hat die nun kontrollierten
-Upstream-Funde sichtbar gemacht; der korrigierte Lauf ist vollständig grün.
+Die Implementierung, der gehostete Lauf und das aktive Repository-Ruleset sind
+vollständig nachgewiesen:
 
 - Grüner Nachweis:
   [GitHub Actions Run 31616117821](https://github.com/MertDurasi/ai-voice-agent/actions/runs/31616117821),
   Commit `4de91a9`, einschließlich `CI / Merge gate`.
-- Offen: `main`-Ruleset mit `CI / Merge gate` als Required Check und ohne
-  Admin-Bypass.
-
-Vor `done` benötigt der Repository-Owner noch:
-
-1. einen `main`-Ruleset mit diesem Required Check, aktuellem Branch, ohne
-   Admin-Bypass, Force-Push oder Branch-Löschung;
-2. den Link oder Screenshot des aktiven Rulesets als Gate-Nachweis.
+- [Aktives Ruleset `main`](https://github.com/MertDurasi/ai-voice-agent/rules/20759048):
+  Default-Branch-Ziel, leere Bypass-Liste, Pull Request, gelöste Reviewthreads,
+  linearer Verlauf, Lösch-/Force-Push-Schutz und Required Check `Merge gate`
+  mit aktuellem Branch; am 2026-08-12 über die öffentliche Ruleset-API
+  verifiziert.
 
 Der vorhandene fremde Arbeitsbaumstand in `apps/web/next-env.d.ts` wurde nicht
 bereinigt oder als Taskartefakt beansprucht.

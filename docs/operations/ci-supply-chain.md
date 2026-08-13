@@ -131,8 +131,9 @@ node tooling/ci/check-vulnerability-report.mjs \
 Der Workflow ist in
 [GitHub Actions Run 31616117821](https://github.com/MertDurasi/ai-voice-agent/actions/runs/31616117821)
 einschließlich `CI / Merge gate` vollständig grün. Der Workflow allein
-verhindert jedoch keinen Merge. Der Repository-Owner muss einen Ruleset für
-`main` aktivieren:
+verhindert jedoch keinen Merge. Deshalb ist das
+[`main`-Ruleset](https://github.com/MertDurasi/ai-voice-agent/rules/20759048)
+aktiviert und am 2026-08-12 verifiziert:
 
 - `CI / Merge gate` ist Required Check und der Branch muss aktuell sein;
 - keine Admin-/Owner-Umgehung, kein Force-Push und keine Branch-Löschung;
@@ -141,5 +142,4 @@ verhindert jedoch keinen Merge. Der Repository-Owner muss einen Ruleset für
   Repositorytarif verfügbar;
 - keine Merge-Freigabe, solange der Required Check fehlt oder übersprungen ist.
 
-`G1` bleibt bis zum verlinkten grünen GitHub-Lauf und diesem Ruleset-Nachweis
-offen. Erst danach kann `F-005` von `review` nach `done` wechseln.
+Der verlinkte grüne Lauf und der Ruleset-Nachweis schließen `F-005` und `G1`.

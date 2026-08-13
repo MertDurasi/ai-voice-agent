@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { ApiErrorResponseDto, ApiRootResponseDto } from './api-contract';
+import { ApiErrorResponseDto, ApiRootResponseDto } from './api-contract.js';
 
 @ApiTags('system')
 @Controller('api/v1')

@@ -78,6 +78,27 @@
         "required": ["latencyMs", "status"],
         "type": "object"
       },
+      "IdentityResponseDto": {
+        "properties": {
+          "roles": {
+            "items": {
+              "enum": ["agent", "support_admin", "tenant_admin", "tenant_owner", "viewer"],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "subject": {
+            "example": "f25c47ed-6f91-469b-865a-84f42b088a7d",
+            "type": "string"
+          },
+          "tenantContext": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": ["roles", "subject", "tenantContext"],
+        "type": "object"
+      },
       "LivenessResponseDto": {
         "properties": {
           "checkedAt": {
@@ -127,6 +148,13 @@
         "required": ["checkedAt", "dependencies", "status"],
         "type": "object"
       }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "bearerFormat": "JWT",
+        "scheme": "bearer",
+        "type": "http"
+      }
     }
   },
   "info": {
@@ -165,6 +193,41 @@
         },
         "summary": "Describe the stable API baseline",
         "tags": ["system"]
+      }
+    },
+    "/api/v1/identity/me": {
+      "get": {
+        "operationId": "IdentityController_getIdentity",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityResponseDto"
+                }
+              }
+            },
+            "description": ""
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Return the validated identity without a tenant context",
+        "tags": ["identity"]
       }
     },
     "/health/live": {

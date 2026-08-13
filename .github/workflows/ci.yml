@@ -274,6 +274,8 @@ jobs:
         run: corepack pnpm compose:health
       - name: Verify synthetic persistence
         run: corepack pnpm compose:verify
+      - name: Verify local OIDC browser flow
+        run: corepack pnpm compose:identity
       - name: Scan final local MinIO image
         id: minio-scan
         continue-on-error: true

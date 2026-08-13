@@ -1,6 +1,7 @@
 import { type INestApplication, type LoggerService, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule, type OpenAPIObject } from '@nestjs/swagger';
+import { createRemoteAccessTokenVerifier, type AccessTokenVerifier } from '@voice-ai/auth';
 import type { ApiConfig } from '@voice-ai/config';
 import {
   JsonLogger,
@@ -9,10 +10,10 @@ import {
 } from '@voice-ai/observability';
 import { TcpDependencyProbe, type DependencyProbe, tcpEndpointFromUrl } from '@voice-ai/runtime';
 
-import { AppModule } from './app.module';
-import { ApiErrorDetailDto, ApiErrorResponseDto } from './http/api-contract';
-import { ApiExceptionFilter } from './http/api-exception.filter';
-import { createRequestIdMiddleware } from './http/request-id.middleware';
+import { AppModule } from './app.module.js';
+import { ApiErrorDetailDto, ApiErrorResponseDto } from './http/api-contract.js';
+import { ApiExceptionFilter } from './http/api-exception.filter.js';
+import { createRequestIdMiddleware } from './http/request-id.middleware.js';
 
 export interface ApiApplication {
   readonly app: INestApplication;
@@ -23,6 +24,7 @@ export interface ApiApplicationOptions {
   readonly enableShutdownHooks?: boolean;
   readonly logger?: LoggerService | false;
   readonly probes?: readonly DependencyProbe[];
+  readonly accessTokenVerifier?: AccessTokenVerifier;
 }
 
 export function dependencyProbesFromConfig(
@@ -65,6 +67,7 @@ export function buildOpenApiDocument(app: INestApplication): OpenAPIObject {
     .setTitle('Voice AI Agent API')
     .setDescription('Providerfreie, synthetische Foundation API.')
     .setVersion('1.0.0')
+    .addBearerAuth({ bearerFormat: 'JWT', scheme: 'bearer', type: 'http' }, 'bearer')
     .build();
   return SwaggerModule.createDocument(app, configuration, {
     extraModels: [ApiErrorDetailDto, ApiErrorResponseDto],
@@ -86,7 +89,13 @@ export async function createApiApplication(
         })
       : options.logger;
   const eventLogger = eventLoggerFrom(logger);
-  const app = await NestFactory.create(AppModule.register(probes), {
+  const accessTokenVerifier =
+    options.accessTokenVerifier ??
+    createRemoteAccessTokenVerifier({
+      audience: config.oidcClientId,
+      issuer: config.oidcIssuerUrl.href.replace(/\/$/u, ''),
+    });
+  const app = await NestFactory.create(AppModule.register(probes, accessTokenVerifier), {
     abortOnError: false,
     forceCloseConnections: true,
     logger,

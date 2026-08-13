@@ -10,6 +10,6 @@ describe('Page', () => {
     expect(markup).toContain('Die technische Basis ist bereit');
     expect(markup).toContain('Reale Nachrichten, Telefonie, Zahlungen und Voice');
     expect(markup).toContain('aria-labelledby="runtime-title"');
-    expect(markup).not.toContain('href=');
+    expect(markup).toContain('href="/auth/login"');
   });
 });

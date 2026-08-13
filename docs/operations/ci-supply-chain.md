@@ -38,7 +38,8 @@ keine Repository-Secrets und enthält weder Publish- noch Deploymentpfade.
   Die beiden lokal gebauten finalen Images werden nach dem Build zusätzlich
   gescannt.
 - Telemetrie von Next.js und Turbo ist deaktiviert. Der lokale Compose-Vertrag
-  veröffentlicht keine Host-Ports und verwendet nur synthetische Werte.
+  veröffentlicht ausschließlich Keycloak an `127.0.0.1:8080`; alle anderen
+  Host-Ports bleiben geschlossen und alle Werte synthetisch.
 
 ## Migrationen vor und ab T-003
 

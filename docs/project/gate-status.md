@@ -1,6 +1,6 @@
 # Gate-Status
 
-Stand: 2026-08-12
+Stand: 2026-08-13
 
 | Gate | Status | Voraussetzungen | Freigabe/Datum | Nachweis |
 |---|---|---|---|---|
@@ -17,8 +17,8 @@ Stand: 2026-08-12
 
 ## Nächste zulässige Arbeit
 
-- Engineering `Now`: `T-001` wird nach bestandenem `G1` als erste
-  Identity-/Isolation-Task gezogen.
+- Engineering `Now`: `T-002` modelliert nach abgeschlossenem `T-001` Tenant,
+  Membership und den ausschließlich serverseitig abgeleiteten Tenant-Kontext.
 - Product/Discovery `Now`: `PO-001` als erster Evidenz-Pull nach bestandenem
   `G0V`.
 - `PO-002`, `V-001` und `PO-003` werden anschließend WIP-gesteuert gezogen.

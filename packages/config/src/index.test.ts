@@ -32,6 +32,7 @@ const developmentEnvironment = Object.freeze({
   SHUTDOWN_GRACE_PERIOD_MS: '5000',
   WORKER_LOG_LEVEL: 'debug',
   WORKER_READINESS_INTERVAL_MS: '2000',
+  WEB_ORIGIN: 'http://127.0.0.1:3000',
 });
 
 const productionEnvironment = Object.freeze({
@@ -47,6 +48,7 @@ const productionEnvironment = Object.freeze({
   OIDC_ISSUER_URL: 'https://identity.product.tld/realms/runtime',
   REDIS_URL: 'rediss://runtime:B9sQ4kM7vN2xP6tH@redis.service:6379',
   SESSION_SECRET: 'j7M2q9L4w8R5x3V6n1T0p7K2c9F4s8H5',
+  WEB_ORIGIN: 'https://app.product.tld',
   WORKER_LOG_LEVEL: 'info',
 });
 
@@ -77,6 +79,7 @@ describe('typed application configuration', () => {
     expect(worker.environment).toBe('development');
     expect(worker.readinessIntervalMs).toBe(2000);
     expect(web.apiBaseUrl.origin).toBe('http://127.0.0.1:3001');
+    expect(web.origin.origin).toBe('http://127.0.0.1:3000');
   });
 
   it('accepts explicit non-local configuration with secure transports', () => {
@@ -91,6 +94,11 @@ describe('typed application configuration', () => {
         APP_ENV: 'test',
         NEXT_PUBLIC_API_BASE_URL: 'http://127.0.0.1:3001',
         NODE_ENV: 'production',
+        OIDC_CLIENT_ID: developmentEnvironment.OIDC_CLIENT_ID,
+        OIDC_CLIENT_SECRET: developmentEnvironment.OIDC_CLIENT_SECRET,
+        OIDC_ISSUER_URL: developmentEnvironment.OIDC_ISSUER_URL,
+        SESSION_SECRET: developmentEnvironment.SESSION_SECRET,
+        WEB_ORIGIN: 'http://127.0.0.1:3000',
       }).environment,
     ).toBe('test');
   });
@@ -132,18 +140,17 @@ describe('typed application configuration', () => {
     const serialized = JSON.stringify(api);
     const inspected = inspect(api);
 
-    expect(String(api.sessionSecret)).toBe(REDACTED_VALUE);
+    expect(String(api.databaseUrl)).toBe(REDACTED_VALUE);
     expect(serialized).toContain(REDACTED_VALUE);
     expect(inspected).toContain(REDACTED_VALUE);
-    for (const secret of [
-      productionEnvironment.DATABASE_URL,
-      productionEnvironment.OIDC_CLIENT_SECRET,
-      productionEnvironment.REDIS_URL,
-      productionEnvironment.SESSION_SECRET,
-    ]) {
+    for (const secret of [productionEnvironment.DATABASE_URL, productionEnvironment.REDIS_URL]) {
       expect(serialized).not.toContain(secret);
       expect(inspected).not.toContain(secret);
     }
+    const web = loadWebConfig(productionEnvironment);
+    expect(String(web.sessionSecret)).toBe(REDACTED_VALUE);
+    expect(JSON.stringify(web)).not.toContain(productionEnvironment.OIDC_CLIENT_SECRET);
+    expect(inspect(web)).not.toContain(productionEnvironment.SESSION_SECRET);
   });
 
   it('returns a generic message for unexpected startup errors', () => {

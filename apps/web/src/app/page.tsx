@@ -10,9 +10,17 @@ export default function Page() {
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col justify-between px-6 py-10 sm:px-10 sm:py-14">
         <header className="flex items-center justify-between border-b border-white/10 pb-6">
           <p className="text-sm font-semibold tracking-tight">Voice AI Agent</p>
-          <span className="rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-xs font-medium text-emerald-200">
-            Lokale Foundation
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-xs font-medium text-emerald-200">
+              Lokale Foundation
+            </span>
+            <a
+              className="rounded-full border border-sky-300/30 px-3 py-1 text-xs font-medium text-sky-200 hover:bg-sky-300/10"
+              href="/auth/login"
+            >
+              Sicher anmelden
+            </a>
+          </div>
         </header>
 
         <section aria-labelledby="foundation-title" className="max-w-3xl py-16 sm:py-24">

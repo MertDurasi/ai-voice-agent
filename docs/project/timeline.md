@@ -1,14 +1,14 @@
 # Rolling Forecast
 
-Stand: 2026-08-11. Kapazitätshypothese: ungefähr 20 Netto-Stunden pro Woche.
+Stand: 2026-08-13. Kapazitätshypothese: ungefähr 20 Netto-Stunden pro Woche.
 Dies ist eine Forecastbandbreite für Replenishment, kein Liefertermin und keine
 Freigabe. Die verbindliche Reihenfolge steht in der
 [Now–Next–Later-Roadmap](roadmap.md).
 
 | Horizont | Forecastannahme | erwartetes Ergebnis | Konfidenz |
 |---|---|---|---|
-| `Now` | je ein WIP-Slot pro Spur; Abschluss vor neuem Pull | `T-001` im Engineering-Track und `PO-001` im Product-Track; `F-005`/`G1` ist abgeschlossen | mittel für Reihenfolge, niedrig für Datum bis weitere Cycle Time vorliegt |
-| `Next` | ungefähr 2–6 Wochen, abhängig von Evidenz, Taskzuschnitt und Durchsatz | `PO-001`–`PO-003`/`V-001` als Investment-Checkpoint, `G1`/`G2` und danach Voice+Text-Konfiguration für `G3` | niedrig; Anbieter-/Runtimebenchmark und erste 3–5 vergleichbare Tasks fehlen |
+| `Now` | je ein WIP-Slot pro Spur; Abschluss vor neuem Pull | `T-002` im Engineering-Track und `PO-001` im Product-Track; `T-001`/OIDC ist abgeschlossen | mittel für Reihenfolge, niedrig für Datum bis weitere Cycle Time vorliegt |
+| `Next` | ungefähr 2–6 Wochen, abhängig von Evidenz, Taskzuschnitt und Durchsatz | `PO-001`–`PO-003`/`V-001` als Investment-Checkpoint, `T-003`/`T-004` bis `G2` und danach Voice+Text-Konfiguration für `G3` | niedrig; Anbieter-/Runtimebenchmark und erste 3–5 vergleichbare Tasks fehlen |
 | `Later` | keine Kalenderprognose | `G4` Realtime Telephony & Media, `G5` synthetischer Combined Assistant, `G6` Pilot Ready, `G7` kontrollierter Pilot und `G8` Post-pilot-Entscheid | absichtlich keine Termin-Konfidenz |
 
 ## Forecast-Regeln

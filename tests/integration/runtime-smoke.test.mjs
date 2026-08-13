@@ -108,9 +108,14 @@ afterEach(async () => {
 
 describe('runtime startup and smoke contracts', () => {
   it.each([
-    ['api', 'apps/api/dist/main.js', [], ['APP_ENV', 'DATABASE_URL', 'SESSION_SECRET']],
+    ['api', 'apps/api/dist/main.js', [], ['APP_ENV', 'DATABASE_URL', 'OIDC_ISSUER_URL']],
     ['worker', 'apps/worker/dist/main.js', [], ['APP_ENV', 'DATABASE_URL', 'REDIS_URL']],
-    ['web', 'apps/web/scripts/run-next.mjs', ['start'], ['APP_ENV', 'NEXT_PUBLIC_API_BASE_URL']],
+    [
+      'web',
+      'apps/web/scripts/run-next.mjs',
+      ['start'],
+      ['APP_ENV', 'NEXT_PUBLIC_API_BASE_URL', 'OIDC_ISSUER_URL', 'WEB_ORIGIN'],
+    ],
   ])(
     'stops %s before startup when required configuration is absent',
     (_, entry, args, variables) => {
@@ -141,9 +146,7 @@ describe('runtime startup and smoke contracts', () => {
       API_LOG_LEVEL: 'error',
       API_PORT: String(apiPort),
       OIDC_CLIENT_ID: 'synthetic-client',
-      OIDC_CLIENT_SECRET: 'synthetic-client-secret',
       OIDC_ISSUER_URL: 'http://127.0.0.1:8080/realms/synthetic',
-      SESSION_SECRET: 'synthetic-session-secret-value-0000',
     });
     const baseUrl = `http://127.0.0.1:${apiPort}`;
 
@@ -196,6 +199,11 @@ describe('runtime startup and smoke contracts', () => {
         APP_ENV: 'test',
         NEXT_PUBLIC_API_BASE_URL: 'http://127.0.0.1:3001',
         NODE_ENV: 'production',
+        OIDC_CLIENT_ID: 'synthetic-client',
+        OIDC_CLIENT_SECRET: 'synthetic-client-secret',
+        OIDC_ISSUER_URL: 'http://127.0.0.1:8080/realms/synthetic',
+        SESSION_SECRET: 'synthetic-session-secret-value-0000',
+        WEB_ORIGIN: `http://127.0.0.1:${webPort}`,
       },
     );
 

@@ -33,7 +33,9 @@ Die lokalen `dev`-Skripte laden ausschließlich die ignorierte Root-Datei
 Prozess-Environment; Staging/Produktion können dadurch nicht unbemerkt eine
 lokale Datei übernehmen. Anwendungscode sucht nicht selbstständig nach
 alternativen Dateien. Die in `F-002` isolierten Infrastrukturcontainer
-veröffentlichen keine Host-Ports. `F-004` hält diese No-Egress-Grenze aufrecht:
+veröffentlichen mit Ausnahme des ausschließlich an `127.0.0.1:8080` gebundenen
+lokalen Keycloak-Endpunkts keine Host-Ports. `F-004` hält diese
+No-Real-Data-Grenze aufrecht:
 Prozess-Smokes verwenden kurzlebige synthetische TCP-Endpunkte; eine spätere
 CI-/Deployment-Topologie setzt Apps und Abhängigkeiten in ein ausdrücklich
 freigegebenes internes Netz. Details stehen im
@@ -44,7 +46,7 @@ freigegebenes internes Netz. Details stehen im
 | Klasse | Variablen | Behandlung |
 |---|---|---|
 | öffentlich | `NEXT_PUBLIC_API_BASE_URL` | darf in Browserbundles erscheinen; niemals Credentials, Tokens oder interne Verwaltungsendpunkte ergänzen |
-| intern | `APP_ENV`, `API_HOST`, `API_PORT`, `API_LOG_LEVEL`, `DEPENDENCY_PROBE_TIMEOUT_MS`, `SHUTDOWN_GRACE_PERIOD_MS`, `WORKER_LOG_LEVEL`, `WORKER_READINESS_INTERVAL_MS`, `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID` | nicht vertraulich, aber nicht ungeprüft in Telemetrie oder Clientbundles übernehmen |
+| intern | `APP_ENV`, `API_HOST`, `API_PORT`, `API_LOG_LEVEL`, `DEPENDENCY_PROBE_TIMEOUT_MS`, `SHUTDOWN_GRACE_PERIOD_MS`, `WORKER_LOG_LEVEL`, `WORKER_READINESS_INTERVAL_MS`, `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID`, `WEB_ORIGIN` | nicht vertraulich, aber nicht ungeprüft in Telemetrie oder Clientbundles übernehmen |
 | secret (`DATA-26`) | `DATABASE_URL`, `REDIS_URL`, `OIDC_CLIENT_SECRET`, `SESSION_SECRET` | nur serverseitig; im Config-Paket als `SecretValue`, dessen String-, JSON- und Inspect-Darstellung immer `[REDACTED]` ist |
 
 Ein `SecretValue` wird ausschließlich direkt am nutzenden Outbound-Adapter
@@ -99,9 +101,9 @@ Spezifische Reihenfolge:
   Verbindung prüfen, Consumer umstellen, alte Sessions beenden und alte
   Identität widerrufen.
 - OIDC Client Secret: zwei gültige Versionen beziehungsweise kontrolliertes
-  Cutover vorsehen, API umstellen, Tokenfluss synthetisch prüfen, Altsecret
+  Cutover vorsehen, Web-BFF umstellen, Tokenfluss synthetisch prüfen, Altsecret
   widerrufen.
-- Session-Schlüssel: versionierte Key-ID und getrennte Signier-/Prüfmenge
+- Session-Schlüssel: versionierte Key-ID und getrennte Ver-/Entschlüsselungsmenge
   vorsehen; nach maximaler Sessionlebensdauer Altkey entfernen. Bei Incident
   Sessions sofort invalidieren.
 - spätere Provider-/Webhook-Secrets: erst nach Providerentscheidung; duale

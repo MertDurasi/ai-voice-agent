@@ -8,7 +8,7 @@ import {
   LivenessResponseDto,
   ReadinessResponseDto,
   type DependencyStatusDto,
-} from '../http/api-contract';
+} from '../http/api-contract.js';
 
 export const DEPENDENCY_PROBES = Symbol('DEPENDENCY_PROBES');
 

@@ -20,7 +20,7 @@ Nachweisen und benannten Entscheidungen, nie allein auf Kalenderzeit.
 
 | Spur | WIP-Limit | Zweck | aktueller Pull |
 |---|---:|---|---|
-| Engineering | 1 | kleinste vollständige technische Task bis `done` führen | `T-002` |
+| Engineering | 1 | kleinste vollständige technische Task bis `done` führen | `T-003` |
 | Product/Discovery | 1 | Evidenz, Ownerentscheidungen und externe Reviews | `PO-001` |
 
 - Eine Task zählt ab `in_progress` bis einschließlich `review` zum WIP.

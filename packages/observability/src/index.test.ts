@@ -23,10 +23,12 @@ describe('JsonLogger', () => {
       'info',
       'http.request.completed',
       {
+        actorRef: 'act_1234567890abcdefghijkl',
         durationMs: 2.6,
         eventType: 'http_request',
         requestId: '0193f8d7-7f03-7f25-a4c0-f043f3d78a50',
         status: 200,
+        tenantRef: 'ten_1234567890abcdefghijkl',
       },
       'RequestContext',
     );
@@ -43,9 +45,11 @@ describe('JsonLogger', () => {
     expect(lines.join('\n')).toMatch(/"timestamp":"[^"\n]+Z"/u);
     expect(JSON.parse(lines[2] ?? '{}')).toMatchObject({
       durationMs: 3,
+      actorRef: 'act_1234567890abcdefghijkl',
       eventType: 'http_request',
       requestId: '0193f8d7-7f03-7f25-a4c0-f043f3d78a50',
       status: 200,
+      tenantRef: 'ten_1234567890abcdefghijkl',
     });
     expect(isSafeCorrelationId('0193f8d7-7f03-7f25-a4c0-f043f3d78a50')).toBe(true);
     expect(isSafeCorrelationId('491701234567')).toBe(false);

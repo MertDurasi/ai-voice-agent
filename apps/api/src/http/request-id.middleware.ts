@@ -5,6 +5,7 @@ import { performance } from 'node:perf_hooks';
 
 export interface RequestWithId extends IncomingMessage {
   requestId?: string;
+  tenantCorrelation?: Readonly<{ actorRef: string; tenantRef: string }>;
 }
 
 export function createRequestIdMiddleware(logger: RuntimeEventLogger) {
@@ -20,6 +21,7 @@ export function createRequestIdMiddleware(logger: RuntimeEventLogger) {
         response.statusCode >= 500 ? 'error' : 'info',
         'http.request.completed',
         {
+          ...request.tenantCorrelation,
           durationMs: performance.now() - startedAt,
           eventType: 'http_request',
           requestId,

@@ -10,9 +10,9 @@ Gatevoraussetzungen stehen in [Gate-Status](../project/gate-status.md).
 
 | Horizont/Spur | Task/Outcome |
 |---|---|
-| `Now` Engineering | `T-002`: Tenant/Membership und serverseitiger Tenant-Kontext; kein RLS-Vorgriff |
+| `Now` Engineering | `T-003`: PostgreSQL-RLS, getrennte DB-Rollen und Cross-Tenant-Negativsuite |
 | `Now` Product | `PO-001` in Arbeit: Interview-Kit fertig; zehn Interviews und Intent-Evidenz offen |
-| `Next` | `T-003`–`T-004` für G2; nach `PO-001` `PO-002`/`V-001`; weitere Arbeit WIP-gesteuert |
+| `Next` | `T-004` schließt G2 ab; nach `PO-001` `PO-002`/`V-001`; weitere Arbeit WIP-gesteuert |
 | `Later` | `G3` Voice+Text Configuration → `G4` Realtime Telephony & Media → `G5` synthetischer Combined Assistant → Pilot-Readiness und kontrollierter Pilot |
 
 WIP: höchstens eine Engineering- und eine Product-/Discovery-Task. `Next` ist
@@ -58,9 +58,9 @@ offen.
 | Task | Status | Abhängigkeit |
 |---|---|---|
 | [T-001 Keycloak/OIDC](tenancy/T-001-keycloak-oidc.md) | done | G1 |
-| [T-002 Tenant und Kontext](tenancy/T-002-tenant-context.md) | ready (`Now`) | T-001 |
-| [T-003 RLS und DB-Rollen](tenancy/T-003-rls-db-roles.md) | blocked | T-002 |
-| [T-004 Audit-Grundlage](tenancy/T-004-audit-foundation.md) | blocked | T-002 |
+| [T-002 Tenant und Kontext](tenancy/T-002-tenant-context.md) | done | T-001 |
+| [T-003 RLS und DB-Rollen](tenancy/T-003-rls-db-roles.md) | ready (`Now`) | T-002 |
+| [T-004 Audit-Grundlage](tenancy/T-004-audit-foundation.md) | ready (`Next`) | T-002 |
 
 `G2` verlangt zusätzlich das bestandene `G0V`; die historischen Tenancy-Tasks
 werden nicht rückwirkend erweitert.

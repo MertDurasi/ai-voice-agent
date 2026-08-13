@@ -60,8 +60,8 @@ synthetischen Loopback-Abhängigkeiten; nur Keycloak veröffentlicht den
 festgelegten Loopback-Port `127.0.0.1:8080`.
 
 Aktuell in `Now`: Engineering zieht nach abgeschlossenem
-[T-001 – Keycloak/OIDC](docs/tasks/tenancy/T-001-keycloak-oidc.md) als Nächstes
-[T-002 – Tenant und Kontext](docs/tasks/tenancy/T-002-tenant-context.md). Der
+[T-002 – Tenant und Kontext](docs/tasks/tenancy/T-002-tenant-context.md) als Nächstes
+[T-003 – RLS und DB-Rollen](docs/tasks/tenancy/T-003-rls-db-roles.md). Der
 Product-Owner-Track zieht weiterhin
 [PO-001 – Probleminterviews](docs/tasks/product-owner/PO-001-problem-interviews.md).
 `PO-002` und `PO-003` folgen wegen des Product-WIP-Limits nacheinander.

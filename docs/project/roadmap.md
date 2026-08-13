@@ -9,11 +9,11 @@ gleichzeitig aktiv.
 
 | Spur | Task | überprüfbares Outcome | Stop-/Reviewpunkt |
 |---|---|---|---|
-| Engineering | `T-002` | Tenant/Membership und unveränderlicher serverseitiger Tenant-Kontext | kein RLS-/Audit-Vorgriff und keine reale Tenant-PII |
+| Engineering | `T-003` | PostgreSQL-RLS, getrennte DB-Rollen und Cross-Tenant-Negativsuite | kein globales Bypass, keine reale Tenant-PII; Audit folgt in `T-004` |
 | Product/Discovery | `PO-001` | zehn Problem-/Vertrauensinterviews prüfen Bedarf, begrenzte Intents, KI-Transparenz, Handoff und Textfortsetzung in der SHK-Kohorte | Interviewevidenz kann Scope oder Kohorte ändern; keine Anbieter-/Realfreigabe |
 
 `Now` enthält bewusst nur diese zwei Tasks. `PM-002`/`G0V`, `F-005`/`G1` und
-`T-001` sind abgeschlossen; andere Product-Tasks werden nicht parallel zu
+`T-001` und `T-002` sind abgeschlossen; andere Product-Tasks werden nicht parallel zu
 `PO-001` begonnen.
 
 ## Next – ungefähr 2–6 Wochen, wöchentlich neu zu forecasten

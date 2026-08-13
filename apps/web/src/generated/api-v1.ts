@@ -44,6 +44,16 @@ export type ReadinessResponseDto = {
   readonly status: 'not_ready' | 'ready';
 };
 
+export type TenantContextResponseDto = {
+  readonly membershipId: string;
+  readonly membershipVersion: number;
+  readonly permissions: readonly (
+    'tenant:read' | 'tenant:manage' | 'members:read' | 'members:manage' | 'work:read' | 'work:write'
+  )[];
+  readonly role: 'tenant_owner' | 'tenant_admin' | 'agent' | 'viewer';
+  readonly tenantId: string;
+};
+
 export interface ApiV1Paths {
   readonly '/api/v1': {
     readonly get: {
@@ -58,6 +68,15 @@ export interface ApiV1Paths {
       readonly responses: {
         readonly '200': IdentityResponseDto;
         readonly '401': ApiErrorResponseDto;
+      };
+    };
+  };
+  readonly '/api/v1/tenants/{tenantId}/context': {
+    readonly get: {
+      readonly responses: {
+        readonly '200': TenantContextResponseDto;
+        readonly '401': ApiErrorResponseDto;
+        readonly '403': ApiErrorResponseDto;
       };
     };
   };

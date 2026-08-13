@@ -147,6 +147,45 @@
         },
         "required": ["checkedAt", "dependencies", "status"],
         "type": "object"
+      },
+      "TenantContextResponseDto": {
+        "properties": {
+          "membershipId": {
+            "example": "0193f8d7-7f03-7f25-a4c0-f043f3d78a52",
+            "format": "uuid",
+            "type": "string"
+          },
+          "membershipVersion": {
+            "example": 1,
+            "minimum": 1,
+            "type": "number"
+          },
+          "permissions": {
+            "items": {
+              "enum": [
+                "tenant:read",
+                "tenant:manage",
+                "members:read",
+                "members:manage",
+                "work:read",
+                "work:write"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "role": {
+            "enum": ["tenant_owner", "tenant_admin", "agent", "viewer"],
+            "type": "string"
+          },
+          "tenantId": {
+            "example": "0193f8d7-7f03-7f25-a4c0-f043f3d78a50",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": ["membershipId", "membershipVersion", "permissions", "role", "tenantId"],
+        "type": "object"
       }
     },
     "securitySchemes": {
@@ -228,6 +267,61 @@
         ],
         "summary": "Return the validated identity without a tenant context",
         "tags": ["identity"]
+      }
+    },
+    "/api/v1/tenants/{tenantId}/context": {
+      "get": {
+        "operationId": "TenantContextController_getTenantContext",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tenantId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantContextResponseDto"
+                }
+              }
+            },
+            "description": ""
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            },
+            "description": ""
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Resolve the authoritative membership-backed tenant context",
+        "tags": ["tenancy"]
       }
     },
     "/health/live": {

@@ -9,8 +9,8 @@ import type { RuntimeEventLogger } from '@voice-ai/observability';
 import { randomUUID } from 'node:crypto';
 import type { ServerResponse } from 'node:http';
 
-import type { ApiErrorDetailDto, ApiErrorResponseDto } from './api-contract';
-import type { RequestWithId } from './request-id.middleware';
+import type { ApiErrorDetailDto, ApiErrorResponseDto } from './api-contract.js';
+import type { RequestWithId } from './request-id.middleware.js';
 
 const errorContract: Readonly<Record<number, Readonly<{ code: string; message: string }>>> = {
   [HttpStatus.BAD_REQUEST]: { code: 'INVALID_REQUEST', message: 'Request validation failed.' },

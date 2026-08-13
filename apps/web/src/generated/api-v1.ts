@@ -19,6 +19,14 @@ export type ApiRootResponseDto = {
 
 export type DependencyStatusDto = { readonly latencyMs: number; readonly status: 'down' | 'up' };
 
+export type IdentityResponseDto = {
+  readonly roles: readonly (
+    'agent' | 'support_admin' | 'tenant_admin' | 'tenant_owner' | 'viewer'
+  )[];
+  readonly subject: string;
+  readonly tenantContext: string | null;
+};
+
 export type LivenessResponseDto = {
   readonly checkedAt: string;
   readonly service: string;
@@ -42,6 +50,14 @@ export interface ApiV1Paths {
       readonly responses: {
         readonly '200': ApiRootResponseDto;
         readonly '500': ApiErrorResponseDto;
+      };
+    };
+  };
+  readonly '/api/v1/identity/me': {
+    readonly get: {
+      readonly responses: {
+        readonly '200': IdentityResponseDto;
+        readonly '401': ApiErrorResponseDto;
       };
     };
   };

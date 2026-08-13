@@ -1,0 +1,181 @@
+{
+  "accessTokenLifespan": 300,
+  "accessTokenLifespanForImplicitFlow": 0,
+  "clients": [
+    {
+      "attributes": {
+        "backchannel.logout.session.required": "true",
+        "pkce.code.challenge.method": "S256"
+      },
+      "baseUrl": "http://127.0.0.1:3000",
+      "clientAuthenticatorType": "client-secret",
+      "clientId": "voice-ai-api-local",
+      "directAccessGrantsEnabled": false,
+      "enabled": true,
+      "frontchannelLogout": false,
+      "implicitFlowEnabled": false,
+      "protocol": "openid-connect",
+      "protocolMappers": [
+        {
+          "config": {
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "included.client.audience": "voice-ai-api-local"
+          },
+          "consentRequired": false,
+          "name": "voice-ai-api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper"
+        },
+        {
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "realm_access.roles",
+            "id.token.claim": "false",
+            "jsonType.label": "String",
+            "multivalued": "true",
+            "userinfo.token.claim": "false",
+            "usermodel.realmRoleMapping.rolePrefix": ""
+          },
+          "consentRequired": false,
+          "name": "voice-ai-application-roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper"
+        },
+        {
+          "config": {
+            "access.token.claim": "true",
+            "id.token.claim": "true"
+          },
+          "consentRequired": false,
+          "name": "voice-ai-authentication-method",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-amr-mapper"
+        }
+      ],
+      "publicClient": false,
+      "redirectUris": [
+        "http://127.0.0.1:3000/auth/callback",
+        "http://127.0.0.1:3100/auth/callback"
+      ],
+      "secret": "${OIDC_CLIENT_SECRET}",
+      "serviceAccountsEnabled": false,
+      "standardFlowEnabled": true,
+      "webOrigins": []
+    }
+  ],
+  "authenticationFlows": [
+    {
+      "alias": "voice-ai-browser",
+      "authenticationExecutions": [
+        {
+          "authenticator": "auth-cookie",
+          "authenticatorFlow": false,
+          "priority": 10,
+          "requirement": "ALTERNATIVE",
+          "userSetupAllowed": false
+        },
+        {
+          "authenticator": "identity-provider-redirector",
+          "authenticatorFlow": false,
+          "priority": 20,
+          "requirement": "ALTERNATIVE",
+          "userSetupAllowed": false
+        },
+        {
+          "authenticatorFlow": true,
+          "flowAlias": "voice-ai-browser-forms",
+          "priority": 30,
+          "requirement": "ALTERNATIVE",
+          "userSetupAllowed": false
+        }
+      ],
+      "builtIn": false,
+      "description": "Browser login with role-enforced TOTP for privileged local roles.",
+      "providerId": "basic-flow",
+      "topLevel": true
+    },
+    {
+      "alias": "voice-ai-browser-forms",
+      "authenticationExecutions": [
+        {
+          "authenticator": "auth-username-password-form",
+          "authenticatorFlow": false,
+          "priority": 10,
+          "requirement": "REQUIRED",
+          "userSetupAllowed": false
+        },
+        {
+          "authenticator": "auth-conditional-otp-form",
+          "authenticatorConfig": "voice-ai-privileged-mfa",
+          "authenticatorFlow": false,
+          "priority": 20,
+          "requirement": "REQUIRED",
+          "userSetupAllowed": false
+        }
+      ],
+      "builtIn": false,
+      "description": "Password plus conditional TOTP based on the mfa_required composite role.",
+      "providerId": "basic-flow",
+      "topLevel": false
+    }
+  ],
+  "authenticatorConfig": [
+    {
+      "alias": "voice-ai-privileged-mfa",
+      "config": {
+        "defaultOtpOutcome": "skip",
+        "forceOtpRole": "mfa_required"
+      }
+    }
+  ],
+  "browserFlow": "voice-ai-browser",
+  "displayName": "Voice AI Local Synthetic Realm",
+  "enabled": true,
+  "eventsEnabled": true,
+  "eventsExpiration": 86400,
+  "loginWithEmailAllowed": true,
+  "otpPolicyAlgorithm": "HmacSHA256",
+  "otpPolicyDigits": 6,
+  "otpPolicyPeriod": 30,
+  "otpPolicyType": "totp",
+  "realm": "voice-ai-local",
+  "registrationAllowed": false,
+  "rememberMe": false,
+  "requiredActions": [
+    {
+      "alias": "CONFIGURE_TOTP",
+      "defaultAction": false,
+      "enabled": true,
+      "name": "Configure OTP",
+      "priority": 10,
+      "providerId": "CONFIGURE_TOTP"
+    }
+  ],
+  "roles": {
+    "realm": [
+      { "name": "agent" },
+      { "name": "mfa_required" },
+      {
+        "composite": true,
+        "composites": { "realm": ["mfa_required"] },
+        "name": "support_admin"
+      },
+      {
+        "composite": true,
+        "composites": { "realm": ["mfa_required"] },
+        "name": "tenant_admin"
+      },
+      {
+        "composite": true,
+        "composites": { "realm": ["mfa_required"] },
+        "name": "tenant_owner"
+      },
+      { "name": "viewer" }
+    ]
+  },
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 28800,
+  "sslRequired": "external",
+  "users": []
+}

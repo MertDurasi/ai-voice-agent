@@ -107,11 +107,9 @@ export interface ApiConfig {
   readonly host: string;
   readonly logLevel: LogLevel;
   readonly oidcClientId: string;
-  readonly oidcClientSecret: SecretValue;
   readonly oidcIssuerUrl: URL;
   readonly port: number;
   readonly redisUrl: SecretValue;
-  readonly sessionSecret: SecretValue;
 }
 
 export interface WorkerConfig {
@@ -127,6 +125,11 @@ export interface WorkerConfig {
 export interface WebConfig {
   readonly apiBaseUrl: URL;
   readonly environment: AppEnvironment;
+  readonly oidcClientId: string;
+  readonly oidcClientSecret: SecretValue;
+  readonly oidcIssuerUrl: URL;
+  readonly origin: URL;
+  readonly sessionSecret: SecretValue;
 }
 
 export const configCatalog = Object.freeze([
@@ -173,26 +176,26 @@ export const configCatalog = Object.freeze([
     sensitivity: 'secret',
   },
   {
-    applications: ['api'],
+    applications: ['api', 'web'],
     description: 'OIDC realm issuer URL.',
     name: 'OIDC_ISSUER_URL',
     sensitivity: 'internal',
   },
   {
-    applications: ['api'],
+    applications: ['api', 'web'],
     description: 'OIDC client identifier.',
     name: 'OIDC_CLIENT_ID',
     sensitivity: 'internal',
   },
   {
-    applications: ['api'],
+    applications: ['web'],
     description: 'OIDC confidential-client credential.',
     name: 'OIDC_CLIENT_SECRET',
     sensitivity: 'secret',
   },
   {
-    applications: ['api'],
-    description: 'High-entropy server-side session signing material.',
+    applications: ['web'],
+    description: 'High-entropy server-side session encryption material.',
     name: 'SESSION_SECRET',
     sensitivity: 'secret',
   },
@@ -219,6 +222,12 @@ export const configCatalog = Object.freeze([
     description: 'Browser-visible API origin; must never contain credentials.',
     name: 'NEXT_PUBLIC_API_BASE_URL',
     sensitivity: 'public',
+  },
+  {
+    applications: ['web'],
+    description: 'Server-side web origin used for OIDC callbacks and secure cookies.',
+    name: 'WEB_ORIGIN',
+    sensitivity: 'internal',
   },
 ] as const satisfies readonly ConfigCatalogEntry[]);
 
@@ -405,8 +414,6 @@ export function loadApiConfig(source: EnvironmentSource): Readonly<ApiConfig> {
   const redisUrlValue = readUrl(source, 'REDIS_URL', ['rediss:', 'redis:'], issues);
   const oidcIssuerUrl = readUrl(source, 'OIDC_ISSUER_URL', ['http:', 'https:'], issues);
   const oidcClientId = required(source, 'OIDC_CLIENT_ID', issues);
-  const oidcClientSecret = readSecret(source, 'OIDC_CLIENT_SECRET', 16, environment, issues);
-  const sessionSecret = readSecret(source, 'SESSION_SECRET', 32, environment, issues);
   rejectUnsafeNonLocalValue(environment, 'DATABASE_URL', source.DATABASE_URL, issues);
   rejectUnsafeNonLocalValue(environment, 'REDIS_URL', source.REDIS_URL, issues);
   requireNonLocalHttps(environment, 'OIDC_ISSUER_URL', oidcIssuerUrl, issues);
@@ -422,11 +429,9 @@ export function loadApiConfig(source: EnvironmentSource): Readonly<ApiConfig> {
     host: host as string,
     logLevel: logLevel as LogLevel,
     oidcClientId: oidcClientId as string,
-    oidcClientSecret: oidcClientSecret as SecretValue,
     oidcIssuerUrl: oidcIssuerUrl as URL,
     port: port as number,
     redisUrl: redisUrl as SecretValue,
-    sessionSecret: sessionSecret as SecretValue,
   });
 }
 
@@ -480,11 +485,23 @@ export function loadWebConfig(source: EnvironmentSource): Readonly<WebConfig> {
   const issues: ConfigIssue[] = [];
   const environment = readEnvironment(source, issues, 'web');
   const apiBaseUrl = readUrl(source, 'NEXT_PUBLIC_API_BASE_URL', ['http:', 'https:'], issues);
+  const origin = readUrl(source, 'WEB_ORIGIN', ['http:', 'https:'], issues);
+  const oidcIssuerUrl = readUrl(source, 'OIDC_ISSUER_URL', ['http:', 'https:'], issues);
+  const oidcClientId = required(source, 'OIDC_CLIENT_ID', issues);
+  const oidcClientSecret = readSecret(source, 'OIDC_CLIENT_SECRET', 16, environment, issues);
+  const sessionSecret = readSecret(source, 'SESSION_SECRET', 32, environment, issues);
   requireNonLocalHttps(environment, 'NEXT_PUBLIC_API_BASE_URL', apiBaseUrl, issues);
+  requireNonLocalHttps(environment, 'WEB_ORIGIN', origin, issues);
+  requireNonLocalHttps(environment, 'OIDC_ISSUER_URL', oidcIssuerUrl, issues);
 
   return finish('web', issues, {
     apiBaseUrl: apiBaseUrl as URL,
     environment: environment as AppEnvironment,
+    oidcClientId: oidcClientId as string,
+    oidcClientSecret: oidcClientSecret as SecretValue,
+    oidcIssuerUrl: oidcIssuerUrl as URL,
+    origin: origin as URL,
+    sessionSecret: sessionSecret as SecretValue,
   });
 }
 

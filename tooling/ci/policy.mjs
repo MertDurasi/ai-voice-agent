@@ -33,6 +33,7 @@ const requiredWorkflowFragments = Object.freeze([
   'corepack pnpm sbom --sbom-format cyclonedx',
   '--sbom-spec-version 1.7',
   'corepack pnpm compose:health',
+  'corepack pnpm compose:identity',
   'corepack pnpm compose:verify',
   'node tooling/ci/prepare-artifacts.mjs',
   'node tooling/ci/check-vulnerability-report.mjs',
@@ -180,7 +181,27 @@ export function infrastructurePolicyViolations({ composeSource, dockerfiles, wor
   }
 
   if (!composeSource.includes('profiles: [tools]')) add('compose_tools_profile_missing');
-  if (/^\s+ports:\s*$/gmu.test(composeSource)) add('compose_host_port_present');
+  const publishedPorts = [
+    ...composeSource.matchAll(/^\s+-\s+((?:\d{1,3}\.){3}\d{1,3}:\d+:\d+)\s*$/gmu),
+  ].map((match) => match[1]);
+  const allowedLoopbackIdentityPort = '127.0.0.1:8080:8080';
+  if (
+    publishedPorts.some((publishedPort) => publishedPort !== allowedLoopbackIdentityPort) ||
+    publishedPorts.filter((publishedPort) => publishedPort === allowedLoopbackIdentityPort)
+      .length !== 1
+  ) {
+    add('compose_host_port_invalid');
+  }
+  const externalNetworks = [
+    ...composeSource.matchAll(/^ {2}([a-z0-9-]+):\n {4}internal: false$/gmu),
+  ].map((match) => match[1]);
+  if (
+    externalNetworks.length !== 1 ||
+    externalNetworks[0] !== 'identity-loopback' ||
+    !/keycloak:[\s\S]*?networks:\n\s+- local-only\n\s+- identity-loopback/u.test(composeSource)
+  ) {
+    add('compose_external_network_invalid');
+  }
 
   return unique(violations);
 }

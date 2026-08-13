@@ -1,10 +1,11 @@
 # Lokale Infrastruktur
 
 Diese Compose-Umgebung ist ausschließlich für synthetische lokale Entwicklung
-bestimmt. Sie enthält keine Provideradapter, keine realen Daten und kein
-Laufzeit-Egress. Es werden keine Host-Ports veröffentlicht; die Dienste teilen
-ausschließlich ein internes Projektnetz. Health-, SMTP- und Persistenzproben
-laufen über kurzlebige Tool-Container oder `exec` innerhalb dieses Netzes.
+bestimmt. Sie enthält keine Provideradapter und keine realen Daten. Ausschließlich
+Keycloak wird für den lokalen Browserflow an Loopback veröffentlicht; die
+übrigen Dienste teilen ein internes Projektnetz. Health-, SMTP- und
+Persistenzproben laufen über kurzlebige Tool-Container oder `exec` innerhalb
+dieses Netzes.
 
 Die Befehle verwenden die leere Client-Konfiguration `docker-anonymous`. So
 werden ausschließlich öffentliche Images anonym geladen und weder persönliche
@@ -19,11 +20,15 @@ Root-README gepinnte Node-/pnpm-Version.
 corepack pnpm compose:up
 corepack pnpm compose:health
 corepack pnpm compose:verify
+corepack pnpm compose:identity
 ```
 
 `compose:verify` legt ausschließlich synthetische Marker in PostgreSQL, Redis
 und MinIO sowie eine E-Mail an `invalid.example` an, startet alle Dienste neu
 und beweist anschließend deren Persistenz. Der Test ist wiederholbar.
+`compose:identity` baut Web/API, erzeugt nur für den Lauf zufällige synthetische
+Nutzer, prüft OIDC Code + PKCE, Refresh, Logout, API-Signaturprüfung und das
+TOTP-Gate privilegierter Rollen und entfernt die Nutzer anschließend wieder.
 
 ## Endpunkte
 
@@ -31,14 +36,19 @@ und beweist anschließend deren Persistenz. Der Test ist wiederholbar.
 |---|---|---|
 | PostgreSQL 18.4 | `postgres:5432` | `postgres-data` |
 | Redis 8.8.1 | `redis:6379` | `redis-data`, AOF |
-| Keycloak 26.7.0 | `keycloak:8080` | PostgreSQL |
+| Keycloak 26.7.0 | intern `keycloak:8080`, Host ausschließlich `127.0.0.1:8080` | PostgreSQL |
 | MinIO | API `minio:9000`, Console `minio:9001` | `minio-data` |
 | Mailpit 1.30.7 | SMTP `mailpit:1025`, UI `mailpit:8025` | `mailpit-data` |
 
 Lokale Testzugänge stehen in `.env.example`. Sie sind absichtlich als
 `local-only` markiert und dürfen niemals für Staging, Produktion oder echte
-Daten wiederverwendet werden. Die Compose-Datei besitzt keine Passwortdefaults:
-ohne eine ausdrücklich übergebene Env-Datei bricht die Auswertung ab. Eine
+Daten wiederverwendet werden. Der Keycloak-Port wird ausschließlich für den
+lokalen OIDC-Browserflow an Loopback gebunden. PostgreSQL, Redis, MinIO und
+Mailpit bleiben ohne Host-Port. Beim ersten Start wird das Realm aus
+`keycloak/voice-ai-local-realm.json` importiert; es enthält Rollen und Client,
+aber bewusst keine Testnutzer oder Secrets. Die Compose-Datei besitzt keine
+Passwortdefaults: ohne eine ausdrücklich übergebene Env-Datei bricht die
+Auswertung ab. Eine
 Produktionskonfiguration existiert in `F-002` nicht. `F-004` lässt Host-Zugriffe
 bewusst geschlossen und prüft die App-Runtime separat mit synthetischen
 Loopback-Abhängigkeiten; siehe

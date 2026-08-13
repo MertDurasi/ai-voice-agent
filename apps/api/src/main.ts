@@ -2,7 +2,7 @@ import 'reflect-metadata';
 
 import { formatStartupError, loadApiConfig } from '@voice-ai/config';
 
-import { createApiApplication } from './bootstrap';
+import { createApiApplication } from './bootstrap.js';
 
 async function bootstrap(): Promise<void> {
   const config = loadApiConfig(process.env);

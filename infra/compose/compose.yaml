@@ -61,6 +61,7 @@ services:
       - start-dev
       - --health-enabled=true
       - --metrics-enabled=true
+      - --import-realm
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_BOOTSTRAP_ADMIN_USERNAME:?KEYCLOAK_BOOTSTRAP_ADMIN_USERNAME is required}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_BOOTSTRAP_ADMIN_PASSWORD:?KEYCLOAK_BOOTSTRAP_ADMIN_PASSWORD is required}
@@ -71,6 +72,14 @@ services:
       KC_CACHE: local
       KC_HOSTNAME_STRICT: 'false'
       KC_HTTP_ENABLED: 'true'
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:?OIDC_CLIENT_SECRET is required}
+    ports:
+      - 127.0.0.1:8080:8080
+    networks:
+      - local-only
+      - identity-loopback
+    volumes:
+      - ./keycloak/voice-ai-local-realm.json:/opt/keycloak/data/import/voice-ai-local-realm.json:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -151,6 +160,8 @@ services:
 networks:
   local-only:
     internal: true
+  identity-loopback:
+    internal: false
 
 volumes:
   postgres-data:

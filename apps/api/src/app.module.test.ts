@@ -1,10 +1,11 @@
 import type { INestApplication } from '@nestjs/common';
+import type { AccessTokenVerifier } from '@voice-ai/auth';
 import { SecretValue, type ApiConfig } from '@voice-ai/config';
 import type { DependencyCheck, DependencyProbe } from '@voice-ai/runtime';
 import type { AddressInfo } from 'node:net';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { createApiApplication } from './bootstrap';
+import { createApiApplication } from './bootstrap.js';
 
 class MutableProbe implements DependencyProbe {
   public constructor(
@@ -24,11 +25,20 @@ const config: Readonly<ApiConfig> = Object.freeze({
   host: '127.0.0.1',
   logLevel: 'error',
   oidcClientId: 'synthetic-client',
-  oidcClientSecret: SecretValue.from('synthetic-client-secret'),
   oidcIssuerUrl: new URL('http://127.0.0.1:8080/realms/synthetic'),
   port: 3001,
   redisUrl: SecretValue.from('redis://:synthetic@127.0.0.1:6379'),
-  sessionSecret: SecretValue.from('synthetic-session-secret-value-0000'),
+});
+
+const accessTokenVerifier: AccessTokenVerifier = Object.freeze({
+  async verify(token: string) {
+    if (token !== 'synthetic-valid-token') throw new Error('invalid token');
+    return {
+      roles: ['tenant_owner'] as const,
+      subject: 'synthetic-user',
+      tenantContext: null,
+    };
+  },
 });
 
 describe('API baseline', () => {
@@ -44,6 +54,7 @@ describe('API baseline', () => {
       enableShutdownHooks: false,
       logger: false,
       probes: [postgres, redis],
+      accessTokenVerifier,
     });
     app = application.app;
     await app.listen(0, '127.0.0.1');
@@ -119,5 +130,24 @@ describe('API baseline', () => {
     expect(document.paths).toHaveProperty('/health/live');
     expect(document.paths).toHaveProperty('/health/ready');
     expect((await fetch(`${baseUrl}/api/v1/openapi`)).status).toBe(404);
+  });
+
+  it('protects identity and never derives a tenant context from authentication', async () => {
+    const missing = await fetch(`${baseUrl}/api/v1/identity/me`);
+    const invalid = await fetch(`${baseUrl}/api/v1/identity/me`, {
+      headers: { authorization: 'Bearer invalid' },
+    });
+    const valid = await fetch(`${baseUrl}/api/v1/identity/me`, {
+      headers: { authorization: 'Bearer synthetic-valid-token' },
+    });
+
+    expect(missing.status).toBe(401);
+    expect(invalid.status).toBe(401);
+    expect(valid.status).toBe(200);
+    await expect(valid.json()).resolves.toEqual({
+      roles: ['tenant_owner'],
+      subject: 'synthetic-user',
+      tenantContext: null,
+    });
   });
 });

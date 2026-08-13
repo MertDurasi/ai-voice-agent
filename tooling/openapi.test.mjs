@@ -32,6 +32,36 @@ describe('OpenAPI contract tooling', () => {
     );
     expect(generateWebTypes(baseline)).toContain('readonly "/health/live"');
     expect(generateWebTypes(baseline)).toContain('readonly "200": Health');
+    expect(
+      generateWebTypes({
+        components: {
+          schemas: {
+            Identity: {
+              properties: { tenantContext: { nullable: true, type: 'string' } },
+              required: ['tenantContext'],
+              type: 'object',
+            },
+          },
+        },
+        paths: {},
+      }),
+    ).toContain('readonly "tenantContext": string | null');
+    expect(
+      generateWebTypes({
+        components: {
+          schemas: {
+            Roles: {
+              properties: {
+                roles: { items: { enum: ['agent', 'viewer'], type: 'string' }, type: 'array' },
+              },
+              required: ['roles'],
+              type: 'object',
+            },
+          },
+        },
+        paths: {},
+      }),
+    ).toContain('readonly "roles": readonly ("agent" | "viewer")[]');
   });
 
   it('classifies removed paths, operations, schemas and properties as breaking', () => {

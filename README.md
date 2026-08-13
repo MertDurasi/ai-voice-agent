@@ -46,7 +46,9 @@ Workflow selbst deployt nichts.
 `corepack pnpm dev` startet die drei providerfreien App-Basen. API-Vertrag,
 Health-Endpunkte, OpenAPI, Request-ID, Worker-Readiness und Shutdown sind in der
 [Application-Runtime](docs/operations/application-runtime.md) dokumentiert.
-Aktuell existieren weder reale Provideradapter noch externe Egress-Pfade.
+Aktuell existieren weder reale Provideradapter noch freigegebene externe
+Provider-Egress-Pfade. Der lokale Keycloak-Browserflow ist ausschließlich an
+Loopback gebunden.
 Die Konfiguration wird pro App typisiert und fail-fast geprüft; lokale Werte
 bleiben synthetisch. Klassifikation und spätere Rotation sind im
 [Secret-Leitfaden](docs/security/configuration-and-secrets.md) dokumentiert.
@@ -54,13 +56,13 @@ Die `db:*`-Befehle bleiben bis `T-003` als fail-closed Guards sichtbar. Die
 lokale Infrastruktur ist unter
 [infra/compose](infra/compose/README.md) dokumentiert; Datenbankmigrationen und
 Seeds bleiben bis `T-003` fail-closed. Runtime-Smokes laufen mit kurzlebigen
-synthetischen Loopback-Abhängigkeiten und benötigen keine geöffneten
-Containerports.
+synthetischen Loopback-Abhängigkeiten; nur Keycloak veröffentlicht den
+festgelegten Loopback-Port `127.0.0.1:8080`.
 
-Aktuell in `Now`: Engineering hat
-[F-005 – CI und Supply Chain](docs/tasks/foundation/F-005-ci-supply-chain.md)
-lokal umgesetzt; der erste grüne GitHub-Lauf und der Required Ruleset stehen im
-Review noch aus. Der Product-Owner-Track zieht
+Aktuell in `Now`: Engineering zieht nach abgeschlossenem
+[T-001 – Keycloak/OIDC](docs/tasks/tenancy/T-001-keycloak-oidc.md) als Nächstes
+[T-002 – Tenant und Kontext](docs/tasks/tenancy/T-002-tenant-context.md). Der
+Product-Owner-Track zieht weiterhin
 [PO-001 – Probleminterviews](docs/tasks/product-owner/PO-001-problem-interviews.md).
 `PO-002` und `PO-003` folgen wegen des Product-WIP-Limits nacheinander.
 

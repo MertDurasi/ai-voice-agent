@@ -24,12 +24,18 @@ export function stableJson(value) {
 
 function schemaType(schema) {
   if (typeof schema !== 'object' || schema === null) return 'unknown';
+  if (schema.nullable === true) {
+    return `${schemaType({ ...schema, nullable: false })} | null`;
+  }
   if ('$ref' in schema && typeof schema.$ref === 'string') {
     return schema.$ref.split('/').at(-1) ?? 'unknown';
   }
   if (Array.isArray(schema.enum))
     return schema.enum.map((value) => JSON.stringify(value)).join(' | ');
-  if (schema.type === 'array') return `readonly ${schemaType(schema.items)}[]`;
+  if (schema.type === 'array') {
+    const itemType = schemaType(schema.items);
+    return `readonly ${itemType.includes(' | ') ? `(${itemType})` : itemType}[]`;
+  }
   if (schema.type === 'integer' || schema.type === 'number') return 'number';
   if (schema.type === 'boolean') return 'boolean';
   if (schema.type === 'string') return 'string';

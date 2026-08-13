@@ -2,7 +2,7 @@
 id: T-002
 title: Tenant, Membership und Tenant-Kontext
 phase: tenancy
-status: blocked
+status: ready
 priority: P0
 owner: Engineering
 dependencies: [T-001]

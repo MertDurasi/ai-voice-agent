@@ -2,6 +2,15 @@ import { describe, expect, it } from 'vitest';
 
 import { evaluateGuardExecution, evaluateMigrationPolicy } from './migrations.mjs';
 
+const active = Object.freeze({
+  actualFiles: { 'packages/db/migrations/0001_tenancy_rls.sql': 'expected-hash' },
+  manifestFiles: { 'packages/db/migrations/0001_tenancy_rls.sql': 'expected-hash' },
+  rootMigrateScript: 'pnpm db:migrate:ci',
+  rootSeedScript: 'pnpm --filter @voice-ai/db seed',
+  state: 'active',
+  taskStatus: 'done',
+});
+
 const guarded = Object.freeze({
   actualFiles: {},
   manifestFiles: {},
@@ -12,8 +21,8 @@ const guarded = Object.freeze({
 });
 
 describe('migration drift policy', () => {
-  it('keeps the pre-T-003 baseline explicitly guarded', () => {
-    expect(evaluateMigrationPolicy(guarded)).toEqual([]);
+  it('accepts the active T-003 migration set only when file and hash match', () => {
+    expect(evaluateMigrationPolicy(active)).toEqual([]);
   });
 
   it('blocks a migration introduced while T-003 is guarded', () => {

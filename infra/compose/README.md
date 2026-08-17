@@ -1,9 +1,10 @@
 # Lokale Infrastruktur
 
 Diese Compose-Umgebung ist ausschließlich für synthetische lokale Entwicklung
-bestimmt. Sie enthält keine Provideradapter und keine realen Daten. Ausschließlich
-Keycloak wird für den lokalen Browserflow an Loopback veröffentlicht; die
-übrigen Dienste teilen ein internes Projektnetz. Health-, SMTP- und
+bestimmt. Sie enthält keine Provideradapter und keine realen Daten. Keycloak
+und die least-privilege PostgreSQL-Runtime werden über jeweils eine eigene,
+nur lokal veröffentlichte Bridge an Loopback gebunden; die übrigen Dienste
+teilen ein internes Projektnetz. Health-, SMTP- und
 Persistenzproben laufen über kurzlebige Tool-Container oder `exec` innerhalb
 dieses Netzes.
 
@@ -23,7 +24,10 @@ corepack pnpm compose:verify
 corepack pnpm compose:identity
 ```
 
-`compose:verify` legt ausschließlich synthetische Marker in PostgreSQL, Redis
+`compose:up` provisioniert zusätzlich getrennte PostgreSQL-Rollen, wendet die
+unveränderlichen Migrationen an und erzeugt zwei synthetische
+Tenant-/Membership-Fixtures. `compose:verify` legt ausschließlich synthetische
+Marker in PostgreSQL, Redis
 und MinIO sowie eine E-Mail an `invalid.example` an, startet alle Dienste neu
 und beweist anschließend deren Persistenz. Der Test ist wiederholbar.
 `compose:identity` baut Web/API, erzeugt nur für den Lauf zufällige synthetische
@@ -34,7 +38,7 @@ TOTP-Gate privilegierter Rollen und entfernt die Nutzer anschließend wieder.
 
 | Dienst | Endpunkt im internen Compose-Netz | Persistenz |
 |---|---|---|
-| PostgreSQL 18.4 | `postgres:5432` | `postgres-data` |
+| PostgreSQL 18.4 | intern `postgres:5432`, Host ausschließlich `127.0.0.1:5432` | `postgres-data` |
 | Redis 8.8.1 | `redis:6379` | `redis-data`, AOF |
 | Keycloak 26.7.0 | intern `keycloak:8080`, Host ausschließlich `127.0.0.1:8080` | PostgreSQL |
 | MinIO | API `minio:9000`, Console `minio:9001` | `minio-data` |
@@ -42,16 +46,16 @@ TOTP-Gate privilegierter Rollen und entfernt die Nutzer anschließend wieder.
 
 Lokale Testzugänge stehen in `.env.example`. Sie sind absichtlich als
 `local-only` markiert und dürfen niemals für Staging, Produktion oder echte
-Daten wiederverwendet werden. Der Keycloak-Port wird ausschließlich für den
-lokalen OIDC-Browserflow an Loopback gebunden. PostgreSQL, Redis, MinIO und
-Mailpit bleiben ohne Host-Port. Beim ersten Start wird das Realm aus
-`keycloak/voice-ai-local-realm.json` importiert; es enthält Rollen und Client,
+Daten wiederverwendet werden. Keycloak und PostgreSQL sind ausschließlich an
+Loopback gebunden. Die App-`.env.example` enthält nur das Runtime-Credential;
+Migration-/System-/Admin-Credentials bleiben im Compose-/Tooling-Kontext.
+Redis, MinIO und Mailpit bleiben ohne Host-Port. Beim ersten Start wird das Realm
+aus `keycloak/voice-ai-local-realm.json` importiert; es enthält Rollen und Client,
 aber bewusst keine Testnutzer oder Secrets. Die Compose-Datei besitzt keine
 Passwortdefaults: ohne eine ausdrücklich übergebene Env-Datei bricht die
 Auswertung ab. Eine
-Produktionskonfiguration existiert in `F-002` nicht. `F-004` lässt Host-Zugriffe
-bewusst geschlossen und prüft die App-Runtime separat mit synthetischen
-Loopback-Abhängigkeiten; siehe
+Produktionskonfiguration existiert nicht. Die Loopback-Freigabe ist eng auf
+lokale Identity-/RLS-Nachweise begrenzt; siehe
 [Application-Runtime](../../docs/operations/application-runtime.md#lokale-netzwerkgrenze-und-smoke-nachweis).
 
 ## Stoppen und Löschen

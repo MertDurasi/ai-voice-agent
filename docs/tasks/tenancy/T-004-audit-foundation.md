@@ -2,10 +2,10 @@
 id: T-004
 title: Audit-Grundlage
 phase: tenancy
-status: blocked
+status: ready
 priority: P0
 owner: Engineering/Security
-dependencies: [T-002]
+dependencies: [T-003]
 gate: G2
 outputs: [audit-event-model, audit-port, audit-policies, audit-tests]
 completed_at: null
@@ -17,8 +17,8 @@ completed_at: null
 
 Append-only-orientierte Audit Events mit Actor, Tenant, Aktion,
 Ressourcentyp/-ID, Zeitpunkt, Request-ID und Ergebnis schaffen. Nur explizit
-freigegebene Metadaten statt Vollobjekt/Payload speichern. RLS und Zugriff
-berücksichtigen, sobald `T-003` verfügbar ist.
+freigegebene Metadaten statt Vollobjekt/Payload speichern. Die in `T-003`
+geschaffenen RLS-, Rollen- und System-Receipt-Grenzen sind verbindlich.
 
 ## Akzeptanz und Verifikation
 

@@ -131,7 +131,7 @@ describe('workflow policy', () => {
     ).toContain('dockerfile_base_unpinned:mailpit:axllent/mailpit:v1.30.7');
   });
 
-  it('allows only the loopback-bound local Keycloak browser endpoint', () => {
+  it('allows only the loopback-bound local Keycloak and least-privilege PostgreSQL endpoints', () => {
     expect(
       infrastructurePolicyViolations({
         composeSource: compose.replace('127.0.0.1:8080:8080', '0.0.0.0:8080:8080'),
@@ -143,8 +143,15 @@ describe('workflow policy', () => {
       infrastructurePolicyViolations({
         composeSource: compose.replace(
           '127.0.0.1:8080:8080',
-          '127.0.0.1:8080:8080\n      - 127.0.0.1:5432:5432',
+          '127.0.0.1:8080:8080\n      - 127.0.0.1:6379:6379',
         ),
+        dockerfiles,
+        workflowSource: workflow,
+      }),
+    ).toContain('compose_host_port_invalid');
+    expect(
+      infrastructurePolicyViolations({
+        composeSource: compose.replace('127.0.0.1:5432:5432', '0.0.0.0:5432:5432'),
         dockerfiles,
         workflowSource: workflow,
       }),
@@ -155,6 +162,13 @@ describe('workflow policy', () => {
           'identity-loopback:\n    internal: false',
           'identity-loopback:\n    internal: false\n  provider-egress:\n    internal: false',
         ),
+        dockerfiles,
+        workflowSource: workflow,
+      }),
+    ).toContain('compose_external_network_invalid');
+    expect(
+      infrastructurePolicyViolations({
+        composeSource: compose.replace('      - database-loopback', '      - identity-loopback'),
         dockerfiles,
         workflowSource: workflow,
       }),

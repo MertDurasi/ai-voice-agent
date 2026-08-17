@@ -1,7 +1,7 @@
 # Providerfreie Application-Runtime
 
-- Stand: 2026-08-13
-- Tasks: `F-004`, `T-001`
+- Stand: 2026-08-17
+- Tasks: `F-004`, `T-001`–`T-003`
 - Geltungsbereich: synthetische lokale Foundation und Identity-Basis; keine
   Provider- oder produktive Fachfunktion
 
@@ -20,9 +20,9 @@ Keycloak-Konfiguration enthält keine Nutzer.
 
 ## Identity- und Session-Vertrag
 
-Keycloak wird lokal unter `127.0.0.1:8080` exponiert; alle anderen
-Infrastrukturports bleiben geschlossen. Beim ersten Start importiert Keycloak
-das versionierte Realm `voice-ai-local` mit einem confidential Client,
+Keycloak und die least-privilege PostgreSQL-Runtime werden lokal ausschließlich
+unter `127.0.0.1:8080` beziehungsweise `127.0.0.1:5432` exponiert. Beim ersten
+Start importiert Keycloak das versionierte Realm `voice-ai-local` mit einem confidential Client,
 Authorization Code, verpflichtendem PKCE `S256`, deaktiviertem Direct/Implicit
 Grant und einer expliziten API-Audience. Das Clientsecret kommt ausschließlich
 aus der lokalen Env-Vorlage und steht nicht im Realm-JSON.
@@ -39,8 +39,8 @@ und Redirect-URI. Refresh und Logout sind POST-only und verlangen denselben
 Die API akzeptiert ausschließlich Bearer Tokens mit RS256-Signatur, richtigem
 Issuer, Audience und Ablauf. Aus Claims werden nur Subject und die
 allowgelisteten Rollen `tenant_owner`, `tenant_admin`, `agent`, `viewer` und
-`support_admin` übernommen. `tenantContext` bleibt zwingend `null`; erst
-`T-002` löst Tenant-Membership serverseitig aus PostgreSQL auf.
+`support_admin` übernommen. `tenantContext` bleibt im Token zwingend `null`;
+die API löst die Tenant-Membership serverseitig aus PostgreSQL auf.
 
 Der lokale Browserflow erzwingt für `tenant_owner`, `tenant_admin` und
 `support_admin` per Composite-Rolle `mfa_required` die Einrichtung und Nutzung
@@ -91,6 +91,13 @@ Abschlusslogs enthalten Request-ID, Status und Dauer, aber bewusst keinen
 ungeprüften URL-Pfad, weil spätere öffentliche Links Capability-Tokens tragen
 könnten.
 
+Tenant-gebundene HTTP-Pfade ergänzen ausschließlich die aus einer aktiven
+Membership abgeleiteten pseudonymen `act_*`-/`ten_*`-Korrelationen. Die
+vollständige Rollen- und Manipulationsgrenze steht im
+[Tenant-Kontext-Vertrag](../security/tenant-context-and-rbac.md). Das produktive
+`MembershipDirectory` nutzt die RLS-geschützte PostgreSQL-Persistenz; fehlende,
+gesperrte oder inkonsistente Memberships bleiben fail-closed.
+
 ## Worker-Readiness und Shutdown
 
 Der Worker nimmt Arbeit nur an, wenn PostgreSQL und Redis erreichbar sind.
@@ -126,14 +133,14 @@ Diff-Review, kein automatisches Überschreiben in CI.
 
 ## Lokale Netzwerkgrenze und Smoke-Nachweis
 
-Die Infrastruktur aus `F-002` bleibt bis auf den für T-001 benötigten,
-ausschließlich an Loopback gebundenen Keycloak-Port im internen Compose-Netz.
-Das schützt die No-Real-Data-Grenze; der Identity-Bridge ist keine Freigabe für
+Die Infrastruktur aus `F-002` bleibt bis auf die ausschließlich an Loopback
+gebundenen Keycloak- und PostgreSQL-Ports im internen Compose-Netz. Das schützt
+die No-Real-Data-Grenze; der Identity-Bridge ist keine Freigabe für
 Provider-Egress oder reale Konten.
-Die URLs in `.env.example` beschreiben und validieren den App-Vertrag, sind
-aber keine Behauptung, dass der Host auf die isolierten Container zugreifen
-kann. Datenbank- oder Redis-Ports dürfen für ein grünes Readiness-Signal nicht
-ad hoc geöffnet werden.
+PostgreSQL ist seit `T-003` gezielt auf `127.0.0.1:5432` verfügbar, damit die
+lokale API ausschließlich mit der RLS-erzwungenen Runtime-Rolle arbeitet.
+Migration-, System- und Admin-Credentials werden der API nicht bereitgestellt.
+Redis, MinIO und Mailpit bleiben ohne Host-Port.
 
 Der ausführbare Identity-Smoke startet Web und API nur auf den zusätzlichen
 Loopback-Testports `3100`/`3101`, durchläuft Login, PKCE, Refresh, API-

@@ -5,9 +5,12 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import type { AccessTokenVerifier } from '@voice-ai/auth';
+import type { AccessPrincipal, AccessTokenVerifier } from '@voice-ai/auth';
 
-import type { AuthenticatedRequest } from './authenticated-user.decorator.js';
+interface BearerRequest {
+  readonly headers: Readonly<{ authorization?: string }>;
+  principal?: AccessPrincipal;
+}
 
 export const ACCESS_TOKEN_VERIFIER = Symbol('ACCESS_TOKEN_VERIFIER');
 
@@ -18,7 +21,7 @@ export class BearerAuthGuard implements CanActivate {
   ) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+    const request = context.switchToHttp().getRequest<BearerRequest>();
     const authorization = request.headers.authorization;
     const match = authorization?.match(/^Bearer ([A-Za-z0-9._~-]+)$/u);
     if (match?.[1] === undefined) throw new UnauthorizedException();

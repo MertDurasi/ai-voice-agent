@@ -14,12 +14,14 @@ export interface JsonLoggerOptions {
 }
 
 export interface RuntimeLogFields {
+  readonly actorRef?: string;
   readonly durationMs?: number;
   readonly errorCode?: string;
   readonly eventType?: string;
   readonly jobType?: string;
   readonly requestId?: string;
   readonly status?: number | string;
+  readonly tenantRef?: string;
 }
 
 export interface RuntimeEventLogger extends LoggerService {
@@ -61,6 +63,12 @@ function safeCode(value: string | undefined): string | undefined {
   return value !== undefined && /^[A-Za-z][A-Za-z0-9_.:-]{0,127}$/u.test(value) ? value : undefined;
 }
 
+function safePseudonymousRef(value: string | undefined, prefix: 'act' | 'ten'): string | undefined {
+  return value !== undefined && new RegExp(`^${prefix}_[A-Za-z0-9_-]{22}$`, 'u').test(value)
+    ? value
+    : undefined;
+}
+
 export function isSafeCorrelationId(value: unknown): value is string {
   return (
     typeof value === 'string' &&
@@ -85,12 +93,18 @@ function safeFields(fields: Readonly<RuntimeLogFields> | undefined): RuntimeLogF
       ? fields.status
       : undefined;
   return {
+    ...(safePseudonymousRef(fields.actorRef, 'act') === undefined
+      ? {}
+      : { actorRef: fields.actorRef }),
     ...(durationMs === undefined ? {} : { durationMs }),
     ...(safeCode(fields.errorCode) === undefined ? {} : { errorCode: fields.errorCode }),
     ...(safeCode(fields.eventType) === undefined ? {} : { eventType: fields.eventType }),
     ...(safeCode(fields.jobType) === undefined ? {} : { jobType: fields.jobType }),
     ...(isSafeCorrelationId(fields.requestId) ? { requestId: fields.requestId } : {}),
     ...(status === undefined ? {} : { status }),
+    ...(safePseudonymousRef(fields.tenantRef, 'ten') === undefined
+      ? {}
+      : { tenantRef: fields.tenantRef }),
   };
 }
 

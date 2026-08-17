@@ -184,11 +184,14 @@ export function infrastructurePolicyViolations({ composeSource, dockerfiles, wor
   const publishedPorts = [
     ...composeSource.matchAll(/^\s+-\s+((?:\d{1,3}\.){3}\d{1,3}:\d+:\d+)\s*$/gmu),
   ].map((match) => match[1]);
-  const allowedLoopbackIdentityPort = '127.0.0.1:8080:8080';
+  const allowedLoopbackPorts = new Set(['127.0.0.1:5432:5432', '127.0.0.1:8080:8080']);
   if (
-    publishedPorts.some((publishedPort) => publishedPort !== allowedLoopbackIdentityPort) ||
-    publishedPorts.filter((publishedPort) => publishedPort === allowedLoopbackIdentityPort)
-      .length !== 1
+    publishedPorts.some((publishedPort) => !allowedLoopbackPorts.has(publishedPort)) ||
+    publishedPorts.length !== allowedLoopbackPorts.size ||
+    [...allowedLoopbackPorts].some(
+      (allowedPort) =>
+        publishedPorts.filter((publishedPort) => publishedPort === allowedPort).length !== 1,
+    )
   ) {
     add('compose_host_port_invalid');
   }
@@ -196,9 +199,9 @@ export function infrastructurePolicyViolations({ composeSource, dockerfiles, wor
     ...composeSource.matchAll(/^ {2}([a-z0-9-]+):\n {4}internal: false$/gmu),
   ].map((match) => match[1]);
   if (
-    externalNetworks.length !== 1 ||
-    externalNetworks[0] !== 'identity-loopback' ||
-    !/keycloak:[\s\S]*?networks:\n\s+- local-only\n\s+- identity-loopback/u.test(composeSource)
+    externalNetworks.sort().join(',') !== 'database-loopback,identity-loopback' ||
+    !/keycloak:[\s\S]*?networks:\n\s+- local-only\n\s+- identity-loopback/u.test(composeSource) ||
+    !/postgres:[\s\S]*?networks:\n\s+- local-only\n\s+- database-loopback/u.test(composeSource)
   ) {
     add('compose_external_network_invalid');
   }

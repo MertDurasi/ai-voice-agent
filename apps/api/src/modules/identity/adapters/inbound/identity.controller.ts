@@ -10,8 +10,8 @@ import {
 import type { AccessPrincipal } from '@voice-ai/auth';
 
 import { ApiErrorResponseDto } from '../../../../http/api-contract.js';
+import { BearerAuthGuard } from '../../../../platform/auth/bearer-auth.guard.js';
 import { AuthenticatedUser } from './authenticated-user.decorator.js';
-import { BearerAuthGuard } from './bearer-auth.guard.js';
 
 export class IdentityResponseDto {
   @ApiProperty({

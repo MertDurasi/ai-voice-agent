@@ -17,8 +17,8 @@ Stand: 2026-08-13
 
 ## Nächste zulässige Arbeit
 
-- Engineering `Now`: `T-002` modelliert nach abgeschlossenem `T-001` Tenant,
-  Membership und den ausschließlich serverseitig abgeleiteten Tenant-Kontext.
+- Engineering `Now`: `T-003` erzwingt nach abgeschlossenem `T-002` die
+  Tenant-Isolation zusätzlich über PostgreSQL-RLS und getrennte DB-Rollen.
 - Product/Discovery `Now`: `PO-001` als erster Evidenz-Pull nach bestandenem
   `G0V`.
 - `PO-002`, `V-001` und `PO-003` werden anschließend WIP-gesteuert gezogen.

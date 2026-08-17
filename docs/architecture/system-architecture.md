@@ -20,7 +20,7 @@ Verbindliche Entscheidungen stehen in [den ADRs](../adr/README.md).
 
 | Modul | Besitzt | Darf nicht besitzen |
 |---|---|---|
-| Identity/Tenancy | Tenant, Membership, Rollen, Tenant-Kontext | Provider-Accounts, Leads |
+| Identity/Tenancy | [Tenant, Membership, Rollen, Tenant-Kontext](../security/tenant-context-and-rbac.md) | Provider-Accounts, Leads |
 | Onboarding/Config | Betriebsprofil, Öffnungszeiten, Nummernkonfiguration, Templates | Zustellstatus, Abrechnung |
 | Telephony | Call, CallEvent, TelephonyPort | Nachrichtenversand |
 | Voice Control | Agent-/Policyversion, KnowledgeSnapshot, VoiceSession-Metadaten, Disclosure-/Handoffzustand | Audio, Rohtranskript, beliebige Tools |

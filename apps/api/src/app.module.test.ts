@@ -1,11 +1,56 @@
 import type { INestApplication } from '@nestjs/common';
 import type { AccessTokenVerifier } from '@voice-ai/auth';
 import { SecretValue, type ApiConfig } from '@voice-ai/config';
+import type {
+  RuntimeEventLogger,
+  RuntimeLogFields,
+  RuntimeLogLevel,
+} from '@voice-ai/observability';
 import type { DependencyCheck, DependencyProbe } from '@voice-ai/runtime';
+import {
+  InMemoryMembershipDirectory,
+  createMembership,
+  createTenant,
+  tenantRoles,
+  type TenantRole,
+} from '@voice-ai/tenancy';
 import type { AddressInfo } from 'node:net';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { createApiApplication } from './bootstrap.js';
+
+interface CapturedEvent {
+  readonly fields?: Readonly<RuntimeLogFields>;
+  readonly level: RuntimeLogLevel;
+  readonly message: string;
+}
+
+class CaptureLogger implements RuntimeEventLogger {
+  public readonly events: CapturedEvent[] = [];
+
+  public debug(...values: readonly unknown[]): void {
+    void values;
+  }
+  public error(...values: readonly unknown[]): void {
+    void values;
+  }
+  public fatal(...values: readonly unknown[]): void {
+    void values;
+  }
+  public log(...values: readonly unknown[]): void {
+    void values;
+  }
+  public verbose(...values: readonly unknown[]): void {
+    void values;
+  }
+  public warn(...values: readonly unknown[]): void {
+    void values;
+  }
+
+  public event(level: RuntimeLogLevel, message: string, fields?: Readonly<RuntimeLogFields>): void {
+    this.events.push({ ...(fields === undefined ? {} : { fields }), level, message });
+  }
+}
 
 class MutableProbe implements DependencyProbe {
   public constructor(
@@ -32,29 +77,66 @@ const config: Readonly<ApiConfig> = Object.freeze({
 
 const accessTokenVerifier: AccessTokenVerifier = Object.freeze({
   async verify(token: string) {
-    if (token !== 'synthetic-valid-token') throw new Error('invalid token');
+    const role = token.replace('synthetic-', '') as TenantRole | 'support_admin';
+    if (![...tenantRoles, 'support_admin'].includes(role)) throw new Error('invalid token');
     return {
-      roles: ['tenant_owner'] as const,
-      subject: 'synthetic-user',
+      roles: [role],
+      subject: `synthetic-${role}`,
       tenantContext: null,
     };
   },
 });
 
+const tenantA = '0193f8d7-7f03-7f25-a4c0-f043f3d78a60';
+const tenantB = '0193f8d7-7f03-7f25-a4c0-f043f3d78a61';
+const memberships = tenantRoles.map((role, index) =>
+  createMembership({
+    id: `0193f8d7-7f03-7f25-a4c0-f043f3d78a${70 + index}`,
+    role,
+    status: 'active',
+    subject: `synthetic-${role}`,
+    tenantId: tenantA,
+    version: index + 1,
+  }),
+);
+const membershipDirectory = new InMemoryMembershipDirectory(
+  [
+    createTenant({ id: tenantA, status: 'active', version: 1 }),
+    createTenant({ id: tenantB, status: 'active', version: 1 }),
+  ],
+  memberships,
+);
+const expectedPermissions = {
+  agent: ['tenant:read', 'work:read', 'work:write'],
+  tenant_admin: ['tenant:read', 'members:read', 'members:manage', 'work:read', 'work:write'],
+  tenant_owner: [
+    'tenant:read',
+    'tenant:manage',
+    'members:read',
+    'members:manage',
+    'work:read',
+    'work:write',
+  ],
+  viewer: ['tenant:read', 'work:read'],
+} as const satisfies Readonly<Record<TenantRole, readonly string[]>>;
+
 describe('API baseline', () => {
   let app: INestApplication;
   let baseUrl: string;
+  let logger: CaptureLogger;
   let postgres: MutableProbe;
   let redis: MutableProbe;
 
   beforeEach(async () => {
     postgres = new MutableProbe('postgres', 'up');
     redis = new MutableProbe('redis', 'up');
+    logger = new CaptureLogger();
     const application = await createApiApplication(config, {
       enableShutdownHooks: false,
-      logger: false,
+      logger,
       probes: [postgres, redis],
       accessTokenVerifier,
+      membershipDirectory,
     });
     app = application.app;
     await app.listen(0, '127.0.0.1');
@@ -129,6 +211,7 @@ describe('API baseline', () => {
     expect(document.paths).toHaveProperty('/api/v1');
     expect(document.paths).toHaveProperty('/health/live');
     expect(document.paths).toHaveProperty('/health/ready');
+    expect(document.paths).toHaveProperty('/api/v1/tenants/{tenantId}/context');
     expect((await fetch(`${baseUrl}/api/v1/openapi`)).status).toBe(404);
   });
 
@@ -138,7 +221,7 @@ describe('API baseline', () => {
       headers: { authorization: 'Bearer invalid' },
     });
     const valid = await fetch(`${baseUrl}/api/v1/identity/me`, {
-      headers: { authorization: 'Bearer synthetic-valid-token' },
+      headers: { authorization: 'Bearer synthetic-tenant_owner' },
     });
 
     expect(missing.status).toBe(401);
@@ -146,8 +229,59 @@ describe('API baseline', () => {
     expect(valid.status).toBe(200);
     await expect(valid.json()).resolves.toEqual({
       roles: ['tenant_owner'],
-      subject: 'synthetic-user',
+      subject: 'synthetic-tenant_owner',
       tenantContext: null,
     });
+  });
+
+  it.each(tenantRoles)('resolves the authoritative %s membership role', async (role) => {
+    const response = await fetch(`${baseUrl}/api/v1/tenants/${tenantA}/context`, {
+      headers: { authorization: `Bearer synthetic-${role}` },
+    });
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      permissions: expectedPermissions[role],
+      role,
+      tenantId: tenantA,
+    });
+
+    const completed = logger.events.find(
+      (event) =>
+        event.message === 'http.request.completed' && event.fields?.tenantRef !== undefined,
+    );
+    expect(completed?.fields).toMatchObject({
+      actorRef: expect.stringMatching(/^act_[A-Za-z0-9_-]{22}$/u),
+      tenantRef: expect.stringMatching(/^ten_[A-Za-z0-9_-]{22}$/u),
+    });
+    expect(JSON.stringify(completed)).not.toContain(`synthetic-${role}`);
+    expect(JSON.stringify(completed)).not.toContain(tenantA);
+  });
+
+  it('returns one uniform 403 for missing membership, support access and tenant manipulation', async () => {
+    const missing = await fetch(`${baseUrl}/api/v1/tenants/${tenantB}/context`, {
+      headers: { authorization: 'Bearer synthetic-viewer' },
+    });
+    const support = await fetch(`${baseUrl}/api/v1/tenants/${tenantA}/context`, {
+      headers: { authorization: 'Bearer synthetic-support_admin' },
+    });
+    const header = await fetch(`${baseUrl}/api/v1/tenants/${tenantA}/context`, {
+      headers: {
+        authorization: 'Bearer synthetic-viewer',
+        'x-tenant-id': tenantB,
+      },
+    });
+    const query = await fetch(`${baseUrl}/api/v1/tenants/${tenantA}/context?tenantId=${tenantB}`, {
+      headers: { authorization: 'Bearer synthetic-viewer' },
+    });
+
+    for (const response of [missing, support, header, query]) {
+      expect(response.status).toBe(403);
+      await expect(response.json()).resolves.toMatchObject({
+        code: 'FORBIDDEN',
+        message: 'Request is forbidden.',
+        status: 403,
+      });
+    }
   });
 });

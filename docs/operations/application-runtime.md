@@ -91,6 +91,13 @@ Abschlusslogs enthalten Request-ID, Status und Dauer, aber bewusst keinen
 ungeprüften URL-Pfad, weil spätere öffentliche Links Capability-Tokens tragen
 könnten.
 
+Tenant-gebundene HTTP-Pfade ergänzen ausschließlich die aus einer aktiven
+Membership abgeleiteten pseudonymen `act_*`-/`ten_*`-Korrelationen. Die
+vollständige Rollen- und Manipulationsgrenze steht im
+[Tenant-Kontext-Vertrag](../security/tenant-context-and-rbac.md). Bis `T-003`
+eine RLS-geschützte Persistenz einführt, ist das produktive
+`MembershipDirectory` absichtlich leer und Tenant-Zugriff damit fail-closed.
+
 ## Worker-Readiness und Shutdown
 
 Der Worker nimmt Arbeit nur an, wenn PostgreSQL und Redis erreichbar sind.

@@ -80,6 +80,9 @@ importers:
       '@voice-ai/runtime':
         specifier: workspace:*
         version: link:../../packages/runtime
+      '@voice-ai/tenancy':
+        specifier: workspace:*
+        version: link:../../packages/tenancy
       class-transformer:
         specifier: 0.5.1
         version: 0.5.1
@@ -174,6 +177,8 @@ importers:
         version: 11.1.28(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0)
 
   packages/runtime: {}
+
+  packages/tenancy: {}
 
 packages:
 

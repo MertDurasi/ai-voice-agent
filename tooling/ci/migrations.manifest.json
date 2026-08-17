@@ -1,6 +1,15 @@
 {
   "schemaVersion": 1,
   "ownerTask": "T-003",
-  "state": "guarded",
-  "files": []
+  "state": "active",
+  "files": [
+    {
+      "path": "packages/db/migrations/0001_tenancy_rls.sql",
+      "sha256": "16d24a86641f66686f6a469a884e6d13902fb2e0bb583af88b2b47ed24c734bf"
+    },
+    {
+      "path": "packages/db/migrations/0002_authoritative_runtime_context.sql",
+      "sha256": "0de90b771184b3d4dcbfcd55c40223c026be32f1de96dafc594f29138230be62"
+    }
+  ]
 }

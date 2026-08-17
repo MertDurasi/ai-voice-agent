@@ -3,13 +3,14 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule, type OpenAPIObject } from '@nestjs/swagger';
 import { createRemoteAccessTokenVerifier, type AccessTokenVerifier } from '@voice-ai/auth';
 import type { ApiConfig } from '@voice-ai/config';
+import { PostgresMembershipDirectory } from '@voice-ai/db';
 import {
   JsonLogger,
   noopRuntimeEventLogger,
   type RuntimeEventLogger,
 } from '@voice-ai/observability';
 import { TcpDependencyProbe, type DependencyProbe, tcpEndpointFromUrl } from '@voice-ai/runtime';
-import { EmptyMembershipDirectory, type MembershipDirectory } from '@voice-ai/tenancy';
+import type { MembershipDirectory } from '@voice-ai/tenancy';
 
 import { AppModule } from './app.module.js';
 import { ApiErrorDetailDto, ApiErrorResponseDto } from './http/api-contract.js';
@@ -97,7 +98,12 @@ export async function createApiApplication(
       audience: config.oidcClientId,
       issuer: config.oidcIssuerUrl.href.replace(/\/$/u, ''),
     });
-  const membershipDirectory = options.membershipDirectory ?? new EmptyMembershipDirectory();
+  const membershipDirectory =
+    options.membershipDirectory ??
+    new PostgresMembershipDirectory({
+      applicationName: 'voice-ai-api-membership',
+      connectionString: config.databaseUrl.reveal(),
+    });
   const app = await NestFactory.create(
     AppModule.register(probes, accessTokenVerifier, membershipDirectory),
     {

@@ -47,9 +47,8 @@ Nicht im Scope: DB-RLS (`T-003`) und vollständiges Audit (`T-004`).
 - Logs erhalten nur pseudonyme `act_*`-/`ten_*`-Referenzen. Rohe Subjects,
   Tenant-UUIDs, URL-Pfade und Payloads bleiben außerhalb der Telemetrie.
 - OpenAPI und Web-Typen enthalten den synthetisch getesteten Kontextendpunkt.
-  Ohne einen injizierten Membership-Adapter bleibt er bis `T-003` bewusst
-  fail-closed; es wurden keine ungeschützten Tabellen oder RLS-Anteile
-  vorgezogen.
+  `T-003` hat den damals bewusst fail-closed gehaltenen Membership-Port
+  inzwischen mit der RLS-geschützten PostgreSQL-Implementierung verbunden.
 - Unter Node `24.18.0` und pnpm `11.20.0` sind Format, Lint, Typecheck, Unit-,
   Architektur-, Security-, CI-Policy-, OpenAPI-, Integrations- und Buildchecks
   sowie der Dependency-Scan grün. Der generische E2E-Runner besitzt weiterhin

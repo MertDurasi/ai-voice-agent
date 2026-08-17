@@ -32,10 +32,11 @@ Die lokalen `dev`-Skripte laden ausschließlich die ignorierte Root-Datei
 `.env`, sofern sie existiert. `start` liest dagegen nur das bereits gesetzte
 Prozess-Environment; Staging/Produktion können dadurch nicht unbemerkt eine
 lokale Datei übernehmen. Anwendungscode sucht nicht selbstständig nach
-alternativen Dateien. Die in `F-002` isolierten Infrastrukturcontainer
-veröffentlichen mit Ausnahme des ausschließlich an `127.0.0.1:8080` gebundenen
-lokalen Keycloak-Endpunkts keine Host-Ports. `F-004` hält diese
-No-Real-Data-Grenze aufrecht:
+alternativen Dateien. Die Infrastruktur veröffentlicht ausschließlich Keycloak
+und die least-privilege PostgreSQL-Runtime an `127.0.0.1:8080`
+beziehungsweise `127.0.0.1:5432`. Die Root-`.env` erhält nur das Runtime-
+Credential; Migration-, System- und Admin-Credentials bleiben in getrennten
+Tooling-Kontexten. Diese T-003-Erweiterung hält die No-Real-Data-Grenze aufrecht:
 Prozess-Smokes verwenden kurzlebige synthetische TCP-Endpunkte; eine spätere
 CI-/Deployment-Topologie setzt Apps und Abhängigkeiten in ein ausdrücklich
 freigegebenes internes Netz. Details stehen im

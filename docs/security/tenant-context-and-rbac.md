@@ -1,10 +1,9 @@
 # Tenant-Kontext und Rollenmodell
 
-- Stand: 2026-08-13
-- Task: `T-002`
+- Stand: 2026-08-17
+- Tasks: `T-002`, `T-003`
 - Scope: providerfreie, synthetische Control-Plane-Basis
-- Nicht enthalten: PostgreSQL-Persistenz/RLS (`T-003`), vollständiges Audit
-  (`T-004`) und Supportzugriff (`B-005`)
+- Nicht enthalten: vollständiges Audit (`T-004`) und Supportzugriff (`B-005`)
 
 ## Sicherheitsinvarianten
 
@@ -40,9 +39,11 @@ darf weder Membership noch RLS umgehen.
 | `Membership` | `id`, `subject`, `tenantId`, `role`, `status`, `version` | genau eine Zuordnung je Subject/Tenant; `active | disabled`; Rolle aus der Matrix |
 | `TenantContext` | `actorSubject`, `tenantId`, `membershipId`, `membershipVersion`, `role` | nur durch Resolver erzeugt; immutable; vor Jobausführung erneut validiert |
 
-Dies ist das fachliche, frameworkunabhängige Schema. Tabellen, Constraints,
-Runtime-/Migrationsrollen und `ENABLE/FORCE RLS` werden atomar in `T-003`
-eingeführt, damit zu keinem Zeitpunkt ungeschützte Tenant-Tabellen entstehen.
+Das fachliche Schema bleibt frameworkunabhängig. Tabellen, Constraints,
+Runtime-/Migrations-/Systemrollen und `ENABLE/FORCE RLS` sind durch `T-003`
+atomar in [`packages/db`](../../packages/db) umgesetzt. Details zu
+Transaktionskontext, Rollen, Migration und Linter stehen im
+[PostgreSQL-Tenancy-Vertrag](../operations/database-tenancy.md).
 
 ## RBAC-Matrix
 
@@ -65,10 +66,11 @@ fehlende Deklaration wird fail-closed abgelehnt.
 
 Die synthetisch getestete API-Route
 `GET /api/v1/tenants/{tenantId}/context` führt nacheinander Bearer-,
-Membership- und Permission-Prüfung aus. Ohne injiziertes produktives
-`MembershipDirectory` verwendet die Runtime absichtlich ein leeres Directory
-und verweigert jeden Tenant-Zugriff. Eine Datenbankanbindung wird nicht vor
-`T-003` vorgezogen.
+Membership- und Permission-Prüfung aus. Die Runtime verwendet standardmäßig
+das PostgreSQL-`MembershipDirectory` mit dem least-privilege Runtime-
+Credential. Es setzt für die Auflösung nur die ausgewählte Tenant-ID und das
+validierte OIDC-Subject lokal in einer Read-only-Transaktion; die autoritativen
+Contextwerte stammen weiterhin ausschließlich aus der gefundenen Membership.
 
 Asynchrone Arbeit nutzt ausschließlich `TenantJobEnvelope` mit Version `1`,
 UUID-Job-ID, begrenztem Jobtyp, unveränderlichem Tenant-Kontext und reinem
@@ -88,5 +90,6 @@ pseudonym, nicht anonym, und unterliegen weiterhin Zugriff und Retention.
 Automatisierte Tests decken alle vier Rollen, fehlende Membership, gesperrte
 Tenants/Memberships, Header-/Query-/Body-/Pfad-Manipulation, veraltete und
 veränderte Jobkontexte, Payload-Prototyp-Manipulation sowie PII-freie
-Korrelation ab. Die zusätzliche Datenbank-Isolation und der Pool-Leak-Nachweis
-folgen in [`T-003`](../tasks/tenancy/T-003-rls-db-roles.md).
+Korrelation ab. Die T-003-Integrationssuite ergänzt echte PostgreSQL-Nachweise
+für fremde Reads/Inserts/Updates/Deletes, bekannte IDs, `SET LOCAL`-Reset,
+Rollen, Policy-Lint und den engen Systempfad.

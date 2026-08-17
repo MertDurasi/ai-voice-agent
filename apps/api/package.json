@@ -19,6 +19,7 @@
     "@nestjs/swagger": "11.4.6",
     "@voice-ai/auth": "workspace:*",
     "@voice-ai/config": "workspace:*",
+    "@voice-ai/db": "workspace:*",
     "@voice-ai/observability": "workspace:*",
     "@voice-ai/runtime": "workspace:*",
     "@voice-ai/tenancy": "workspace:*",

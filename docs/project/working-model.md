@@ -2,7 +2,7 @@
 
 ## Rahmen
 
-- Stand: 2026-08-13
+- Stand: 2026-08-17
 - Kapazitätshypothese: Solo-/Kleinteam, ungefähr 20 Netto-Stunden pro Woche
 - Produktstrategie: Voice ist der primäre, begrenzte Anrufassistent; Textback
   ist die integrierte Fortsetzung beziehungsweise der Fallback desselben
@@ -20,7 +20,7 @@ Nachweisen und benannten Entscheidungen, nie allein auf Kalenderzeit.
 
 | Spur | WIP-Limit | Zweck | aktueller Pull |
 |---|---:|---|---|
-| Engineering | 1 | kleinste vollständige technische Task bis `done` führen | `T-003` |
+| Engineering | 1 | kleinste vollständige technische Task bis `done` führen | `T-004` ist `ready` zum Pull |
 | Product/Discovery | 1 | Evidenz, Ownerentscheidungen und externe Reviews | `PO-001` |
 
 - Eine Task zählt ab `in_progress` bis einschließlich `review` zum WIP.

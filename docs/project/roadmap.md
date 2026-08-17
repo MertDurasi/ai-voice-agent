@@ -1,6 +1,6 @@
 # Roadmap – Now, Next, Later
 
-Stand: 2026-08-13. Ausführbar sind ausschließlich die Task-Verträge unter
+Stand: 2026-08-17. Ausführbar sind ausschließlich die Task-Verträge unter
 `docs/tasks/`. Diese Roadmap zeigt Outcomes und Pull-Reihenfolge, keine
 Lieferzusage. Maximal eine Engineering- und eine Product-/Discovery-Task sind
 gleichzeitig aktiv.
@@ -9,19 +9,19 @@ gleichzeitig aktiv.
 
 | Spur | Task | überprüfbares Outcome | Stop-/Reviewpunkt |
 |---|---|---|---|
-| Engineering | `T-003` | PostgreSQL-RLS, getrennte DB-Rollen und Cross-Tenant-Negativsuite | kein globales Bypass, keine reale Tenant-PII; Audit folgt in `T-004` |
+| Engineering | `T-004` (`ready`) | inhaltsarme, unveränderliche Audit Events auf der RLS-/Rollenbaseline | keine Payload, Nachrichtentexte, Secrets oder direkte PII; Retention bleibt Legal-/Compliance-Entscheidung |
 | Product/Discovery | `PO-001` | zehn Problem-/Vertrauensinterviews prüfen Bedarf, begrenzte Intents, KI-Transparenz, Handoff und Textfortsetzung in der SHK-Kohorte | Interviewevidenz kann Scope oder Kohorte ändern; keine Anbieter-/Realfreigabe |
 
 `Now` enthält bewusst nur diese zwei Tasks. `PM-002`/`G0V`, `F-005`/`G1` und
-`T-001` und `T-002` sind abgeschlossen; andere Product-Tasks werden nicht parallel zu
-`PO-001` begonnen.
+`T-001` bis `T-003` sind abgeschlossen; andere Product-Tasks werden nicht
+parallel zu `PO-001` begonnen.
 
 ## Next – ungefähr 2–6 Wochen, wöchentlich neu zu forecasten
 
 | Outcome | wahrscheinliche Tasks/Abhängigkeiten | Nachweis vor Pull |
 |---|---|---|
 | Problem, Pilotangebot und technische Machbarkeit sind als Investment-Checkpoint belastbar | `PO-001`; danach WIP-gesteuert `PO-002` und `V-001`; `PO-003` nutzt den Benchmark | anonymisierte Interviewevidenz, testbares Angebot, providerneutrale Voice-Scorecard, Kostenbandbreite und Stopregeln |
-| Tenant-Isolation ist beweisbar | `T-002`–`T-004` für `G2`; OIDC-Basis aus `T-001` ist abgeschlossen | Membership-/Kontext-, RLS- und Audit-Negativfälle; keine reale Tenant-PII |
+| Tenant-Isolation und Audit sind beweisbar | `T-004` schließt auf `T-001`–`T-003` aufbauend `G2` ab | Audit-Negativfälle und Gate-Review; keine reale Tenant-PII |
 | Voice+Text-Konfiguration ist synthetisch aktivierbar | `O-001`–`O-004` erst nach `G2` und `PO-001`–`PO-003`; Abschluss `G3` | versionierte Profile, begrenzte Intents, Routing/Handoff, Disclosure- und Textback-Policy sowie kombinierter Fake-Test |
 | dünne kombinierte Scheibe ist für den nächsten Pull geschnitten | Just-in-time-Refinement der für `G4`/`G5` benötigten `E-*`, `V-*` und `M-*` | Fake-Call/Media → Voice → CallOutcome → optionaler Fake-Textback → ein Lead; Negativfälle für Disclosure, Handoff, Duplikate und Inhaltsleaks |
 

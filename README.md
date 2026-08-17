@@ -37,7 +37,7 @@ corepack pnpm dependency:scan
 corepack pnpm ci:quality
 ```
 
-Die Details zu Required Check, SBOM, Scans, Migrations-Guard und kurzlebigen
+Die Details zu Required Check, SBOM, Scans, Migrationspolicy und kurzlebigen
 CI-Artefakten stehen im
 [CI- und Supply-Chain-Vertrag](docs/operations/ci-supply-chain.md). Der erste
 GitHub-Lauf und der verpflichtende Branch-Ruleset bleiben Owner-Schritte; der
@@ -52,17 +52,17 @@ Loopback gebunden.
 Die Konfiguration wird pro App typisiert und fail-fast geprüft; lokale Werte
 bleiben synthetisch. Klassifikation und spätere Rotation sind im
 [Secret-Leitfaden](docs/security/configuration-and-secrets.md) dokumentiert.
-Die `db:*`-Befehle bleiben bis `T-003` als fail-closed Guards sichtbar. Die
-lokale Infrastruktur ist unter
-[infra/compose](infra/compose/README.md) dokumentiert; Datenbankmigrationen und
-Seeds bleiben bis `T-003` fail-closed. Runtime-Smokes laufen mit kurzlebigen
-synthetischen Loopback-Abhängigkeiten; nur Keycloak veröffentlicht den
-festgelegten Loopback-Port `127.0.0.1:8080`.
+Die aktive RLS-/Rollen-/Migrationsbaseline steht im
+[PostgreSQL-Tenancy-Vertrag](docs/operations/database-tenancy.md). Die lokale
+Infrastruktur ist unter [infra/compose](infra/compose/README.md) dokumentiert.
+Runtime-Smokes und Datenbanktests verwenden ausschließlich synthetische Daten;
+Keycloak und PostgreSQL veröffentlichen nur die festgelegten Loopback-Ports
+`127.0.0.1:8080` und `127.0.0.1:5432`.
 
-Aktuell in `Now`: Engineering zieht nach abgeschlossenem
-[T-002 – Tenant und Kontext](docs/tasks/tenancy/T-002-tenant-context.md) als Nächstes
-[T-003 – RLS und DB-Rollen](docs/tasks/tenancy/T-003-rls-db-roles.md). Der
-Product-Owner-Track zieht weiterhin
+Aktuell in `Now`: Engineering hat
+[T-003 – RLS und DB-Rollen](docs/tasks/tenancy/T-003-rls-db-roles.md)
+abgeschlossen; [T-004 – Audit-Grundlage](docs/tasks/tenancy/T-004-audit-foundation.md)
+ist als nächster Pull bereit. Der Product-Owner-Track zieht weiterhin
 [PO-001 – Probleminterviews](docs/tasks/product-owner/PO-001-problem-interviews.md).
 `PO-002` und `PO-003` folgen wegen des Product-WIP-Limits nacheinander.
 

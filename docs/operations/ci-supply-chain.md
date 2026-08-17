@@ -38,24 +38,20 @@ keine Repository-Secrets und enthält weder Publish- noch Deploymentpfade.
   Die beiden lokal gebauten finalen Images werden nach dem Build zusätzlich
   gescannt.
 - Telemetrie von Next.js und Turbo ist deaktiviert. Der lokale Compose-Vertrag
-  veröffentlicht ausschließlich Keycloak an `127.0.0.1:8080`; alle anderen
+  veröffentlicht ausschließlich Keycloak an `127.0.0.1:8080` und die
+  least-privilege PostgreSQL-Runtime an `127.0.0.1:5432`; alle anderen
   Host-Ports bleiben geschlossen und alle Werte synthetisch.
 
 ## Migrationen vor und ab T-003
 
-Die Check-ID bleibt stabil, obwohl `T-003` noch nicht umgesetzt ist:
-
-1. Im aktuellen Modus `guarded` müssen `db:migrate` und `db:seed` exakt auf den
-   `T-003`-Guard zeigen. Beide Guards werden ausgeführt und müssen mit Exitcode
-   `1` sowie dem stabilen Grund „intentionally unavailable“ enden. Jede echte
-   Migration außerhalb von Dokumentation oder CI-Fixtures blockiert.
-2. `T-003` schaltet Manifest und Runner in derselben Änderung auf `active`.
-   Dann werden Dateimenge und SHA-256 bestehender Migrationen unveränderlich
-   geprüft. Der aktive Runner muss zusätzlich Clean-DB-Anwendung, zweiten
-   No-op-Lauf, Schema-/RLS-Lint und Driftvergleich implementieren.
-
-Dadurch zieht `F-005` kein Datenbankschema vor, lässt aber auch keinen stillen
-Migrationspfad am Gate vorbei zu.
+Die Check-ID bleibt stabil. `T-003` hat Manifest und Runner atomar auf `active`
+geschaltet: Dateimenge und SHA-256 bestehender Migrationen werden
+unveränderlich geprüft. Der Runner serialisiert Ausführungen per Advisory Lock,
+lehnt unbekannte oder hashveränderte angewandte Migrationen ab und läuft beim
+zweiten Durchlauf als No-op. Die PostgreSQL-Integrationssuite beweist Clean-DB-
+Anwendung, Schema-/RLS-Lint, Rollen und Cross-Tenant-Isolation. Eine neue
+Tenanttabelle ohne `tenant_id`, `ENABLE/FORCE RLS` oder vollständige
+Command-Policies blockiert den Lauf.
 
 ## Findings und Ausnahmen
 
